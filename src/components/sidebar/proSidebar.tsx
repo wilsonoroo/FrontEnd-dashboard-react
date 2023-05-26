@@ -7,10 +7,14 @@ import { NavLink } from "react-router-dom";
 import { HSeparator } from "../separator/Separator";
 import FotterSidebar from "./components/FotterSidebar";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { SidebarHeader } from "./components/SidebarHeader";
 
-const hexToRgba = (hex: string, alpha: number) => {
+const hexToRgba = (
+  hex: string,
+  alpha: number,
+  setCollapsed: (collapsed: boolean) => void
+) => {
   const r = parseInt(hex.slice(1, 3), 16);
   const g = parseInt(hex.slice(3, 5), 16);
   const b = parseInt(hex.slice(5, 7), 16);
@@ -18,11 +22,14 @@ const hexToRgba = (hex: string, alpha: number) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-export function SidebarPro(props: { menu: Menus[] }) {
-  const { menu } = props;
+export function SidebarPro(props: {
+  menu: Menus[];
+  collapsed: boolean;
+  setCollapsed: Dispatch<SetStateAction<boolean>>;
+}) {
+  const { menu, collapsed, setCollapsed } = props;
   const textColor = useColorModeValue("vaku.700", "white");
   const userAuth = useAuth();
-  const [collapsed, setCollapsed] = useState(false);
 
   const variants = {
     rotate: { rotate: -180, transition: { duration: 0.4 } },
@@ -43,11 +50,11 @@ export function SidebarPro(props: { menu: Menus[] }) {
         <Box ps="20px" pe={{ lg: "16px", "2xl": "16px" }} p={0}>
           {menu
             .filter((item) => item.views.includes("admin"))
-            .map((item) => {
-              return item.menu.map((categoria, index) => {
+            .map((item, index) => {
+              return item.menu.map((categoria, subIndex) => {
                 return (
                   <Menu
-                    key={"car-" + categoria.id + "-" + index}
+                    key={"car-" + categoria.id + "-" + index + "-" + subIndex}
                     menuItemStyles={{
                       button: ({ level, active, disabled }) => {
                         // only apply styles on first level elements of the tree
@@ -69,10 +76,21 @@ export function SidebarPro(props: { menu: Menus[] }) {
                         )}
                       </NavLink>
                     ) : (
-                      categoria?.sections.map((subMenu, index) => {
+                      categoria?.sections.map((subMenu, subIndex2) => {
                         return (
                           <SubMenu
-                            key={"sub-" + subMenu.route + "-" + index}
+                            key={
+                              "sub-" +
+                              categoria.id +
+                              "-" +
+                              subMenu.id +
+                              "-" +
+                              index +
+                              "-" +
+                              subIndex +
+                              "-" +
+                              subIndex2
+                            }
                             defaultOpen
                             label={subMenu.titulo}
                             rootStyles={{
@@ -92,7 +110,16 @@ export function SidebarPro(props: { menu: Menus[] }) {
                               if (item?.isVisible && item.isVisible) {
                                 return (
                                   <NavLink
-                                    key={indexSM}
+                                    key={
+                                      "submenu-" +
+                                      index +
+                                      "-" +
+                                      subIndex +
+                                      "-" +
+                                      subIndex2 +
+                                      "-" +
+                                      indexSM
+                                    }
                                     to={subMenu.route + "/" + item.route}
                                     end
                                   >

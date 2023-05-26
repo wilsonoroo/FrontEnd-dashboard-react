@@ -25,6 +25,7 @@ import { addEmpresas } from "@services/database/empresaServices";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
+import { v4 as uuid } from "uuid";
 import UpLoadField from "./uploadField";
 
 export default function AgregarUsuario(props: {
@@ -68,7 +69,8 @@ export default function AgregarUsuario(props: {
           });
 
           addEmpresas({
-            id: values.id,
+            key: values.id,
+            id: uuid(),
             nombre: values.nombre,
             url: downloadURL,
           });

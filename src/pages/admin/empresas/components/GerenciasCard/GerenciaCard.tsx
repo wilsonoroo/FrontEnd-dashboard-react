@@ -10,13 +10,19 @@ import { HeaderCardGerencia } from "./HeaderCardGerencia";
 
 export default function GerenciaCard(props: {
   index: number;
-  item: { nombre: string };
+  item: { nombre: string; key: string; isEliminado: boolean; id: string };
+  onClick: (item: {
+    nombre: string;
+    key: string;
+    isEliminado: boolean;
+    id: string;
+  }) => void;
 }) {
   const shadow = useColorModeValue(
     "0px 18px 40px rgba(112, 144, 176, 0.12)",
     "none"
   );
-  const { index, item } = props;
+  const { index, item, onClick } = props;
   return (
     <CustomCard
       key={index}
@@ -77,6 +83,11 @@ export default function GerenciaCard(props: {
             variant="solid"
             size="sm"
             borderRadius={5}
+            onClick={() => {
+              if (onClick) {
+                onClick(item);
+              }
+            }}
           >
             Ver Mas
           </Button>

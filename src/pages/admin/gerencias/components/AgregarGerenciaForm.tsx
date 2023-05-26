@@ -1,3 +1,4 @@
+import { guardarGerenciasEmpresas } from "@/services/database/gerenciasServices";
 import {
   Box,
   Button,
@@ -17,7 +18,6 @@ import {
   VStack,
 } from "@chakra-ui/react";
 import useFetch from "@hooks/useFetch";
-import { guardarDatosEnFirebase } from "@services/database/gerenciasServices";
 import { getUsuarios } from "@services/database/usuariosServices";
 import { Field, Formik } from "formik";
 import { useEffect, useState } from "react";
@@ -174,7 +174,7 @@ export default function AgregarGerenciaForm(props: {
             setIsLoading(true);
             setDataGerencia({ loading: true });
 
-            guardarDatosEnFirebase(values, empresa)
+            guardarGerenciasEmpresas(values, empresa)
               .then(() => {
                 toast({
                   title: `Se ha creado la gerencia ${values.nombre}`,

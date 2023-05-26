@@ -14,7 +14,7 @@ export default function FotterSidebar(props: {
     fade: { transform: "scale(1)", y: 0, opacity: 1, delay: 1 },
     fadeOut: { transform: "scale(0)", y: 10, opacity: 0, delay: 1 },
   };
-  console.log(user.currentUser);
+
   return (
     <Flex
       justify="space-between"
@@ -90,7 +90,7 @@ export default function FotterSidebar(props: {
                   me="14px"
                   maxWidth={"160px"}
                 >
-                  {user.currentUser?.correo}
+                  {user.currentUser?.email}
                 </Text>
               </Box>
             </HStack>

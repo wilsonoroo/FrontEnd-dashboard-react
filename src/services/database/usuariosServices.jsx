@@ -11,13 +11,11 @@ import axios from "axios";
  * @param empresa - La identificación de la empresa
  */
 export const subirImagen = (image, ruta, uuid) => {
-  console.log(image);
   const storageRef = ref2(
     storage,
     `${ruta}/${uuid}.${image.name.split(".").at(-1)}`
   );
   return uploadBytes(storageRef, image).then((snapshot) => {
-    console.log("luciano puto", snapshot);
     return `https://firebasestorage.googleapis.com/v0/b/vaku-dev.appspot.com/o/${snapshot.metadata.fullPath}?alt=media`;
   });
   /* const uploadTask = uploadBytesResumable(ref2(storage, `${ruta}/${uuid}.${image.name.split(".").at(-1)}`), image);
@@ -75,7 +73,6 @@ export const getUsers = (empresa) => {
             resolve(returnArr);
             return snapshot.val();
           } else {
-            console.log("No data available");
             resolve([]);
           }
         })
@@ -122,7 +119,6 @@ export const getUsuarios = async (empresa) => {
       return usuariosArr;
     }
   } catch (err) {
-    console.log(false);
     return false;
   }
 };
@@ -138,7 +134,6 @@ export const getUsuariosArray = async (empresa) => {
       return usuariosArr;
     }
   } catch (err) {
-    console.log(false);
     return false;
   }
 };
@@ -151,7 +146,7 @@ export const getUsuariosArray = async (empresa) => {
 export const getUsuarioByUid = async (uid) => {
   try {
     var snapshot = await get(child(ref(database), `auth/${uid}`));
-    console.log(snapshot.val(), uid);
+
     if (snapshot.exists()) {
       return snapshot.val();
     }
@@ -167,10 +162,14 @@ export const getUsuarioByUid = async (uid) => {
  * @param empresa - El ID de la empresa
  * @returns El objeto de usuario
  */
-export const getUsuario = async (uid, empresa) => {
+export const getUsuario = async (uid, empresa, gerencia, division) => {
   try {
+    //empresas/shingeki_no_sushi-v2/gerencia-id_1/divisiones/division-id_1/contenido/usuarios/auth/jc7IxBgOnchtk91ftbPbcpvcsj33
     var snapshot = await get(
-      child(ref(database), `empresas/${empresa}/usuarios/auth/${uid}`)
+      child(
+        ref(database),
+        `empresas/${empresa}/gerencias/${gerencia}/divisiones/${division}/contenido/usuarios/auth/${uid}`
+      )
     );
     if (snapshot.exists()) {
       return snapshot.val();
@@ -188,7 +187,6 @@ export const getUsuario = async (uid, empresa) => {
  */
 export const updateUsuarioByUid = async (uid, data, pass, empresa) => {
   return new Promise((resolve, reject) => {
-    console.log(pass);
     try {
       if (typeof pass !== "undefined")
         axios
@@ -198,10 +196,9 @@ export const updateUsuarioByUid = async (uid, data, pass, empresa) => {
             displayName: data.displayName,
           })
           .then(function (response) {
-            console.log(response);
             if (response.status === 200) {
               const cleanedObject = pickBy(data, (v) => v !== undefined);
-              console.log(cleanedObject);
+
               return update(
                 ref(database, `empresas/${empresa}/usuarios/auth/${uid}`),
                 data
@@ -222,11 +219,10 @@ export const updateUsuarioByUid = async (uid, data, pass, empresa) => {
           })
           .catch(function (error) {
             // handle error
-            console.log(error);
+
             reject(false);
           });
     } catch (err) {
-      console.log(err);
       reject(false);
     }
   });
@@ -242,7 +238,6 @@ export const updateUsuarioByUid = async (uid, data, pass, empresa) => {
  * @returns Una promesa que se resuelve en verdadero o falso.
  */
 export async function crearUsuario(data, email, password, empresa) {
-  console.log(data, email, password, empresa);
   let uid;
   return new Promise((resolve, reject) => {
     try {
@@ -254,11 +249,11 @@ export async function crearUsuario(data, email, password, empresa) {
         })
         .then(function (response) {
           // handle success
-          console.log(empresa);
+
           uid = response.data.uid;
           data.id = uid;
           const cleanedObject = pickBy(data, (v) => v !== undefined);
-          console.log(cleanedObject);
+
           return set(
             ref(
               database,
@@ -268,7 +263,6 @@ export async function crearUsuario(data, email, password, empresa) {
           );
         })
         .then(function (result) {
-          console.log(uid);
           return set(ref(database, `auth/${uid}`), {
             email: email,
             empresaId: empresa,
@@ -280,11 +274,10 @@ export async function crearUsuario(data, email, password, empresa) {
         })
         .catch(function (error) {
           // handle error
-          console.log(error);
+
           reject(false);
         });
     } catch (err) {
-      console.log(err);
       reject(false);
     }
   });
@@ -314,11 +307,9 @@ export async function eliminarUsuario(uId, empresa) {
     await update(ref(database, `empresas/${empresa}/usuarios/auth/${uId}`), {
       isEliminado: true,
     });
-    console.log("Usuario eliminado correctamente");
 
     return true;
   } catch (err) {
-    console.log(err);
     return false;
   }
 }
@@ -330,7 +321,6 @@ export async function guardarDatosEnFirebase(values, empresa) {
     const nuevoObjetoRef = push(dbRef);
     // Guardar los datos en la base de datos utilizando la nueva ID generada
     await set(nuevoObjetoRef, values);
-    console.log("Datos guardados en Firebase");
   } catch (error) {
     console.error("Error al guardar datos en Firebase:", error);
   }
@@ -342,7 +332,7 @@ export async function editarUsuario(uId, empresa, nuevosDatos) {
       ref(database, `empresas/${empresa}/usuarios/auth/${uId}`),
       nuevosDatos
     );
-    console.log("Usuario actualizado correctamente");
+
     return true;
   } catch (err) {
     console.log(err);
@@ -366,7 +356,6 @@ export async function moverUsuario(userId, empresaActualId, nuevaEmpresaId) {
     // Guardar los datos del usuario en la nueva empresa
     await guardarDatosEnFirebase(usuarioData, nuevaEmpresaId);
 
-    console.log("Usuario movido correctamente");
     return true;
   } catch (error) {
     console.error("Error al mover el usuario:", error);

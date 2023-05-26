@@ -31,20 +31,28 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
 
   useEffect(() => {
     auth.onAuthStateChanged(async (user) => {
-      console.log("user context", user);
-      const userSemiComplete = await getUsuarioByUid(user?.uid);
-      console.log("user context", userSemiComplete);
-      const userComplete = await getUsuario(
-        user?.uid,
-        userSemiComplete?.empresaId
-      );
-      console.log("user context", userComplete);
+      if (user != null) {
+        const userSemiComplete = await getUsuarioByUid(user?.uid);
+        console.log(
+          "🚀 ~ file: AuthContext.tsx:35 ~ auth.onAuthStateChanged ~ userSemiComplete:",
+          userSemiComplete
+        );
 
-      setCurrentUser(userComplete);
+        const { divisionId, empresaId, gerenciaId } = userSemiComplete;
 
-      setUtils(await getUtils(userSemiComplete?.empresaId));
-      const activeEmpresa = await getActive(userSemiComplete?.empresaId);
-      setConfig(activeEmpresa);
+        const userComplete = await getUsuario(
+          user?.uid,
+          empresaId,
+          gerenciaId,
+          divisionId
+        );
+
+        setCurrentUser(userComplete);
+
+        setUtils(await getUtils(userSemiComplete?.empresaId));
+        const activeEmpresa = await getActive(userSemiComplete?.empresaId);
+        setConfig(activeEmpresa);
+      }
 
       setPending(false);
     });

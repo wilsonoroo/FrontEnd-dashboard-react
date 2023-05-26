@@ -21,8 +21,6 @@ import Error404Page from "@pages/Error404Page/Error404Page";
 // import PublicRoute from "./routes/PublicRoute";
 
 export default function App() {
-  console.log(process.env.REACT_APP_FIREBASE_API_KEY);
-
   return (
     // <BrowserRouter>
     //   <Routes>

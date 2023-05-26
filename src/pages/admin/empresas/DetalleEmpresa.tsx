@@ -17,14 +17,17 @@ import Loading from "@components/Loading";
 import useFetch from "@hooks/useFetch";
 import AgregarGerenciaForm from "@pages/admin/gerencias/components/AgregarGerenciaForm";
 import { getGerenciasArray } from "@services/database/gerenciasServices";
-import { useLocation, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
+
 export default function DetalleEmpresa(props: { titulo: string }) {
   const { titulo } = props;
   const { id } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [dataEmpresa, setDataEmpresa] = useState([]);
   const [listaGerencias, setListaGerencia] = useState([]);
+
+  const navigate = useNavigate();
   const {
     data: gerencias,
     firstLoading,
@@ -33,6 +36,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
   } = useFetch(() => getGerenciasArray(id));
 
   useEffect(() => {
+    console.log(gerencias);
     setListaGerencia(gerencias);
   }, [gerencias]);
 
@@ -50,7 +54,9 @@ export default function DetalleEmpresa(props: { titulo: string }) {
     "secondaryGray.600"
   );
 
-  const navigate = useLocation();
+  const handleClick = (item: any) => {
+    navigate("/admin/empresas/" + id + "/" + item.id, { state: { item } });
+  };
 
   return (
     <>
@@ -119,185 +125,13 @@ export default function DetalleEmpresa(props: { titulo: string }) {
                   key={item.id + "-" + index}
                   index={index}
                   item={item}
+                  onClick={() => {
+                    handleClick(item);
+                  }}
                 />
               </>
             );
           })}
-          {/* <Grid> */}
-          <>
-            {/* {gerencias.map((item, index) => {
-              return (
-                <CustomCard key={index} m={3} boxShadow="md">
-                  <Flex
-                    minWidth="max-content"
-                    alignItems="center"
-                    gap="2"
-                    justifyContent={"space-between"}
-                  >
-                    <HStack
-                      flexDirection={"row"}
-                      display={"flex"}
-                      justifyContent={"start"}
-                      alignItems="center"
-                      direction={"row"}
-                    >
-                      {/* icono gerencia 
-                      <Box pl={10} pr={10}>
-                        <Avatar
-                          bg="red.500"
-                          icon={<HiOutlineBuildingOffice2 fontSize="1.5rem" />}
-                        />
-                      </Box>
-                      {/* nombre y detalle 
-                      <Box>
-                        <Text
-                          fontWeight="bold"
-                          me="14px"
-                          isTruncated={false}
-                          noOfLines={2}
-                        >
-                          {item.nombre}
-                        </Text>
-                        <Text
-                          color="secondaryGray.600"
-                          fontSize={{
-                            base: "sm",
-                          }}
-                          isTruncated
-                          noOfLines={1}
-                          fontWeight="400"
-                          me="14px"
-                        >
-                          {item.nombre}
-                        </Text>
-                      </Box>
-                      {/* cant usuarios 
-                      <Box>
-                        <Box>
-                          <HStack spacing={5}>
-                            <Icons.UserPlus color={"#CBD5E0"} size={18} />
-                            <Text
-                              color="secondaryGray.600"
-                              fontSize={{
-                                base: "sm",
-                              }}
-                              isTruncated
-                              noOfLines={1}
-                              fontWeight="400"
-                              me="14px"
-                            >
-                              24
-                            </Text>
-                          </HStack>
-                        </Box>
-                      </Box>
-                      {/* separador 
-                      <Box>
-                        <VSeparator
-                          mx={{ base: "20px", xl: "20px", "2xl": "20px" }}
-                          h={30}
-                        />
-                      </Box>
-                      {/* cant divisiones 
-                      <Box>
-                        <Box>
-                          <HStack spacing={5}>
-                            <HiOutlineBuildingOffice2
-                              color={"#CBD5E0"}
-                              size={18}
-                            />
-                            <Text
-                              color="secondaryGray.600"
-                              fontSize={{
-                                base: "sm",
-                              }}
-                              isTruncated
-                              noOfLines={1}
-                              fontWeight="400"
-                              me="14px"
-                            >
-                              24
-                            </Text>
-                          </HStack>
-                        </Box>
-                      </Box>
-                      {/* separador 
-                      <Box>
-                        <VSeparator
-                          mx={{ base: "20px", xl: "20px", "2xl": "20px" }}
-                          h={30}
-                        />
-                      </Box>
-                      {/* cant documentos 
-                      <Box>
-                        <Box>
-                          <HStack spacing={2}>
-                            <HiOutlineDocumentText
-                              color={"#CBD5E0"}
-                              size={18}
-                            />
-                            <Text
-                              color="secondaryGray.600"
-                              fontSize={{
-                                base: "sm",
-                              }}
-                              isTruncated
-                              noOfLines={1}
-                              fontWeight="400"
-                              me="14px"
-                            >
-                              24
-                            </Text>
-                          </HStack>
-                        </Box>
-                      </Box>
-                      {/* separadir
-                      <Box>
-                        <VSeparator
-                          mx={{ base: "20px", xl: "20px", "2xl": "20px" }}
-                          h={30}
-                        />
-                      </Box>
-                      {/* cant otros docu 
-                      <Box>
-                        <Box>
-                          <HStack spacing={2}>
-                            <HiOutlineDocumentChartBar
-                              color={"#CBD5E0"}
-                              size={18}
-                            />
-                            <Text
-                              color="secondaryGray.600"
-                              fontSize={{
-                                base: "sm",
-                              }}
-                              isTruncated
-                              noOfLines={1}
-                              fontWeight="400"
-                              me="14px"
-                            >
-                              24
-                            </Text>
-                          </HStack>
-                        </Box>
-                      </Box>
-                    </HStack>
-
-                    <Box p="4">
-                      <IconButton
-                        colorScheme="vaku"
-                        aria-label="Send email"
-                        borderRadius={25}
-                        isRound={false}
-                        icon={<HiOutlineArrowSmallRight />}
-                      />
-                    </Box>
-                  </Flex>
-                </CustomCard>
-              );
-            })} */}
-          </>
-          {/* </Grid> */}
 
           <>{isLoading ? <Loading /> : <></>}</>
         </Grid>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // chakra imports
 import {
@@ -28,6 +28,7 @@ import { SidebarPro } from "./proSidebar";
 
 function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
   const { menu } = props;
+  const [collapsed, setCollapsed] = useState(false);
 
   const variantChange = "0.2s linear";
   const shadow = useColorModeValue(
@@ -50,8 +51,8 @@ function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
     xl: { size: "xl", value: "85px" },
     "2xl": { size: "2xl", value: "85px" },
   });
-  console.log(buttonSize);
 
+  console.log("render");
   // SIDEBAR
   return (
     <Sidebar
@@ -59,7 +60,7 @@ function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
       rootStyles={{
         borderColor: "#fff",
       }}
-      defaultCollapsed
+      collapsed={collapsed}
       collapsedWidth={buttonSize?.value}
       breakPoint="sm"
     >
@@ -81,7 +82,12 @@ function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
             renderThumbVertical={renderThumb}
             renderView={renderView}
           >
-            <SidebarPro menu={menu} />
+            <SidebarPro
+              key={"sidebar"}
+              menu={menu}
+              setCollapsed={setCollapsed}
+              collapsed={collapsed}
+            />
           </Scrollbars>
         </Box>
       </Box>

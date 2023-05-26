@@ -2,9 +2,9 @@ import { Box, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
 
 import useFetch from "@hooks/useFetch";
 import { getEmpresasArray } from "@services/database/empresaServices";
-import { useEffect } from "react";
 
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
+import { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AgregarUsuario from "./agregarEmpresa";
@@ -23,16 +23,12 @@ export default function Empresas(props: { titulo: string }) {
   } = useFetch(() => getEmpresasArray());
 
   useEffect(() => {
-    console.log(empresas, firstLoading);
+    console.log(empresas);
   }, [empresas]);
 
   const handlePresEmpresa = (e: any) => {
-    console.log(e);
-
     navigate("/admin/empresas/" + e.id, { state: { e } });
   };
-
-  console.log("Empresas");
 
   return (
     <>
@@ -51,8 +47,8 @@ export default function Empresas(props: { titulo: string }) {
                   avatar={item.url}
                   name={item?.nombre}
                   job={"a"}
-                  key={index}
-                  path={item?.id}
+                  key={item.id}
+                  path={item?.key}
                   empresa={item}
                 />
               </>

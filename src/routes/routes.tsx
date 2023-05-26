@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 
 // Auth Imports
+import GerenciasPage from "@/pages/admin/gerencias/GerenciasPage";
 import { Icon } from "@chakra-ui/react";
 import { ComponentType, ReactNode } from "react";
 import { MdGroups2, MdHome, MdLock } from "react-icons/md";
@@ -168,6 +169,9 @@ export class RouterJson implements IRouteObject {
   categoria?: string;
 }
 
+/**
+ * funcion definitica para las rutas de admin
+ */
 export const routesAdmin: RouterJson[] = [
   {
     path: "/",
@@ -182,6 +186,12 @@ export const routesAdmin: RouterJson[] = [
   {
     path: "empresas/:id",
     element: <DetalleEmpresa titulo={"Gerencia"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "empresas/:id/:idGerencia",
+    element: <GerenciasPage titulo={"Gerencia"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
