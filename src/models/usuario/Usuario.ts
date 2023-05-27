@@ -4,6 +4,7 @@ import { Dispositivos } from "../dispositivo/Dispositivo";
 import { Fotografia } from "../fotografia/Fotografia";
 import { Permisos } from "../permisos/Permisos";
 import { Rol } from "../rol/Rol";
+import { Enrolamiento } from "./Enrolamiento";
 
 export interface UsuarioVaku extends VakuModel {
   areaCargo: string;
@@ -29,4 +30,5 @@ export interface UsuarioVaku extends VakuModel {
   rut: string;
   sexo: string;
   turno: string;
+  enrolamiento: Enrolamiento;
 }

@@ -1,8 +1,8 @@
+import VakuModel from "../Vaku";
 import { MetaData } from "./MetaData";
 
-export interface Equipo {
+export interface Equipo extends VakuModel {
   categoria: string;
-  id: string;
   identificador: string;
   isEliminado: boolean;
   isServicio: boolean;
@@ -10,4 +10,5 @@ export interface Equipo {
   metadata: MetaData[];
   modelo: string;
   tipo: string;
+  numeroInterno: string;
 }
