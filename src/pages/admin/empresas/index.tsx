@@ -4,10 +4,31 @@ import useFetch from "@hooks/useFetch";
 import { getEmpresasArray } from "@services/database/empresaServices";
 
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
+import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AgregarUsuario from "./agregarEmpresa";
+
+const container = {
+  hidden: { opacity: 1, scale: 0 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      delayChildren: 0.3,
+      staggerChildren: 0.2,
+    },
+  },
+};
+
+const item = {
+  hidden: { y: 20, opacity: 0 },
+  visible: {
+    y: 0,
+    opacity: 1,
+  },
+};
 
 export default function Empresas(props: { titulo: string }) {
   const { titulo } = props;
@@ -34,34 +55,43 @@ export default function Empresas(props: { titulo: string }) {
     <>
       <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
         <Text fontSize="xl">{titulo}</Text>
-        <SimpleGrid
-          columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
-          gap="10px"
-          mb="10px"
+        <motion.ul
+          className="container"
+          variants={container}
+          initial="hidden"
+          animate="visible"
         >
-          {empresas.map((item, index) => {
-            return (
-              <>
-                <EmpresaView
-                  onClick={(event) => handlePresEmpresa(event)}
-                  avatar={item.url}
-                  name={item?.nombre}
-                  job={"a"}
-                  key={item.id}
-                  path={item?.key}
-                  empresa={item}
-                />
-              </>
-            );
-          })}
-          <EmpresaAdd
-            onClick={onOpen}
-            name={"Agregar nueva Empresa"}
-            job={"a"}
-            icon={MdAdd}
-            key={2}
-          />
-        </SimpleGrid>
+          <SimpleGrid
+            columns={{ base: 1, md: 2, lg: 3, "2xl": 6 }}
+            gap="10px"
+            mb="10px"
+          >
+            {empresas.map((item, index) => {
+              return (
+                <>
+                  <motion.li key={index} className="item" variants={item}>
+                    <EmpresaView
+                      onClick={(event) => handlePresEmpresa(event)}
+                      avatar={item.url}
+                      name={item?.nombre}
+                      job={"a"}
+                      key={item.id}
+                      path={item?.key}
+                      empresa={item}
+                    />
+                  </motion.li>
+                </>
+              );
+            })}
+            <EmpresaAdd
+              onClick={onOpen}
+              name={"Agregar nueva Empresa"}
+              job={"a"}
+              icon={MdAdd}
+              key={2}
+            />
+          </SimpleGrid>
+        </motion.ul>
       </Box>
       <AgregarUsuario
         isOpen={isOpen}

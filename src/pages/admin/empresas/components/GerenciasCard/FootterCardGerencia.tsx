@@ -1,3 +1,4 @@
+import { Gerencia } from "@/models/gerencia/Gerencia";
 import { Box, HStack, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 
 import * as Icons from "react-feather";
@@ -7,8 +8,11 @@ import {
   HiOutlineDocumentText,
 } from "react-icons/hi2";
 
-export function FotterCardGerencia(props: { item: { nombre: string } }) {
-  const { item } = props;
+interface GerenciaCardProps {
+  item: Gerencia;
+}
+
+const FotterCardGerencia: React.FC<GerenciaCardProps> = ({ item }) => {
   return (
     <Box alignItems={"center"}>
       <HStack direction={"column"}>
@@ -16,17 +20,17 @@ export function FotterCardGerencia(props: { item: { nombre: string } }) {
           {/* cant divisiones */}
           <Tag size={"md"} variant="subtle" colorScheme="gray">
             <TagLeftIcon boxSize="12px" as={Icons.UserPlus} />
-            <TagLabel>24</TagLabel>
+            <TagLabel>{item.cantUsuarios}</TagLabel>
           </Tag>
 
           <Tag size={"md"} variant="subtle" colorScheme="verdevaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineBuildingOffice2} />
-            <TagLabel>24</TagLabel>
+            <TagLabel>{item.cantDivisiones}</TagLabel>
           </Tag>
 
           <Tag size={"md"} variant="subtle" colorScheme="rosavaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineDocumentText} />
-            <TagLabel>24</TagLabel>
+            <TagLabel>{item.cantDocumentos}</TagLabel>
           </Tag>
           <Tag size={"md"} variant="subtle" colorScheme="marronvaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineDocumentChartBar} />
@@ -36,4 +40,6 @@ export function FotterCardGerencia(props: { item: { nombre: string } }) {
       </HStack>
     </Box>
   );
-}
+};
+
+export default FotterCardGerencia;

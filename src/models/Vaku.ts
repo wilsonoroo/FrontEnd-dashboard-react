@@ -1,7 +1,6 @@
 import { CampoFormKey } from "@/utils/global";
-import * as yup from "yup";
 
-interface IVakuModel {
+export interface IVakuModel {
   readonly value: string;
   readonly label: string;
   id: string;
@@ -10,11 +9,28 @@ interface IVakuModel {
   updatedAt: Date;
 }
 
-interface ISchemaValidation {
+export interface ISchemaValidation {
   getValidationSchema(): any;
 }
 
-export default class VakuModel implements IVakuModel, ISchemaValidation {
+export interface IFormBuilder {
+  getFormBuilder(): any;
+}
+export interface IEmptyObject {
+  getEmptyObject(): any;
+}
+export interface IValidationSchema {
+  getValidationSchema(): any;
+}
+
+export default abstract class VakuModel
+  implements
+    IVakuModel,
+    ISchemaValidation,
+    IEmptyObject,
+    IFormBuilder,
+    IValidationSchema
+{
   id: string;
   nombre: string;
   createdAt: Date;
@@ -27,12 +43,16 @@ export default class VakuModel implements IVakuModel, ISchemaValidation {
     return this.nombre;
   }
 
+  abstract getValidationSchema(): any;
+  abstract getFormBuilder(): any;
+  abstract getEmptyObject(): any;
+}
+
+export class BaseModel extends VakuModel {
   getValidationSchema() {
-    return yup.object().shape({
-      id: yup.string().required(),
-      nombre: yup.string().required(),
-    });
+    throw new Error("Method not implemented.");
   }
+
   getFormBuilder() {
     return {
       id: {

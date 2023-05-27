@@ -8,8 +8,12 @@ interface FormControlsProps {
   touched: FormikTouched<any>;
   fields: string[];
   values: any;
-  getItemForm: (item: CampoForm) => JSX.Element;
+  getItemForm: (
+    item: CampoForm,
+    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+  ) => JSX.Element;
   camposForm: Record<string, any>;
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
 
 const FormControls: React.FC<FormControlsProps> = ({
@@ -19,24 +23,25 @@ const FormControls: React.FC<FormControlsProps> = ({
   values,
   getItemForm,
   camposForm,
+  setFieldValue,
 }) => {
-  console.log(camposForm);
   return (
     <>
       {fields.map((field) => (
-        <FormControl
-          key={field}
-          isInvalid={
-            getIn(errors, field as string) && getIn(touched, field as string)
-          }
-          isRequired={getIn(camposForm, field as string).required}
-        >
-          <>{console.log(getIn(camposForm, field as string).required)}</>
-          {getItemForm(camposForm[`${field}`])}
-          <ErrorMessage name={field}>
-            {(msg) => <FormErrorMessage>{msg}ss</FormErrorMessage>}
-          </ErrorMessage>
-        </FormControl>
+        <>
+          <FormControl
+            key={field as string}
+            isInvalid={
+              getIn(errors, field as string) && getIn(touched, field as string)
+            }
+            isRequired={getIn(camposForm, field as string)?.required ?? false}
+          >
+            {getItemForm(camposForm[`${field}`], setFieldValue)}
+            <ErrorMessage name={field}>
+              {(msg) => <FormErrorMessage>{msg}ss</FormErrorMessage>}
+            </ErrorMessage>
+          </FormControl>
+        </>
       ))}
     </>
   );

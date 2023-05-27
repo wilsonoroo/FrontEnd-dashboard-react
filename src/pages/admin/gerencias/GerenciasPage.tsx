@@ -11,7 +11,7 @@ import {
 import CustomCard from "@/components/card/Card";
 import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
-import VakuModel from "@/models/Vaku";
+import { BaseModel } from "@/models/Vaku";
 import { CampoForm, CampoFormKey } from "@/utils/global";
 import { AddIcon } from "@chakra-ui/icons";
 import useFetch from "@hooks/useFetch";
@@ -143,7 +143,7 @@ export default function GerenciasPage(props: { titulo: string }) {
     },
   };
 
-  const vaku = new VakuModel();
+  const vaku = new BaseModel();
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -176,6 +176,7 @@ export default function GerenciasPage(props: { titulo: string }) {
         fieldsToExclude={[]}
         model={vaku}
         onSubmit={(data) => console.log(typeof data, data)}
+        loading={false}
       />
 
       <>

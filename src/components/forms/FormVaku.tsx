@@ -1,6 +1,13 @@
-import { Box, Stack, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  ModalContent,
+  ModalOverlay,
+  Spinner,
+  Stack,
+  VStack,
+} from "@chakra-ui/react";
 import { Formik } from "formik";
-import { useState } from "react";
 
 import FormControls from "./FormControls";
 
@@ -17,6 +24,7 @@ interface AgregarFormProps<T> {
   fieldsToExclude: string[];
   model: T;
   onSubmit: (values: T) => void;
+  loading: boolean;
 }
 const FormVaku = <T extends VakuModel>({
   isOpen,
@@ -24,30 +32,9 @@ const FormVaku = <T extends VakuModel>({
   refreshData,
   fieldsToExclude,
   model,
+  loading,
   onSubmit,
 }: AgregarFormProps<T>) => {
-  //const FormVaku: React.FC<AgregarFormProps<T extends VakuModel>> = ({
-  //   isOpen,
-  //   onClose,
-  //   refreshData,
-  //   fieldsToExclude,
-  //   model,
-  //   onSubmit,
-  // }) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Assuming you've defined the functions obtenerClientes and obtenerEstados
-  //   const { data: clientes, isLoading: isLoadingClientes } = useFetch(() =>
-  //     obtenerClientes()
-  //   );
-  //   const { data: estados, isLoading: isLoadingEstados } = useFetch(() =>
-  //     obtenerEstados()
-  //   );
-
-  //   useEffect(() => {
-  //     // Logic to update 'result' and 'selectEstados' when 'clientes' and 'estados' change
-  //   }, [clientes, estados]);
-
   const initialValues = model.getEmptyObject();
   const validationSchema = model.getValidationSchema();
   const camposForm = model.getFormBuilder();
@@ -55,17 +42,6 @@ const FormVaku = <T extends VakuModel>({
   const handleSubmitForm = (values: any) => {
     onSubmit(values);
   };
-
-  //   const handleSubmit = async (
-  //     values: any,
-  //     { resetForm }: { resetForm: () => void }
-  //   ) => {
-  //     setIsLoading(true);
-  //     // TODO llamado a la funcion para el server
-  //     setIsLoading(false);
-
-  //     onClose();
-  //   };
 
   return (
     <Formik
@@ -82,8 +58,31 @@ const FormVaku = <T extends VakuModel>({
             console.log(values);
             handleSubmit();
           }}
-          isLoading={isLoading}
+          isLoading={loading}
         >
+          {loading ? (
+            <ModalContent h="100%" w="100%">
+              <ModalOverlay
+                bg="whiteAlpha"
+                w="100%"
+                backdropFilter="auto"
+                backdropInvert="0%"
+                backdropBlur="10px"
+              >
+                <Center h="100%">
+                  <Spinner
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="vaku.500"
+                    size="xl"
+                  />
+                </Center>
+              </ModalOverlay>
+            </ModalContent>
+          ) : (
+            <></>
+          )}
           <Stack spacing="24px">
             <Box>
               <VStack spacing={4} align="flex-start">
@@ -94,6 +93,7 @@ const FormVaku = <T extends VakuModel>({
                     (key) => !fieldsToExclude.includes(key)
                   )}
                   values={values}
+                  setFieldValue={setFieldValue}
                   getItemForm={getItemForm}
                   camposForm={camposForm}
                 />

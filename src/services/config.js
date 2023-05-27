@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 //import { getAdmin } from "firebase-admin";
 
@@ -27,8 +28,9 @@ export const auth = getAuth(app);
 
 export const database = getDatabase(app);
 export const storage = getStorage(app);
-/* export const firestore = firebase.firestore();
-export const database = firebase.database()
+export const firestoreDB = getFirestore(app);
+export const firebaseTimeStamp = firestoreDB.Timestamp
+/*export const database = firebase.database()
 export const functions = firebase.functions();
 export const storage = firebase.storage();
 export const firestoreTimestamp = firebase.firestore.Timestamp;

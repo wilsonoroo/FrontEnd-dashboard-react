@@ -2,27 +2,36 @@ import { Box, Button, Flex, Spacer, useColorModeValue } from "@chakra-ui/react";
 
 import { HiChevronRight } from "react-icons/hi2";
 
+import { Gerencia } from "@/models/gerencia/Gerencia";
 import CustomCard from "@components/card/Card";
 import { HSeparator } from "@components/separator/Separator";
 import { BodyCardGerencia } from "./BodyCardGerencia";
-import { FotterCardGerencia } from "./FootterCardGerencia";
+
+import FotterCardGerencia from "./FootterCardGerencia";
 import { HeaderCardGerencia } from "./HeaderCardGerencia";
 
-export default function GerenciaCard(props: {
+interface GerenciaCardProps {
   index: number;
   item: { nombre: string; key: string; isEliminado: boolean; id: string };
-  onClick: (item: {
-    nombre: string;
-    key: string;
-    isEliminado: boolean;
-    id: string;
-  }) => void;
-}) {
+  gerencia: Gerencia;
+  onClick: (item: Gerencia) => void;
+}
+
+// })
+
+//  export default function GerenciaCard(props: {
+
+const GerenciaCard: React.FC<GerenciaCardProps> = ({
+  index,
+  item,
+  gerencia,
+  onClick,
+}) => {
   const shadow = useColorModeValue(
     "0px 18px 40px rgba(112, 144, 176, 0.12)",
     "none"
   );
-  const { index, item, onClick } = props;
+
   return (
     <CustomCard
       key={index}
@@ -74,7 +83,7 @@ export default function GerenciaCard(props: {
             xl: "flex",
           }}
         >
-          <FotterCardGerencia item={item} />
+          <FotterCardGerencia item={gerencia} />
           <Spacer />
           <Button
             rightIcon={<HiChevronRight />}
@@ -85,7 +94,7 @@ export default function GerenciaCard(props: {
             borderRadius={5}
             onClick={() => {
               if (onClick) {
-                onClick(item);
+                onClick(gerencia);
               }
             }}
           >
@@ -95,4 +104,6 @@ export default function GerenciaCard(props: {
       </Box>
     </CustomCard>
   );
-}
+};
+
+export default GerenciaCard;
