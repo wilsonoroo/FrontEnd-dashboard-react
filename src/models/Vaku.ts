@@ -44,7 +44,7 @@ export default abstract class VakuModel
   }
 
   abstract getValidationSchema(): any;
-  abstract getFormBuilder(): any;
+  abstract getFormBuilder(options?: any): any;
   abstract getEmptyObject(): any;
 }
 

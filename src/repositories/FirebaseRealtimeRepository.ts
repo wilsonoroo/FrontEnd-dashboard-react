@@ -1,5 +1,6 @@
 import VakuModel from "@/models/Vaku";
 import { database } from "@/services/config";
+import { cleanObject } from "@/utils/global";
 import { DataSnapshot, get, Query, ref, set } from "firebase/database";
 import { v4 as uuid } from "uuid";
 import { IRepository } from "./IRepository";
@@ -19,11 +20,13 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
     return ref(database, `${this.path}/${path}`);
   }
 
-  async getAll(): Promise<T[]> {
+  async getAll(factory: new () => T): Promise<T[]> {
     const snapshot = await get(this.query);
     const values: T[] = [];
     snapshot.forEach((child: DataSnapshot) => {
-      values.push(child.val() as T);
+      const value = new factory();
+      Object.assign(value, child.val());
+      values.push(value);
     });
     return values;
   }
@@ -36,16 +39,12 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
   async add(id: string | null, item: T): Promise<void> {
     if (id === null) {
       const idNotNull = uuid();
-
-      const aud = { ...item, id: idNotNull };
-
-      console.log(
-        "🚀 ~ file: FirebaseRealtimeRepository.ts:41 ~ add ~ aud:",
-        aud
-      );
-      await set(this.getDataReference(idNotNull), { ...item, id: idNotNull });
+      let cleanObj = cleanObject({ ...item, id: idNotNull });
+      console.log(cleanObj);
+      await set(this.getDataReference(idNotNull), cleanObj);
     } else {
-      await set(this.getDataReference(id), item);
+      let cleanObj = cleanObject(item);
+      await set(this.getDataReference(id), cleanObj);
     }
   }
 

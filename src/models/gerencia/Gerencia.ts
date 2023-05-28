@@ -8,6 +8,7 @@ import VakuModel, {
   IValidationSchema,
 } from "../Vaku";
 import { Division } from "../division/Disvision";
+import { AuthUser } from "../usuario/AuthUser";
 export class Gerencia
   extends VakuModel
   implements
@@ -22,10 +23,10 @@ export class Gerencia
   cantUsuarios: number;
   cantDivisiones: number;
   cantDocumentos: number;
+  responsable: AuthUser[] | AuthUser | null;
 
   getValidationSchema() {
     return yup.object().shape({
-      // id: yup.string().required(),
       nombre: yup.string().required(),
     });
   }
@@ -33,6 +34,7 @@ export class Gerencia
     return {
       id: "",
       nombre: "",
+      responsable: new AuthUser(),
       createdAt: new Date(),
       updatedAt: new Date(),
       cantUsuarios: 0,
@@ -41,19 +43,20 @@ export class Gerencia
       isEliminado: false,
     };
   }
-  getFormBuilder() {
+  getFormBuilder(options?: any) {
     return {
-      // id: {
-      //   display: "id",
-      //   tipo: CampoFormKey.TEXT,
-      //   field: "id",
-      //   required: false,
-      // },
       nombre: {
         display: "Nombre Gerencia",
         tipo: CampoFormKey.TEXT,
         field: "nombre",
         required: true,
+      },
+      responsable: {
+        display: "Responsable",
+        tipo: CampoFormKey.DROPDOWN,
+        field: "responsable",
+        required: true,
+        options: options.responsable,
       },
       isEliminado: {
         display: "Esta elminada?",

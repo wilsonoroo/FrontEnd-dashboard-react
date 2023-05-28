@@ -25,6 +25,7 @@ interface AgregarFormProps<T> {
   model: T;
   onSubmit: (values: T) => void;
   loading: boolean;
+  options?: any;
 }
 const FormVaku = <T extends VakuModel>({
   isOpen,
@@ -34,10 +35,11 @@ const FormVaku = <T extends VakuModel>({
   model,
   loading,
   onSubmit,
+  options,
 }: AgregarFormProps<T>) => {
   const initialValues = model.getEmptyObject();
   const validationSchema = model.getValidationSchema();
-  const camposForm = model.getFormBuilder();
+  const camposForm = model.getFormBuilder(options);
 
   const handleSubmitForm = (values: any) => {
     onSubmit(values);
@@ -47,7 +49,11 @@ const FormVaku = <T extends VakuModel>({
     <Formik
       validationSchema={validationSchema}
       initialValues={initialValues}
-      onSubmit={handleSubmitForm}
+      onSubmit={async (values, { resetForm }) => {
+        handleSubmitForm(values);
+        resetForm();
+        onClose();
+      }}
     >
       {({ handleSubmit, errors, touched, values, setFieldValue }) => (
         <DrawerComponent

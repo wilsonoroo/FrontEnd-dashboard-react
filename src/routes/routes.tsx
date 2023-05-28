@@ -10,7 +10,7 @@ import {
 } from "react-router-dom";
 
 // Auth Imports
-import GerenciasPage from "@/pages/admin/gerencias/GerenciasPage";
+import DivisionPage from "@/pages/admin/gerencias/Division";
 import { Icon } from "@chakra-ui/react";
 import { ComponentType, ReactNode } from "react";
 import { MdGroups2, MdHome, MdLock } from "react-icons/md";
@@ -190,8 +190,8 @@ export const routesAdmin: RouterJson[] = [
     isSubMenu: true,
   },
   {
-    path: "empresas/:id/:idGerencia",
-    element: <GerenciasPage titulo={"Gerencia"} />,
+    path: "empresas/:idEmpresa/:idGerencia",
+    element: <DivisionPage titulo={"Gerencia"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },

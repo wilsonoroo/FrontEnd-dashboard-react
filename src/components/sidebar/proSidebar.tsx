@@ -79,18 +79,18 @@ export function SidebarPro(props: {
                       categoria?.sections.map((subMenu, subIndex2) => {
                         return (
                           <SubMenu
-                            key={
-                              "sub-" +
-                              categoria.id +
-                              "-" +
-                              subMenu.id +
-                              "-" +
-                              index +
-                              "-" +
-                              subIndex +
-                              "-" +
-                              subIndex2
-                            }
+                            // key={
+                            //   "sub2-" +
+                            //   categoria.id +
+                            //   "-" +
+                            //   subMenu.id +
+                            //   "-" +
+                            //   index +
+                            //   "-" +
+                            //   subIndex +
+                            //   "-" +
+                            //   subIndex2
+                            // }
                             defaultOpen
                             label={subMenu.titulo}
                             rootStyles={{

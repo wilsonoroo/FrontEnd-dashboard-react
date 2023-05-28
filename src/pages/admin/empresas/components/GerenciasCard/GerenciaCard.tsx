@@ -7,6 +7,7 @@ import CustomCard from "@components/card/Card";
 import { HSeparator } from "@components/separator/Separator";
 import { BodyCardGerencia } from "./BodyCardGerencia";
 
+import { motion } from "framer-motion";
 import FotterCardGerencia from "./FootterCardGerencia";
 import { HeaderCardGerencia } from "./HeaderCardGerencia";
 
@@ -33,76 +34,82 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
   );
 
   return (
-    <CustomCard
-      key={index}
-      m={3}
-      boxShadow={shadow}
-      minWidth={{
-        base: "flex",
-        sm: "100%",
-        md: "370px",
-        lg: "370px",
-        xl: "370px",
-      }}
-      maxWidth={{
-        base: "flex",
-        sm: "100%",
-        md: "370px",
-        lg: "100%",
-        xl: "100%",
-      }}
-      p={0}
-      _hover={{ shadow: "lg" }}
+    <motion.div
+      className="box"
+      whileHover={{ scale: 1.02 }}
+      transition={{ type: "spring", stiffness: 100, damping: 5 }}
     >
-      <Box>
-        <Flex
-          minWidth={300}
-          alignItems="start"
-          gap="2"
-          justifyContent={"start"}
-          flexDirection={"column"}
-          p={3}
-        >
-          {/* icono gerencia */}
-          <HeaderCardGerencia />
-          {/* nombre y detalle */}
-          <BodyCardGerencia item={item} />
-        </Flex>
-        <HSeparator bg={"gray.100"} />
+      <CustomCard
+        key={index}
+        m={3}
+        boxShadow={shadow}
+        minWidth={{
+          base: "flex",
+          sm: "100%",
+          md: "370px",
+          lg: "370px",
+          xl: "370px",
+        }}
+        maxWidth={{
+          base: "flex",
+          sm: "100%",
+          md: "370px",
+          lg: "100%",
+          xl: "100%",
+        }}
+        p={0}
+        _hover={{ shadow: "lg" }}
+      >
+        <Box>
+          <Flex
+            minWidth={300}
+            alignItems="start"
+            gap="2"
+            justifyContent={"start"}
+            flexDirection={"column"}
+            p={3}
+          >
+            {/* icono gerencia */}
+            <HeaderCardGerencia />
+            {/* nombre y detalle */}
+            <BodyCardGerencia item={gerencia} />
+          </Flex>
+          <HSeparator bg={"gray.100"} />
 
-        <Flex
-          minWidth="max-content"
-          alignItems="center"
-          gap="2"
-          p={3}
-          display={{
-            base: "flex",
-            sm: "grid",
-            md: "grid",
-            lg: "flex",
-            xl: "flex",
-          }}
-        >
-          <FotterCardGerencia item={gerencia} />
-          <Spacer />
-          <Button
-            rightIcon={<HiChevronRight />}
-            colorScheme="vaku.700"
-            bg={"vaku.700"}
-            variant="solid"
-            size="sm"
-            borderRadius={5}
-            onClick={() => {
-              if (onClick) {
-                onClick(gerencia);
-              }
+          <Flex
+            minWidth="max-content"
+            alignItems="center"
+            gap="2"
+            p={3}
+            display={{
+              base: "flex",
+              sm: "grid",
+              md: "grid",
+              lg: "flex",
+              xl: "flex",
             }}
           >
-            Ver Mas
-          </Button>
-        </Flex>
-      </Box>
-    </CustomCard>
+            <FotterCardGerencia item={gerencia} />
+            <Spacer />
+            <Button
+              rightIcon={<HiChevronRight />}
+              colorScheme="vaku.700"
+              bg={"vaku.700"}
+              variant="solid"
+              size="sm"
+              borderRadius={5}
+              onClick={() => {
+                if (onClick) {
+                  onClick(gerencia);
+                }
+              }}
+            >
+              Ver Mas
+            </Button>
+          </Flex>
+        </Box>
+      </CustomCard>
+    </motion.div>
   );
 };
 

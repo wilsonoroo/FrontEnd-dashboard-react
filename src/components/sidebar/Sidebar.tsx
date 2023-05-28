@@ -52,7 +52,6 @@ function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
     "2xl": { size: "2xl", value: "85px" },
   });
 
-  console.log("render");
   // SIDEBAR
   return (
     <Sidebar

@@ -1,12 +1,15 @@
 import {
   Box,
   Button,
+  Container,
   Flex,
   Grid,
+  HStack,
+  IconButton,
   Spacer,
   Text,
-  useColorModeValue,
   useDisclosure,
+  useToast,
   VStack,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
@@ -16,10 +19,14 @@ import { HiPlus } from "react-icons/hi2";
 import FormVaku from "@/components/forms/FormVaku";
 import Loading from "@/components/Loading";
 import { Gerencia } from "@/models/gerencia/Gerencia";
+import { AuthUser } from "@/models/usuario/AuthUser";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { getGerenciasArray } from "@services/database/gerenciasServices";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { BsFillGrid3X3GapFill, BsListStars } from "react-icons/bs";
+import { IoIosRefresh } from "react-icons/io";
 import { useNavigate, useParams } from "react-router-dom";
 import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
 
@@ -48,11 +55,24 @@ export default function DetalleEmpresa(props: { titulo: string }) {
   const { id } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
+  const [isList, setIsList] = useState(false);
+  const [options, setOptions] = useState({});
+
+  const toast = useToast();
 
   const newGerencia = new Gerencia();
   const empresaRepository = new FirebaseRealtimeRepository(
     `empresaCompact/${id}/gerencias`
   );
+
+  useEffect(() => {
+    const getUsuarios = async () => {
+      const db = new FirebaseRealtimeRepository<AuthUser>("auth");
+      const result = await db.getAll(AuthUser);
+      setOptions({ responsable: result });
+    };
+    getUsuarios();
+  }, []);
   const navigate = useNavigate();
   const {
     data: gerencias,
@@ -61,24 +81,31 @@ export default function DetalleEmpresa(props: { titulo: string }) {
     isLoading,
   } = useFetch(() => getGerenciasArray(id));
 
-  const textColorDetails = useColorModeValue(
-    "secondaryGray.600",
-    "secondaryGray.600"
-  );
-
   const handleClick = (item: any) => {
     navigate("/admin/empresas/" + id + "/" + item.id, { state: { item } });
   };
 
   const handleSaveGerencia = (data: Gerencia) => {
-    console.log(data);
     setLoading(true);
-    empresaRepository.add(null, data).then(() => {
-      console.log("exito!!!");
-      setLoading(false);
-      onClose();
-      refreshData();
-    });
+    empresaRepository
+      .add(null, data)
+      .then(() => {
+        toast({
+          title: `Se ha creado la gerencia con éxito `,
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        onClose();
+        refreshData();
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
     return;
   };
   return (
@@ -108,7 +135,49 @@ export default function DetalleEmpresa(props: { titulo: string }) {
             </Text>
           </Box>
           <Spacer />
-          <Box>
+          <HStack>
+            <HStack>
+              {isList ? (
+                <Box>
+                  <IconButton
+                    aria-label="Search database"
+                    isActive={!isList}
+                    bg="transparent"
+                    onClick={() => {
+                      setIsList(false);
+                    }}
+                    borderRadius={25}
+                    icon={<BsFillGrid3X3GapFill />}
+                  />
+                </Box>
+              ) : (
+                <Box>
+                  <IconButton
+                    aria-label="Search database"
+                    isActive={isList}
+                    bg="transparent"
+                    onClick={() => {
+                      setIsList(true);
+                    }}
+                    borderRadius={25}
+                    icon={<BsListStars />}
+                  />
+                </Box>
+              )}
+
+              <Box>
+                <IconButton
+                  aria-label="recargar"
+                  isActive={isList}
+                  bg="transparent"
+                  onClick={() => {
+                    refreshData();
+                  }}
+                  borderRadius={25}
+                  icon={<IoIosRefresh />}
+                />
+              </Box>
+            </HStack>
             <Button
               rightIcon={<HiPlus />}
               colorScheme="vaku.700"
@@ -120,14 +189,14 @@ export default function DetalleEmpresa(props: { titulo: string }) {
             >
               Agregar Gerencia
             </Button>
-          </Box>
+          </HStack>
         </Flex>
       </VStack>
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
           <Loading />
-        ) : (
+        ) : gerencias.length !== 0 ? (
           <motion.div
             className="container"
             variants={container}
@@ -140,15 +209,15 @@ export default function DetalleEmpresa(props: { titulo: string }) {
                 sm: "repeat(1, 1fr)",
                 md: "repeat(2, 1fr)",
                 lg: "repeat(2, 1fr)",
-                xl: "repeat(3, 1fr)",
-                "2xl": "repeat(3, 1fr)",
+                xl: "repeat(3, 2fr)",
+                "2xl": "repeat(3, 2fr)",
               }}
               templateRows={{
                 base: "1fr",
                 lg: "1fr",
                 sm: "1fr",
               }}
-              gap={{ base: "2", sm: "1", xl: "2" }}
+              gap={{ base: "2", sm: "1", xl: "2", "2xl": "4" }}
             >
               {gerencias.map((item, index) => {
                 return (
@@ -168,6 +237,33 @@ export default function DetalleEmpresa(props: { titulo: string }) {
               })}
             </Grid>
           </motion.div>
+        ) : (
+          <VStack pt={130}>
+            <Box>
+              <Container maxW="sm">
+                <img src={empty} />
+              </Container>
+            </Box>
+            <Text as="b" fontSize="2xl">
+              No Existen Gerencias
+            </Text>
+            <Text fontSize="xl">
+              Empieza con VAKU ingresa la primera gerencia
+            </Text>
+
+            <Box py={5}>
+              <Button
+                rightIcon={<HiPlus />}
+                colorScheme="vaku.700"
+                variant="outline"
+                size="md"
+                borderRadius={25}
+                onClick={onOpen}
+              >
+                Crear Gerencia
+              </Button>
+            </Box>
+          </VStack>
         )}
       </Box>
       <FormVaku<Gerencia>
@@ -178,6 +274,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
         model={newGerencia}
         onSubmit={handleSaveGerencia}
         loading={loading}
+        options={options}
       />
       {/* <AgregarGerenciaForm
         isOpen={isOpen}

@@ -27,22 +27,25 @@ const FormControls: React.FC<FormControlsProps> = ({
 }) => {
   return (
     <>
-      {fields.map((field) => (
-        <>
-          <FormControl
-            key={field as string}
-            isInvalid={
-              getIn(errors, field as string) && getIn(touched, field as string)
-            }
-            isRequired={getIn(camposForm, field as string)?.required ?? false}
-          >
-            {getItemForm(camposForm[`${field}`], setFieldValue)}
-            <ErrorMessage name={field}>
-              {(msg) => <FormErrorMessage>{msg}ss</FormErrorMessage>}
-            </ErrorMessage>
-          </FormControl>
-        </>
-      ))}
+      {fields.map(function (field, index) {
+        return (
+          <>
+            <FormControl
+              key={field as string}
+              isInvalid={
+                getIn(errors, field as string) &&
+                getIn(touched, field as string)
+              }
+              isRequired={getIn(camposForm, field as string)?.required ?? false}
+            >
+              {getItemForm(camposForm[`${field}`], setFieldValue)}
+              <ErrorMessage name={field}>
+                {(msg) => <FormErrorMessage>{msg}ss</FormErrorMessage>}
+              </ErrorMessage>
+            </FormControl>
+          </>
+        );
+      })}
     </>
   );
 };

@@ -1,4 +1,5 @@
 import FormikReactSelectClientes from "@/components/select/SelectClientes";
+import VakuModel from "@/models/Vaku";
 import {
   Checkbox,
   FormLabel,
@@ -84,7 +85,28 @@ const generateCheckboxField = (item: CampoForm) => (
   </>
 );
 
-export function getItemForm(
+export class GenericCreator<T> {
+  public create(c: new () => T): T {
+    return new c();
+  }
+}
+
+export function cleanObject<T>(obj: T): Partial<T> {
+  if (typeof obj !== "object" || obj === null) {
+    return obj;
+  }
+
+  return Object.fromEntries(
+    Object.entries(obj)
+      .map(([key, value]) => {
+        const cleanedValue = cleanObject(value);
+        return [key, cleanedValue];
+      })
+      .filter(([_, value]) => value !== undefined)
+  ) as Partial<T>;
+}
+
+export function getItemForm<T extends VakuModel>(
   item: CampoForm,
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
 ) {
@@ -102,8 +124,8 @@ export function getItemForm(
           <>
             <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
 
-            <FormikReactSelectClientes
-              nombre="cliente"
+            <FormikReactSelectClientes<T>
+              nombre={item.field}
               id={item.field}
               name={item.field}
               isMulti={item?.isMulti}

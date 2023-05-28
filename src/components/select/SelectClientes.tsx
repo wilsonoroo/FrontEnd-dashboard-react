@@ -1,29 +1,18 @@
-import { Box } from "@chakra-ui/react";
+import VakuModel from "@/models/Vaku";
 import { useField, useFormikContext } from "formik";
-import Select, {
-  ControlProps,
-  GroupBase,
-  SingleValueProps,
-  components,
-} from "react-select";
+import Select, { GroupBase, components } from "react-select";
 import { StateManagerProps } from "react-select/dist/declarations/src/useStateManager";
 
-type MyOption = {
-  id: any;
-  label: string;
-  value: string;
-};
-
-type GroupedOption = {
+type GroupedOption<T> = {
   label: string; // group label
-  options: MyOption[];
+  options: T[];
 };
 
-export type Props = {
+export type Props<T extends VakuModel> = {
   nombre: string;
-  onChangeValue?: (newValue: MyOption[] | MyOption) => void;
+  onChangeValue?: (newValue: T[] | T) => void;
 } & Omit<
-  StateManagerProps<MyOption, false | true, GroupedOption>,
+  StateManagerProps<T, false | true, GroupedOption<T>>,
   "value" | "onChange"
 >;
 declare module "react-select/dist/declarations/src/Select" {
@@ -36,46 +25,46 @@ declare module "react-select/dist/declarations/src/Select" {
   }
 }
 
-const SingleValue = ({ children, ...props }: SingleValueProps<MyOption>) => {
-  return <components.SingleValue {...props}>{children}</components.SingleValue>;
-};
+// const SingleValue = ({ children, ...props }: SingleValueProps<MyOption>) => {
+//   return <components.SingleValue {...props}>{children}</components.SingleValue>;
+// };
 
-const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
-  const { user } = props.selectProps;
+// const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
+//   const { user } = props.selectProps;
 
-  return (
-    <>
-      <components.Control {...props}>
-        <Box
-          py={2}
-          px={2}
-          display={"flex"}
-          justifyContent={"space-between"}
-          w={"100%"}
-        >
-          <>
-            {console.log(user, props.innerProps)}
-            {!Array.isArray(user) && !props.menuIsOpen ? (
-              <>
-                {user.nombre}
-                {props.isMulti ?? children}
+//   return (
+//     <>
+//       <components.Control {...props}>
+//         <Box
+//           py={2}
+//           px={2}
+//           display={"flex"}
+//           justifyContent={"space-between"}
+//           w={"100%"}
+//         >
+//           <>
+//             {console.log(user, props.innerProps)}
+//             {!Array.isArray(user) && !props.menuIsOpen ? (
+//               <>
+//                 {user.nombre}
+//                 {props.isMulti ?? children}
 
-                {/* {children} */}
-                {/* <components.ClearIndicator
-                  {...props}
-                  {...innerProps}
-                  isMulti={true}
-                /> */}
-              </>
-            ) : (
-              children
-            )}
-          </>
-        </Box>
-      </components.Control>
-    </>
-  );
-};
+//                 {/* {children} */}
+//                 {/* <components.ClearIndicator
+//                   {...props}
+//                   {...innerProps}
+//                   isMulti={true}
+//                 /> */}
+//               </>
+//             ) : (
+//               children
+//             )}
+//           </>
+//         </Box>
+//       </components.Control>
+//     </>
+//   );
+// };
 
 export const ValueContainer = (props: any) => {
   return (
@@ -85,7 +74,7 @@ export const ValueContainer = (props: any) => {
   );
 };
 
-const FormikReactSelectClientes = (props: Props) => {
+const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
   const {
     id,
     name,
@@ -93,33 +82,42 @@ const FormikReactSelectClientes = (props: Props) => {
     isMulti,
     placeholder,
     onChangeValue,
+    options,
     ...restProps
   } = props;
   const [field] = useField(nombre);
   const { setFieldValue } = useFormikContext();
 
   //flatten the options so that it will be easier to find the value
-  const flattenedOptions = props.options?.flatMap((o) => {
+  const flattenedOptions = props.options?.flatMap((o: T) => {
     const isNotGrouped = "value" in o;
     if (isNotGrouped) {
       return o;
     } else {
-      return o.options;
+      return (o as GroupedOption<T>).options;
     }
   });
 
-  const value = flattenedOptions?.filter((o) => {
+  const value = flattenedOptions?.filter((o: T) => {
     const isArrayValue = Array.isArray(field.value);
 
     if (isArrayValue) {
-      const values = field.value as Array<any>;
-      return values.includes(o.value);
+      if (field?.value.length > 0) {
+        const values = field.value as Array<any>;
+        return values.includes(o.value);
+      } else {
+        return false;
+      }
     } else {
-      return field.value?.value === o.value;
+      if (field?.value) {
+        return field?.value?.value === o.value;
+      } else {
+        return false;
+      }
     }
   });
 
-  const handleOnChange = (val: MyOption[] | MyOption) => {
+  const handleOnChange = (val: T[] | T) => {
     if (onChangeValue) onChangeValue(val);
 
     const isArray = Array.isArray(val);
@@ -137,9 +135,11 @@ const FormikReactSelectClientes = (props: Props) => {
   return (
     <Select
       {...restProps}
+      noOptionsMessage={() => "No se encontraron resultados"}
       className="basic-single"
       classNamePrefix="select"
       value={value[0] || null}
+      options={options}
       // onChange implementation
 
       isClearable={false}

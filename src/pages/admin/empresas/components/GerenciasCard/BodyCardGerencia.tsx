@@ -1,10 +1,13 @@
+import { Gerencia } from "@/models/gerencia/Gerencia";
 import { Avatar, Box, Flex, Spacer } from "@chakra-ui/react";
 
 import { HStack, Text, WrapItem } from "@chakra-ui/react";
+import { formatInTimeZone } from "date-fns-tz";
 
 import { HiOutlineCalendarDays } from "react-icons/hi2";
-export function BodyCardGerencia(props: { item: { nombre: string } }) {
+export function BodyCardGerencia(props: { item: Gerencia }) {
   const { item } = props;
+
   return (
     <Box>
       <Text
@@ -64,7 +67,6 @@ export function BodyCardGerencia(props: { item: { nombre: string } }) {
               me="14px"
             >
               {"Fecha Creacion"}
-              {}
             </Text>
           </HStack>
           <HStack spacing={2}>
@@ -78,8 +80,13 @@ export function BodyCardGerencia(props: { item: { nombre: string } }) {
               me="14px"
               pt={2}
             >
-              {"11-03-2013 "}
-              {}
+              {item.createdAt
+                ? formatInTimeZone(
+                    item.createdAt,
+                    "America/Santiago",
+                    "dd-MM-yyyy hh:mm"
+                  )
+                : "--/--/----"}
             </Text>
           </HStack>
         </Flex>
