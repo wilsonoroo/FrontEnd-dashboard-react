@@ -19,7 +19,4 @@ export class AuthUser extends VakuModel {
   get label(): string {
     return this.email;
   }
-  get label(): string {
-    return this.email;
-  }
 }

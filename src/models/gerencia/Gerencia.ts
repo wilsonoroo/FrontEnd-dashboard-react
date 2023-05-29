@@ -7,7 +7,8 @@ import VakuModel, {
   IVakuModel,
   IValidationSchema,
 } from "../Vaku";
-import { Division } from "../division/Disvision";
+
+import { Divisiones } from "../division/Disvision";
 import { AuthUser } from "../usuario/AuthUser";
 export class Gerencia
   extends VakuModel
@@ -18,7 +19,7 @@ export class Gerencia
     IVakuModel,
     IValidationSchema
 {
-  divisiones: Division[];
+  divisiones: Divisiones[];
   isEliminado: boolean;
   cantUsuarios: number;
   cantDivisiones: number;

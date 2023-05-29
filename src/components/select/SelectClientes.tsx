@@ -10,6 +10,7 @@ type GroupedOption<T> = {
 
 export type Props<T extends VakuModel> = {
   nombre: string;
+  single?: boolean;
   onChangeValue?: (newValue: T[] | T) => void;
 } & Omit<
   StateManagerProps<T, false | true, GroupedOption<T>>,
@@ -83,6 +84,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
     placeholder,
     onChangeValue,
     options,
+    single,
     ...restProps
   } = props;
   const [field] = useField(nombre);
@@ -118,7 +120,9 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
   });
 
   const handleOnChange = (val: T[] | T) => {
-    if (onChangeValue) onChangeValue(val);
+    if (onChangeValue) {
+      onChangeValue(val);
+    }
 
     const isArray = Array.isArray(val);
     if (isArray) {

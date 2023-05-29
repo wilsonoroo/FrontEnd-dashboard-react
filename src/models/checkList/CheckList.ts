@@ -1,6 +1,7 @@
+import VakuModel from "../Vaku";
 import { Configuracion } from "./Configuracion";
 
-export interface Checklist {
+export interface Checklist extends VakuModel {
   abreviatura: string;
   categoria: string;
   configuracion: Configuracion;

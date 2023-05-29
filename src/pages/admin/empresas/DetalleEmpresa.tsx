@@ -108,6 +108,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
 
     return;
   };
+
   return (
     <>
       <VStack align={"start"} pl={"20px"}>

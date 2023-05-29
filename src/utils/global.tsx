@@ -21,6 +21,7 @@ export interface CampoForm {
   value?: any;
   options?: any[];
   isMulti?: boolean;
+  single?: boolean;
   onChangeValue?: (newValue: any) => void;
 }
 
@@ -132,6 +133,7 @@ export function getItemForm<T extends VakuModel>(
               options={item?.options}
               onChangeValue={item.onChangeValue}
               placeholder={item.placeholder}
+              single={item?.single}
             />
           </>
         );

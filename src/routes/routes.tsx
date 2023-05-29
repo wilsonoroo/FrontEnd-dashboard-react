@@ -191,7 +191,7 @@ export const routesAdmin: RouterJson[] = [
   },
   {
     path: "empresas/:idEmpresa/:idGerencia",
-    element: <DivisionPage titulo={"Gerencia"} />,
+    element: <DivisionPage titulo={"Detalle Gerencia"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },

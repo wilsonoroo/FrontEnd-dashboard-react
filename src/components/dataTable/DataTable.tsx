@@ -95,11 +95,11 @@ export function DataTable<Data extends object>({
       <div style={{ overflowX: "auto" }}>
         <Table
           variant="striped"
-          style={{ borderCollapse: "separate", borderSpacing: "0 1em" }}
+          style={{ borderCollapse: "separate", borderSpacing: "0 0em" }}
         >
           <Thead>
             {table.getHeaderGroups().map((headerGroup, index) => (
-              <Tr key={"header_" + headerGroup.id + "_" + index} px={0} py={2}>
+              <Tr key={"header_" + headerGroup.id + "_" + index} px={0} py={0}>
                 {headerGroup.headers.map((header, index) => {
                   // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                   const meta: any = header.column.columnDef.meta;
@@ -107,8 +107,6 @@ export function DataTable<Data extends object>({
                   return (
                     // eslint-disable-next-line react/jsx-key
                     <Th
-                      px={0}
-                      py={0}
                       key={header.index + "_" + header.id + "_" + index}
                       onClick={header.column.getToggleSortingHandler()}
                       isNumeric={meta?.isNumeric}
@@ -154,8 +152,6 @@ export function DataTable<Data extends object>({
                       isNumeric={meta?.isNumeric}
                       width={cell.column.columnDef.size + "px"}
                       minWidth={cell.column.columnDef.minSize + "px"}
-                      px={2}
-                      py={2}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -182,7 +178,7 @@ export function DataTable<Data extends object>({
               aria-label={""}
             />
           </Tooltip>
-          <Tooltip label="Previous Page">
+          <Tooltip label="Atras">
             <IconButton
               onClick={() => table.previousPage()}
               isDisabled={!table.getCanPreviousPage()}
@@ -194,16 +190,16 @@ export function DataTable<Data extends object>({
 
         <Flex alignItems="center">
           <Text flexShrink="0" mr={8}>
-            Page{" "}
+            Pagina{" "}
             <Text fontWeight="bold" as="span">
               {table.getState().pagination.pageIndex + 1}
             </Text>{" "}
-            of{" "}
+            de{" "}
             <Text fontWeight="bold" as="span">
               {table.getPageOptions().length}
             </Text>
           </Text>
-          <Text flexShrink="0">Go to page:</Text>{" "}
+          <Text flexShrink="0">Ir a la pagina:</Text>{" "}
           <NumberInput
             ml={2}
             mr={8}
@@ -231,7 +227,7 @@ export function DataTable<Data extends object>({
           >
             {[10, 20, 30, 40, 50].map((pageSize) => (
               <option key={pageSize} value={pageSize}>
-                Show {pageSize}
+                {pageSize}
               </option>
             ))}
           </Select>

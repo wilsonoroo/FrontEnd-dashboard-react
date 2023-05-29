@@ -74,7 +74,6 @@ export class Empresa
 
   encargado: unknown | UsuarioVaku;
   cantUsuarios: number;
-
   cantDivisiones: number;
   cantDocumentos: number;
   usuarios: UsuarioVaku[] | null;
