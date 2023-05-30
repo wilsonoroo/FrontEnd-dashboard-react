@@ -11,11 +11,18 @@ import {
 
 // Auth Imports
 import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
+import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import DivisionPage from "@/pages/admin/gerencias/Division";
 import { Icon } from "@chakra-ui/react";
 import { ComponentType, ReactNode } from "react";
-import { MdGroups2, MdHome, MdLock } from "react-icons/md";
+import {
+  MdGroups2,
+  MdHome,
+  MdLock,
+  MdOutlineAddChart,
+  MdPerson2,
+} from "react-icons/md";
 import DetalleEmpresa from "../pages/admin/empresas/DetalleEmpresa";
 import SignInCentered from "../pages/auth/signIn";
 
@@ -23,45 +30,33 @@ export const menuApp: Menus[] = [
   {
     menu: [
       {
-        titulo: "Gerencias",
-        id: "empresas",
+        titulo: "Inicio",
         layout: "admin",
-        path: "empresas",
+        path: "/",
+        id: "main_dash",
+
+        icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+      },
+
+      {
+        titulo: "Usuarios",
+        layout: "admin",
+        path: "/usuarios",
+        id: "main_dash",
+
         icon: (
           <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
         ),
-        sections: [
-          {
-            titulo: "Empresa",
-            route: "v1/empresas",
-            icon: (
-              <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
-            ),
-            id: "empresa2",
-            items: [
-              {
-                titulo: "Documentos",
-                route: "",
-                isVisible: true,
-              },
-              {
-                titulo: "Profile",
-                route: "profile",
-                isVisible: true,
-              },
-              {
-                titulo: "Documentos",
-                route: "features",
-                isVisible: true,
-              },
-              {
-                titulo: "Configuracion",
-                route: "features",
-                isVisible: false,
-              },
-            ],
-          },
-        ],
+      },
+      {
+        titulo: "Perfil",
+        layout: "admin",
+        path: "/perfil",
+        id: "main_dash",
+
+        icon: (
+          <Icon as={MdPerson2} width="20px" height="20px" color="inherit" />
+        ),
       },
 
       {
@@ -70,7 +65,14 @@ export const menuApp: Menus[] = [
         path: "default",
         id: "main_dash",
 
-        icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+        icon: (
+          <Icon
+            as={MdOutlineAddChart}
+            width="20px"
+            height="20px"
+            color="inherit"
+          />
+        ),
       },
     ],
     views: ["admin"],
@@ -167,12 +169,12 @@ export class RouterJson implements IRouteObject {
 export const routesAdmin: RouterJson[] = [
   {
     path: "/",
-    element: <DocumentosViewV1 titulo={"Documentos"} />,
+    element: <ContenidoDetalleV1 titulo={"Administrador"} />,
     name: "Empresas",
   },
   {
     path: "/admin",
-    element: <DocumentosViewV1 titulo={"Documentos"} />,
+    element: <ContenidoDetalleV1 titulo={"Administrador"} />,
     name: "Admin",
   },
   {
@@ -207,7 +209,7 @@ export const routesAdmin: RouterJson[] = [
   },
   {
     path: "empresas",
-    element: <DocumentosViewV1 titulo={"Documentos"} />,
+    element: <ContenidoDetalleV1 titulo={"Documentos"} />,
     name: "Empresas",
     isSubMenu: false,
   },

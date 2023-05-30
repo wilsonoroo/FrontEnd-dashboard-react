@@ -33,6 +33,7 @@ export enum CampoFormKey {
   CHECKBOX = "checkbox",
   DROPDOWN = "dropdown",
   NUMBER = "number",
+  EMAIL = "email",
 }
 
 export default {};

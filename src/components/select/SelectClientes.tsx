@@ -140,7 +140,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
       noOptionsMessage={() => "No se encontraron resultados"}
       className="basic-single"
       classNamePrefix="select"
-      value={value[0] || null}
+      value={value?.length > 0 ? value[0] : null || null}
       options={options}
       // onChange implementation
 

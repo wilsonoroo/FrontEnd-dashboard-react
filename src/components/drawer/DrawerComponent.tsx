@@ -15,6 +15,7 @@ interface DrawerComponentProps {
   handleSubmit: (e?: React.FormEvent<HTMLFormElement> | undefined) => void;
   isLoading: boolean;
   children: React.ReactNode;
+  titulo?: string;
 }
 
 const DrawerComponent: React.FC<DrawerComponentProps> = ({
@@ -23,13 +24,14 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
   handleSubmit,
   isLoading,
   children,
+  titulo = "Agregar",
 }) => {
   return (
     <Drawer size={"md"} isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader borderBottomWidth="1px">Crear gerencia</DrawerHeader>
+        <DrawerHeader borderBottomWidth="1px">{titulo}</DrawerHeader>
         <DrawerBody>{children}</DrawerBody>
         <DrawerFooter borderTopWidth="1px">
           <Button variant="outline" mr={3} onClick={onClose}>

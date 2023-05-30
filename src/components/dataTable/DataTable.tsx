@@ -48,7 +48,6 @@ export function DataTable<Data extends object>({
   sortees,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>(sortees);
-  console.log(sorting);
 
   const table = useReactTable({
     columns,
@@ -112,7 +111,6 @@ export function DataTable<Data extends object>({
                     header.column.getToggleSortingHandler();
                   }
 
-                  console.log(meta);
                   return (
                     // eslint-disable-next-line react/jsx-key
                     //<th {...column.getHeaderProps(column?.isSortable ? column.getSortByToggleProps() : {})}>

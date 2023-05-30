@@ -26,11 +26,12 @@ interface AgregarFormProps<T> {
   onSubmit: (values: T) => void;
   loading: boolean;
   options?: any;
+  titulo?: string;
 }
 const FormVaku = <T extends VakuModel>({
   isOpen,
   onClose,
-
+  titulo,
   fieldsToExclude,
   model,
   loading,
@@ -64,6 +65,7 @@ const FormVaku = <T extends VakuModel>({
             console.log(values);
             handleSubmit();
           }}
+          titulo={titulo}
           isLoading={loading}
         >
           {loading ? (

@@ -2,54 +2,85 @@ import {
   Box,
   Flex,
   Grid,
-  Spacer,
   Tag,
   TagLabel,
   Text,
   useDisclosure,
   useToast,
-  VStack,
 } from "@chakra-ui/react";
-import { CellContext, createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
+import FormVaku from "@/components/forms/FormVaku";
+import { AuthContext } from "@/contexts/AuthContext";
 import useFetch from "@/hooks/useFetch";
-import { UsuarioVaku } from "@/model/user";
-import { Divisiones } from "@/models/division/Disvision";
-import { DocumentoVaku } from "@/models/documento/Documento";
+import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function VehiculosViewV1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [ordenSelect, setOrdenSelect] = useState<Divisiones>();
-  const toast = useToast();
-  const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
-  const newDivision = new Divisiones();
+  const newVehiculo = new Vehiculo();
+  const { currentUser } = useContext(AuthContext);
 
-  const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
-  );
+  let divisionRepository: FirebaseRealtimeRepository<Vehiculo>;
+  if (idEmpresa === undefined) {
+    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
+      `empresas/${currentUser.empresaId}/vehiculos`
+    );
+  } else {
+    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
+      `empresas/${idEmpresa}/vehiculos`
+    );
+  }
 
   const {
     data: division,
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
+  } = useFetch(() => divisionRepository.getAll(Vehiculo));
 
-  const columnHelper = createColumnHelper<DocumentoVaku>();
+  const columnHelper = createColumnHelper<Vehiculo>();
+
+  const handleSaveGerencia = (data: Vehiculo) => {
+    setLoading(true);
+
+    divisionRepository
+      .add(null, data)
+      .then(() => {
+        toast({
+          title: `Se ha creado la gerencia con éxito `,
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        onClose();
+        refreshData();
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+
+    return;
+  };
 
   const columns = [
-    columnHelper.accessor("id", {
+    columnHelper.accessor("numeroInterno", {
       cell: (info) => (
         <Box px={5}>
           <Tag
@@ -63,29 +94,11 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </Tag>
         </Box>
       ),
-      header: "ID.",
+      header: "numero Interno",
       size: 100,
       minSize: 120,
     }),
-    columnHelper.accessor("correlativo", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "Correlativo",
-      size: 100,
-      minSize: 120,
-    }),
-    columnHelper.accessor("fechaValidacion", {
+    columnHelper.accessor("fechaVencimiento", {
       cell: (info) => {
         return (
           <span>
@@ -93,31 +106,12 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Validacion",
+      header: "fechaVencimiento",
       size: 300,
       minSize: 250,
     }),
 
-    columnHelper.accessor("emisor", {
-      cell: (info) => {
-        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
-        const data = info.getValue() as UsuarioVaku | undefined;
-
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
-        return (
-          <span>
-            <Text fontSize="sm">{`${data}`}</Text>
-          </span>
-        );
-      },
-      header: "emisor",
-      size: 300,
-      minSize: 250,
-    }),
-
-    columnHelper.accessor("estado", {
+    columnHelper.accessor("marca", {
       cell: (info) => {
         return (
           <span>
@@ -125,11 +119,11 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "estado",
+      header: "marca",
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("fechaCreacion", {
+    columnHelper.accessor("patente", {
       cell: (info) => {
         return (
           <span>
@@ -137,11 +131,11 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Creacion",
+      header: "patente",
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("fechaSubida", {
+    columnHelper.accessor("modelo", {
       cell: (info) => {
         return (
           <span>
@@ -149,25 +143,19 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Subida",
+      header: "modelo",
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("validadoPor", {
+    columnHelper.accessor("tipoVehiculo", {
       cell: (info) => {
-        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
-        const data = info.getValue() as UsuarioVaku | undefined;
-
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
         return (
           <span>
-            <Text fontSize="sm">{`${data}`}</Text>
+            <Text fontSize="sm">{info.getValue()}</Text>
           </span>
         );
       },
-      header: "validadoPor",
+      header: "tipoVehiculo",
       size: 300,
       minSize: 250,
     }),
@@ -175,40 +163,13 @@ export default function VehiculosViewV1(props: { titulo: string }) {
 
   return (
     <>
-      <VStack align={"start"} pl={"20px"}>
-        <Text
-          as="b"
-          fontSize="5xl"
-          color={"vaku.700"}
-          fontFamily="Oswald"
-          textStyle="secondary"
-        >
-          {titulo}
-        </Text>
-
-        <Flex width={"100%"} alignItems={"end"}>
-          {/* titulo de la tabla  */}
-          <Box>
-            <Text
-              fontSize="md"
-              color={"secondaryGray.600"}
-              mt={0}
-              marginTop={"0px"}
-            >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
-            </Text>
-          </Box>
-          <Spacer />
-          {/* Contenido de la tabla */}
-          {/* encabezado */}
-        </Flex>
-      </VStack>
+      {/* <TituloPage titulo={"Vehiculos"} subtitulo="Vehiculos" /> */}
       <>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
-                titulo={"Divisiones"}
+                titulo={"Vehiculos"}
                 textButtonAdd={" Agregar Division"}
                 onOpen={onOpen}
                 onReload={refreshData}
@@ -222,7 +183,18 @@ export default function VehiculosViewV1(props: { titulo: string }) {
         )}
       </>
 
-      <Flex></Flex>
+      <Flex>
+        <FormVaku<Vehiculo>
+          isOpen={isOpen}
+          onClose={onClose}
+          refreshData={refreshData}
+          fieldsToExclude={["id"]}
+          model={newVehiculo}
+          onSubmit={handleSaveGerencia}
+          loading={loading}
+          options={options}
+        />
+      </Flex>
     </>
   );
 }
