@@ -43,13 +43,13 @@ export const getEmpresas = async () => {
     }
   } catch (err) {
     console.log(false);
-    return false;
+    return [];
   }
 };
 
 export const addEmpresas = async (empresa) => {
   try {
-    const dbRef = ref(database, `empresaCompact/${empresa.id}`);
+    const dbRef = ref(database, `empresasCompact/${empresa.id}`);
 
     const nuevoObjetoRef = await set(dbRef, empresa);
     console.log(nuevoObjetoRef.key);
@@ -63,15 +63,16 @@ export const addEmpresas = async (empresa) => {
 
 export const getEmpresasArray = async () => {
   try {
-    var snapshot = await get(child(ref(database), `empresaCompact`));
+    var snapshot = await get(child(ref(database), `empresasCompact`));
     if (snapshot.exists()) {
       const empresaObj = snapshot.val();
+
       const empresaArr = Object.values(empresaObj);
       return empresaArr;
     }
   } catch (err) {
     console.log(false);
-    return false;
+    return [];
   }
 };
 

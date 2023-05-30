@@ -24,7 +24,7 @@ interface GerenciaCardProps {
 
 const GerenciaCard: React.FC<GerenciaCardProps> = ({
   index,
-  item,
+
   gerencia,
   onClick,
 }) => {

@@ -2,11 +2,6 @@ import {
   Box,
   Flex,
   Grid,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Spacer,
   Tag,
   TagLabel,
@@ -20,29 +15,28 @@ import { CellContext, createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
-import FormVaku from "@/components/forms/FormVaku";
 import useFetch from "@/hooks/useFetch";
+import { UsuarioVaku } from "@/model/user";
 import { Divisiones } from "@/models/division/Disvision";
-import { TipoDivision } from "@/models/tiposDivision/TipoDivision";
+import { DocumentoVaku } from "@/models/documento/Documento";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useEffect, useState } from "react";
-import { HiEllipsisVertical } from "react-icons/hi2";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function DivisionPage(props: { titulo: string }) {
+export default function UsuariosViewV1(props: { titulo: string }) {
   const { titulo } = props;
-  const { idEmpresa, idGerencia } = useParams();
+  const { idEmpresa, idGerencia, idDivision } = useParams();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [ordenSelect, setOrdenSelect] = useState<Divisiones>();
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
   const newDivision = new Divisiones();
 
-  const divisionRepository = new FirebaseRealtimeRepository<Divisiones>(
-    `empresasCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+  const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
+    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
   );
 
   const {
@@ -50,57 +44,9 @@ export default function DivisionPage(props: { titulo: string }) {
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(Divisiones));
+  } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
 
-  useEffect(() => {
-    setOptions({
-      tipoDivision: [
-        {
-          value: "proyecto",
-          label: "Proyecto",
-        },
-        {
-          value: "contrato",
-          label: "Contrato",
-        },
-        {
-          value: "area",
-          label: "Area",
-        },
-      ],
-    });
-  }, []);
-
-  const columnHelper = createColumnHelper<Divisiones>();
-
-  const handleSaveGerencia = (data: Divisiones) => {
-    setLoading(true);
-
-    divisionRepository
-      .add(null, data)
-      .then(() => {
-        toast({
-          title: `Se ha creado la gerencia con éxito `,
-          position: "top",
-          status: "success",
-          isClosable: true,
-        });
-        onClose();
-        refreshData();
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
-    return;
-  };
-
-  const handleClickVerDetalle = (id: string) => {
-    navigate(`/admin/empresas/${idEmpresa}/${idGerencia}/${id}`);
-  };
+  const columnHelper = createColumnHelper<DocumentoVaku>();
 
   const columns = [
     columnHelper.accessor("id", {
@@ -117,11 +63,29 @@ export default function DivisionPage(props: { titulo: string }) {
           </Tag>
         </Box>
       ),
-      header: "Código Seg.",
+      header: "ID.",
       size: 100,
       minSize: 120,
     }),
-    columnHelper.accessor("nombre", {
+    columnHelper.accessor("correlativo", {
+      cell: (info) => (
+        <Box px={5}>
+          <Tag
+            bg={"#fb8500"}
+            color="#fff"
+            alignItems={"center"}
+            alignContent={"center"}
+            size={"sm"}
+          >
+            <TagLabel>{info.getValue()}</TagLabel>
+          </Tag>
+        </Box>
+      ),
+      header: "Correlativo",
+      size: 100,
+      minSize: 120,
+    }),
+    columnHelper.accessor("fechaValidacion", {
       cell: (info) => {
         return (
           <span>
@@ -129,57 +93,83 @@ export default function DivisionPage(props: { titulo: string }) {
           </span>
         );
       },
-      header: "Nombre",
+      header: "fecha Validacion",
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("tipoDivision", {
+
+    columnHelper.accessor("emisor", {
       cell: (info) => {
-        const infoCasted = info as unknown as CellContext<TipoDivision, object>;
-        const data = info.getValue() as TipoDivision | undefined;
-        const str: keyof TipoDivision = "nombre";
+        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
+        const data = info.getValue() as UsuarioVaku | undefined;
 
         console.log(data);
         console.log(infoCasted);
         console.log(info.getValue());
         return (
           <span>
-            <Text fontSize="sm">{data.label}</Text>
+            <Text fontSize="sm">{`${data}`}</Text>
           </span>
         );
       },
-      header: "Tipo",
+      header: "emisor",
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("tipoDivision", {
-      header: "Accion",
-      maxSize: 30,
-      size: 30,
+
+    columnHelper.accessor("estado", {
       cell: (info) => {
         return (
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label="Options"
-              borderRadius={25}
-              size={"md"}
-              bg={"transparent"}
-              icon={<HiEllipsisVertical size={24} />}
-            />
-            <MenuList>
-              <MenuItem
-                onClick={() => {
-                  console.log(info.row.original.id);
-                  handleClickVerDetalle(info.row.original.id);
-                }}
-              >
-                Ver detalles
-              </MenuItem>
-            </MenuList>
-          </Menu>
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
         );
       },
+      header: "estado",
+      size: 300,
+      minSize: 250,
+    }),
+    columnHelper.accessor("fechaCreacion", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "fecha Creacion",
+      size: 300,
+      minSize: 250,
+    }),
+    columnHelper.accessor("fechaSubida", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "fecha Subida",
+      size: 300,
+      minSize: 250,
+    }),
+    columnHelper.accessor("validadoPor", {
+      cell: (info) => {
+        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
+        const data = info.getValue() as UsuarioVaku | undefined;
+
+        console.log(data);
+        console.log(infoCasted);
+        console.log(info.getValue());
+        return (
+          <span>
+            <Text fontSize="sm">{`${data}`}</Text>
+          </span>
+        );
+      },
+      header: "validadoPor",
+      size: 300,
+      minSize: 250,
     }),
   ];
 
@@ -232,18 +222,7 @@ export default function DivisionPage(props: { titulo: string }) {
         )}
       </>
 
-      <Flex>
-        <FormVaku<Divisiones>
-          isOpen={isOpen}
-          onClose={onClose}
-          refreshData={refreshData}
-          fieldsToExclude={["id"]}
-          model={newDivision}
-          onSubmit={handleSaveGerencia}
-          loading={loading}
-          options={options}
-        />
-      </Flex>
+      <Flex></Flex>
     </>
   );
 }

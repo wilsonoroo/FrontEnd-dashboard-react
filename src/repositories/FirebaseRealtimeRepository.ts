@@ -13,6 +13,7 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
 
   constructor(private databaseRef: string) {
     this.path = databaseRef;
+
     this.query = ref(database, this.databaseRef);
   }
 
@@ -23,8 +24,10 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
   async getAll(factory: new () => T): Promise<T[]> {
     const snapshot = await get(this.query);
     const values: T[] = [];
+
     snapshot.forEach((child: DataSnapshot) => {
       const value = new factory();
+
       Object.assign(value, child.val());
       values.push(value);
     });

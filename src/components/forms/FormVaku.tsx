@@ -20,7 +20,7 @@ import DrawerComponent from "../drawer/DrawerComponent";
 interface AgregarFormProps<T> {
   isOpen: boolean;
   onClose: () => void;
-  refreshData: () => void;
+  refreshData?: () => void;
   fieldsToExclude: string[];
   model: T;
   onSubmit: (values: T) => void;
@@ -30,7 +30,7 @@ interface AgregarFormProps<T> {
 const FormVaku = <T extends VakuModel>({
   isOpen,
   onClose,
-  refreshData,
+
   fieldsToExclude,
   model,
   loading,

@@ -1,7 +1,7 @@
 import VakuModel from "@/models/Vaku";
 import { useField, useFormikContext } from "formik";
+import { StateManagerProps } from "node_modules/react-select/dist/declarations/src/useStateManager";
 import Select, { GroupBase, components } from "react-select";
-import { StateManagerProps } from "react-select/dist/declarations/src/useStateManager";
 
 type GroupedOption<T> = {
   label: string; // group label
@@ -16,14 +16,12 @@ export type Props<T extends VakuModel> = {
   StateManagerProps<T, false | true, GroupedOption<T>>,
   "value" | "onChange"
 >;
-declare module "react-select/dist/declarations/src/Select" {
+declare module "node_modules/react-select/dist/declarations/src/Select" {
   export interface Props<
     Option,
     IsMulti extends boolean,
     Group extends GroupBase<Option>
-  > {
-    user: any;
-  }
+  > {}
 }
 
 // const SingleValue = ({ children, ...props }: SingleValueProps<MyOption>) => {
@@ -91,7 +89,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
   const { setFieldValue } = useFormikContext();
 
   //flatten the options so that it will be easier to find the value
-  const flattenedOptions = props.options?.flatMap((o: T) => {
+  const flattenedOptions = props.options?.flatMap((o) => {
     const isNotGrouped = "value" in o;
     if (isNotGrouped) {
       return o;
@@ -155,7 +153,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
         }
       }}
       isMulti={false}
-      onChange={handleOnChange}
+      onChange={(val: any) => handleOnChange(val)}
     />
   );
 };

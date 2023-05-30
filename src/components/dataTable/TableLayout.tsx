@@ -21,6 +21,7 @@ interface TableLayoutProps {
   onReload: () => void;
   hiddenButtonAdd?: boolean;
   debug?: boolean;
+  hiddenTitulo?: boolean;
 }
 
 const TableLayout: React.FC<TableLayoutProps> = ({
@@ -30,15 +31,20 @@ const TableLayout: React.FC<TableLayoutProps> = ({
   onOpen,
   onReload,
   hiddenButtonAdd = false,
-  debug = false,
+
+  hiddenTitulo = false,
 }) => {
   return (
     <CustomCard>
       <Flex>
         <Box p="4">
-          <Text as="b" fontSize="3xl" color={"vaku.700"} fontFamily="Oswald">
-            {titulo}
-          </Text>
+          {!hiddenTitulo ? (
+            <Text as="b" fontSize="3xl" color={"vaku.700"} fontFamily="Oswald">
+              {titulo}
+            </Text>
+          ) : (
+            <></>
+          )}
         </Box>
         <Spacer />
         <Box p="4">
@@ -49,6 +55,7 @@ const TableLayout: React.FC<TableLayoutProps> = ({
                 bg="transparent"
                 onClick={onReload}
                 borderRadius={25}
+                size="lg"
                 icon={<IoIosRefresh />}
               />
             </Box>

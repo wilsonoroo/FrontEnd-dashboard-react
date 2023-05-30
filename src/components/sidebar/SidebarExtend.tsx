@@ -26,7 +26,7 @@ const baseStyle: PartsStyleFunction<typeof parts> = (props) => {
   };
 };
 
-const variantDefault: PartsStyleFunction<typeof parts> = (props) => {
+const variantDefault: PartsStyleFunction<typeof parts> = ({}) => {
   return {
     container: {
       width: "280px",
@@ -48,7 +48,7 @@ const variantDefault: PartsStyleFunction<typeof parts> = (props) => {
   };
 };
 
-const variantCondensed: PartsStyleFunction<typeof parts> = (props) => {
+const variantCondensed: PartsStyleFunction<typeof parts> = ({}) => {
   return {
     container: {
       width: "14",

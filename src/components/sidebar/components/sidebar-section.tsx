@@ -27,21 +27,22 @@ export const SidebarSection = (props: SidebarSectionProps) => {
     <>
       <Flex align="center">
         <NavLink routes={route}>
-          {({ isActive }) => (
-            <chakra.span
-              display="block"
-              py="2"
-              fontSize="sm"
-              textTransform="capitalize"
-              cursor="pointer"
-              _dark={{
-                color: isActive ? activeColor : inactiveColor,
-              }}
-              fontWeight={"inherit"} //isActive ? "semibold" : "inherit"}
-            >
-              {section.titulo}
-            </chakra.span>
-          )}
+          <chakra.span
+            display="block"
+            py="2"
+            fontSize="sm"
+            textTransform="capitalize"
+            cursor="pointer"
+            _dark={{
+              color: inactiveColor, //isActive ? activeColor : inactiveColor,
+            }}
+            fontWeight={"inherit"} //isActive ? "semibold" : "inherit"}
+          >
+            {section.titulo}
+          </chakra.span>
+          {/* {({ isActive }) => (
+           
+          )} */}
         </NavLink>
         {section.items.length && (
           <IconButton

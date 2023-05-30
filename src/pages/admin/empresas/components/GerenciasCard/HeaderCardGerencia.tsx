@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { HiEllipsisVertical, HiOutlineBuildingOffice2 } from "react-icons/hi2";
 
-export function HeaderCardGerencia({ ...props }) {
+export function HeaderCardGerencia({}) {
   return (
     <Box w={"100%"}>
       <Flex minWidth="max-content" alignItems="center" gap="2">

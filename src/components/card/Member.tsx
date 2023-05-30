@@ -1,8 +1,8 @@
 // Chakra imports
 import { Avatar, Flex, Icon, Text, useColorModeValue } from "@chakra-ui/react";
 // Custom components
+import TransparentMenu from "@/components/menu/TransparentMenu";
 import Card from "../card/Card";
-import TransparentMenu from "../menu/TransparentMenu";
 
 // Custom icons
 import { IoEllipsisVertical } from "react-icons/io5";

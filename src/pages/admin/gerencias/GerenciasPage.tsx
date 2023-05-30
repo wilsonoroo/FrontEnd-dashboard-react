@@ -12,7 +12,6 @@ import CustomCard from "@/components/card/Card";
 import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
 import { BaseModel } from "@/models/Vaku";
-import { CampoForm, CampoFormKey } from "@/utils/global";
 import { AddIcon } from "@chakra-ui/icons";
 import useFetch from "@hooks/useFetch";
 import { getDivisionesPorGerencia } from "@services/database/gerenciasServices";
@@ -20,8 +19,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-export default function GerenciasPage(props: { titulo: string }) {
-  const { titulo } = props;
+export default function GerenciasPage({}) {
   const { id, idGerencia } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -108,40 +106,40 @@ export default function GerenciasPage(props: { titulo: string }) {
     }),
   ];
 
-  const camposForm: Record<string, CampoForm> = {
-    fecha: {
-      display: "Fecha Acordada",
-      tipo: CampoFormKey.FECHA_NATIVO,
-      field: "fecha",
-      placeholder: "Ingresar fecha acordada",
-    },
-    fechaEntrega: {
-      display: "Fecha Entrega",
-      tipo: CampoFormKey.FECHA_NATIVO,
-      field: "fechaEntrega",
-      placeholder: "Ingresa la fecha de entrega",
-    },
-    descripcion: {
-      display: "Descripcion",
-      tipo: CampoFormKey.TEXT,
-      field: "descripcion",
-    },
-    numeroOT: {
-      display: "Numero OT",
-      tipo: CampoFormKey.TEXT,
-      field: "numeroOT",
-    },
-    tramiteAduanero: {
-      display: "Tiene Tramite aduanero?",
-      tipo: CampoFormKey.CHECKBOX,
-      field: "tramiteAduanero",
-    },
-    destinoSanntiago: {
-      display: "OT tendra destino Santiago?",
-      tipo: CampoFormKey.CHECKBOX,
-      field: "destinoSanntiago",
-    },
-  };
+  // const camposForm: Record<string, CampoForm> = {
+  //   fecha: {
+  //     display: "Fecha Acordada",
+  //     tipo: CampoFormKey.FECHA_NATIVO,
+  //     field: "fecha",
+  //     placeholder: "Ingresar fecha acordada",
+  //   },
+  //   fechaEntrega: {
+  //     display: "Fecha Entrega",
+  //     tipo: CampoFormKey.FECHA_NATIVO,
+  //     field: "fechaEntrega",
+  //     placeholder: "Ingresa la fecha de entrega",
+  //   },
+  //   descripcion: {
+  //     display: "Descripcion",
+  //     tipo: CampoFormKey.TEXT,
+  //     field: "descripcion",
+  //   },
+  //   numeroOT: {
+  //     display: "Numero OT",
+  //     tipo: CampoFormKey.TEXT,
+  //     field: "numeroOT",
+  //   },
+  //   tramiteAduanero: {
+  //     display: "Tiene Tramite aduanero?",
+  //     tipo: CampoFormKey.CHECKBOX,
+  //     field: "tramiteAduanero",
+  //   },
+  //   destinoSanntiago: {
+  //     display: "OT tendra destino Santiago?",
+  //     tipo: CampoFormKey.CHECKBOX,
+  //     field: "destinoSanntiago",
+  //   },
+  // };
 
   const vaku = new BaseModel();
 

@@ -1,12 +1,11 @@
 import { Flex, useColorModeValue } from "@chakra-ui/react";
-import { runIfFn } from "@chakra-ui/utils";
+
 import { useState } from "react";
 
 // eslint-disable-next-line react/prop-types, @typescript-eslint/no-unused-vars
 const NavLink = (props: {
-  children:
-    | JSX.Element
-    | (({ isActive }: { isActive: boolean }) => JSX.Element);
+  children: JSX.Element;
+  // | (({ isActive }: { isActive: boolean }) => JSX.Element);
   routes: Menus;
 }) => {
   const { routes, children } = props;
@@ -36,11 +35,17 @@ const NavLink = (props: {
       transition=".15s ease"
       {...props}
     >
-      {/* {routes.icon && routes.icon} */}
-      {runIfFn(children, { isActive: active })}
+      {children}
+
       <></>
     </Flex>
   );
 };
+{
+  /* {runIfFn(children, { isActive: active })} */
+}
+{
+  /* {routes.icon && routes.icon} */
+}
 
 export default NavLink;

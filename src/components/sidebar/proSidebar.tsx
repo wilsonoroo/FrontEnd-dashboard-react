@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { Box, Flex, Stack, useColorModeValue } from "@chakra-ui/react";
+import { Box, Flex, Stack, Text, useColorModeValue } from "@chakra-ui/react";
 import useAuth from "@hooks/useAuth";
 import { motion } from "framer-motion";
 import { Menu, MenuItem, SubMenu, menuClasses } from "react-pro-sidebar";
@@ -10,17 +10,17 @@ import FotterSidebar from "./components/FotterSidebar";
 import { Dispatch, SetStateAction } from "react";
 import { SidebarHeader } from "./components/SidebarHeader";
 
-const hexToRgba = (
-  hex: string,
-  alpha: number,
-  setCollapsed: (collapsed: boolean) => void
-) => {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
+// const hexToRgba = (
+//   hex: string,
+//   alpha: number,
+//   setCollapsed: (collapsed: boolean) => void
+// ) => {
+//   const r = parseInt(hex.slice(1, 3), 16);
+//   const g = parseInt(hex.slice(3, 5), 16);
+//   const b = parseInt(hex.slice(5, 7), 16);
 
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-};
+//   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+// };
 
 export function SidebarPro(props: {
   menu: Menus[];
@@ -69,9 +69,9 @@ export function SidebarPro(props: {
                   >
                     {!categoria?.sections ? (
                       <NavLink to={categoria.path} end>
-                        {({ isActive, isPending }) => (
+                        {({ isActive }) => (
                           <MenuItem icon={categoria?.icon} active={isActive}>
-                            {categoria?.titulo}
+                            <Text fontSize="md">{categoria?.titulo}</Text>
                           </MenuItem>
                         )}
                       </NavLink>
@@ -79,6 +79,16 @@ export function SidebarPro(props: {
                       categoria?.sections.map((subMenu, subIndex2) => {
                         return (
                           <SubMenu
+                            key={
+                              "sub-" +
+                              categoria.id +
+                              "-" +
+                              subIndex +
+                              "-" +
+                              subMenu.id +
+                              "-" +
+                              subIndex2
+                            }
                             // key={
                             //   "sub2-" +
                             //   categoria.id +
@@ -103,6 +113,9 @@ export function SidebarPro(props: {
                               ["." + menuClasses.button]: {
                                 color: "#0a6ddc",
                               },
+                              ["." + menuClasses.label]: {
+                                fontSize: "15px",
+                              },
                             }}
                             icon={subMenu.icon}
                           >
@@ -123,9 +136,9 @@ export function SidebarPro(props: {
                                     to={subMenu.route + "/" + item.route}
                                     end
                                   >
-                                    {({ isActive, isPending }) => (
+                                    {({ isActive }) => (
                                       <MenuItem key={indexSM} active={isActive}>
-                                        {item.titulo + isPending}
+                                        <Text fontSize="md">{item.titulo}</Text>
                                       </MenuItem>
                                     )}
                                   </NavLink>

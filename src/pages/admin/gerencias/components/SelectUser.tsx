@@ -8,7 +8,8 @@ import Select, {
   SingleValueProps,
   components,
 } from "react-select";
-import { StateManagerProps } from "react-select/dist/declarations/src/useStateManager";
+// import { StateManagerProps } from "react-select/dist/declarations/src/useStateManager";
+import { StateManagerProps } from "node_modules/react-select/dist/declarations/src/useStateManager";
 import { ItemUser } from "./ItemUser";
 
 type MyOption = {
@@ -27,7 +28,7 @@ export type Props = {
   StateManagerProps<MyOption, false | true, GroupedOption>,
   "value" | "onChange"
 >;
-declare module "react-select/dist/declarations/src/Select" {
+declare module "node_modules/react-select/dist/declarations/src/Select" {
   export interface Props<
     Option,
     IsMulti extends boolean,
@@ -178,7 +179,7 @@ const FormikReactSelect = (props: Props) => {
         SingleValue,
         ValueContainer,
       }}
-      onChange={(val, actioMeta) => {
+      onChange={(val) => {
         //here I used explicit typing but there maybe a better way to type the value.
 
         const _val = val as MyOption[] | MyOption;
@@ -207,7 +208,7 @@ const FormikReactSelect = (props: Props) => {
         }
       }}
       isMulti={true}
-      onChange={(val, actioMeta) => {
+      onChange={(val) => {
         //here I used explicit typing but there maybe a better way to type the value.
 
         const _val = val as MyOption[] | MyOption;

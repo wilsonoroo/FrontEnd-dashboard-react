@@ -134,6 +134,7 @@ export function getItemForm<T extends VakuModel>(
               onChangeValue={item.onChangeValue}
               placeholder={item.placeholder}
               single={item?.single}
+              user={undefined}
             />
           </>
         );

@@ -32,6 +32,12 @@ export class Divisiones
         field: "nombre",
         required: true,
       },
+      codigo: {
+        display: "Codigo",
+        tipo: CampoFormKey.TEXT,
+        field: "codigo",
+        required: true,
+      },
       tipoDivision: {
         display: "Tipo de Disvision",
         tipo: CampoFormKey.DROPDOWN,
@@ -47,10 +53,12 @@ export class Divisiones
       id: "",
       nombre: "",
       tipoDivision: "",
+      codigo: "",
     };
   }
   tipoDivision: TipoDivision | string;
   contenido: ContenidoDivision;
+  codigo: string;
 
   readonly tipo: string;
 }

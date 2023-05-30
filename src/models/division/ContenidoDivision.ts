@@ -1,15 +1,16 @@
 import VakuModel from "../Vaku";
-import { Documento } from "../documento/Documento";
+import { DocumentoVaku } from "../documento/Documento";
+
 import { UsuarioVaku } from "../usuario/Usuario";
 import { Vehiculo } from "../vehiculo/Vehiculo";
 
 export interface ContenidoDivision extends VakuModel {
   vehiculo: Vehiculo;
   usuarios: UsuarioVaku;
-  usuarioRespuesta: [Documento];
+  usuarioRespuesta: [DocumentoVaku];
 
   logs: [UsuarioVaku];
-  documentos: Documento;
+  documentos: DocumentoVaku;
   correlativo: {
     numeral: string;
     prefijo: string;

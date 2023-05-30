@@ -1,5 +1,10 @@
 import { mode } from "@chakra-ui/theme-tools";
 export const globalStyles = {
+  fontSizes: {
+    lg: "18px",
+    md: "13px",
+    sm: "11px",
+  },
   textStyles: {
     primary: {
       fontFamily: "Montserrat",

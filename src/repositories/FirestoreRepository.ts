@@ -10,7 +10,7 @@ import {
 } from "firebase/firestore";
 import { IRepository } from "./IRepository";
 
-class FirestoreRepository<T> implements IRepository<T> {
+export class FirestoreRepository<T> implements IRepository<T> {
   autogenerateUID: boolean;
   constructor(private readonly collectionPath: string) {}
 

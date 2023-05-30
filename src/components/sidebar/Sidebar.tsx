@@ -62,13 +62,14 @@ function SidebarContainer(props: { menu: Menus[]; [x: string]: any }) {
       collapsed={collapsed}
       collapsedWidth={buttonSize?.value}
       breakPoint="sm"
+      width="210px"
     >
-      <Box display={{ base: "flex" }} minH="100%">
+      <Box display={{ base: "flex" }} minH="100%" id="sidebar-contentedor">
         <Box
           bg={sidebarBg}
           transition={variantChange}
-          maxWidth={{ sm: "0px", md: "250px", xl: "250px" }}
-          w={{ sm: "0px", md: "250px", xl: "250px" }}
+          maxWidth={{ sm: "0px", md: "210px", xl: "210px" }}
+          w={{ sm: "0px", md: "210px", xl: "210px" }}
           h="100vh"
           m={sidebarMargins}
           minH="100%"

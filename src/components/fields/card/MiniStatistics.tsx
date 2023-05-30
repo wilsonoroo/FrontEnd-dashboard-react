@@ -8,7 +8,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 // Custom components
-import Card from "../../../components/vaku/card/Card";
+import Card from "@/components/card/Card";
 
 export default function Default(props: {
   startContent?: JSX.Element;

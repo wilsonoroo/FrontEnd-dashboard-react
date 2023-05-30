@@ -98,7 +98,7 @@ export default function AgregarUsuario(props: {
             uploadImage(values);
           }}
         >
-          {({ handleSubmit, errors, touched, setFieldValue, submitForm }) => (
+          {({ handleSubmit, errors, setFieldValue, submitForm }) => (
             <DrawerContent>
               <DrawerCloseButton />
               <DrawerHeader borderBottomWidth="1px">
@@ -185,7 +185,7 @@ export default function AgregarUsuario(props: {
                 <Button
                   colorScheme="blue"
                   onClick={(e) => {
-                    console.log("on click");
+                    console.log("on click", e);
                     submitForm();
                   }}
                 >

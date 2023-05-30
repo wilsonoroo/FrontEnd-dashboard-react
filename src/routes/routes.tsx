@@ -10,11 +10,12 @@ import {
 } from "react-router-dom";
 
 // Auth Imports
+import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
+import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import DivisionPage from "@/pages/admin/gerencias/Division";
 import { Icon } from "@chakra-ui/react";
 import { ComponentType, ReactNode } from "react";
 import { MdGroups2, MdHome, MdLock } from "react-icons/md";
-import Empresas from "../pages/admin/empresas";
 import DetalleEmpresa from "../pages/admin/empresas/DetalleEmpresa";
 import SignInCentered from "../pages/auth/signIn";
 
@@ -31,24 +32,15 @@ export const menuApp: Menus[] = [
         ),
         sections: [
           {
-            titulo: "Detalle Empresas",
-            route: "empresas/:id",
+            titulo: "Empresa",
+            route: "v1/empresas",
             icon: (
               <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
             ),
-            id: "empresa",
-            items: [],
-          },
-          {
-            titulo: "Empresas",
-            route: "empresas",
-            icon: (
-              <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
-            ),
-            id: "empresa",
+            id: "empresa2",
             items: [
               {
-                titulo: "Listado Empresas",
+                titulo: "Documentos",
                 route: "",
                 isVisible: true,
               },
@@ -175,12 +167,12 @@ export class RouterJson implements IRouteObject {
 export const routesAdmin: RouterJson[] = [
   {
     path: "/",
-    element: <Empresas titulo={"Empresas"} />,
+    element: <DocumentosViewV1 titulo={"Documentos"} />,
     name: "Empresas",
   },
   {
     path: "/admin",
-    element: <Empresas titulo={"Empresas"} />,
+    element: <DocumentosViewV1 titulo={"Documentos"} />,
     name: "Admin",
   },
   {
@@ -196,8 +188,26 @@ export const routesAdmin: RouterJson[] = [
     isSubMenu: true,
   },
   {
+    path: "empresas/:idEmpresa/:idGerencia/:idDivision",
+    element: <ContenidoDetalle titulo={"Division"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "v1/empresas/:idEmpresa",
+    element: <DocumentosViewV1 titulo={"Documentos"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "v1/empresas/",
+    element: <DocumentosViewV1 titulo={"Documentos"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
     path: "empresas",
-    element: <Empresas titulo={"Empresas"} />,
+    element: <DocumentosViewV1 titulo={"Documentos"} />,
     name: "Empresas",
     isSubMenu: false,
   },

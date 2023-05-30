@@ -39,13 +39,16 @@ import * as React from "react";
 export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, any>[];
+  sortees?: SortingState;
 };
 
 export function DataTable<Data extends object>({
   data,
   columns,
+  sortees,
 }: DataTableProps<Data>) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = React.useState<SortingState>(sortees);
+  console.log(sorting);
 
   const table = useReactTable({
     columns,
@@ -57,9 +60,11 @@ export function DataTable<Data extends object>({
     state: {
       sorting,
     },
+
+    debugTable: true,
   });
 
-  const createEmptyRow = (id: number) => {
+  const createEmptyRow = () => {
     return (
       <Tr height={"60px"}>
         {table.getHeaderGroups().map((headerGroup: any) =>
@@ -79,13 +84,13 @@ export function DataTable<Data extends object>({
 
     if (page.length % pageSize !== 0)
       for (let i = 0; i < pageSize - (page.length % pageSize); i++) {
-        const rowItem = createEmptyRow(i);
+        const rowItem = createEmptyRow();
 
         emptyRows.push(rowItem);
       }
 
     if (data.length === 0 || pageSize === 0)
-      for (let i = 0; i < pageSize; i++) emptyRows.push(createEmptyRow(i));
+      for (let i = 0; i < pageSize; i++) emptyRows.push(createEmptyRow());
 
     return emptyRows;
   };
@@ -103,9 +108,14 @@ export function DataTable<Data extends object>({
                 {headerGroup.headers.map((header, index) => {
                   // see https://tanstack.com/table/v8/docs/api/core/column-def#meta to type this correctly
                   const meta: any = header.column.columnDef.meta;
+                  if (meta?.isSortable) {
+                    header.column.getToggleSortingHandler();
+                  }
 
+                  console.log(meta);
                   return (
                     // eslint-disable-next-line react/jsx-key
+                    //<th {...column.getHeaderProps(column?.isSortable ? column.getSortByToggleProps() : {})}>
                     <Th
                       key={header.index + "_" + header.id + "_" + index}
                       onClick={header.column.getToggleSortingHandler()}

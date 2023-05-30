@@ -1,8 +1,9 @@
 import { Box, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
 
 import useFetch from "@hooks/useFetch";
-import { getEmpresasArray } from "@services/database/empresaServices";
 
+import { Empresa } from "@/models/empresa/Empresa";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
@@ -36,12 +37,23 @@ export default function Empresas(props: { titulo: string }) {
 
   const navigate = useNavigate();
 
+  const divisionRepository = new FirebaseRealtimeRepository<Empresa>(
+    `empresasCompact`
+  );
+
   const {
     data: empresas,
-    firstLoading,
+    firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => getEmpresasArray());
+  } = useFetch(() => divisionRepository.getAll(Empresa));
+
+  // const {
+  //   data: empresas,
+  //   firstLoading,
+  //   refreshData,
+  //   isLoading,
+  // } = useFetch(() => getEmpresasArray());
 
   useEffect(() => {
     console.log(empresas);
@@ -66,23 +78,27 @@ export default function Empresas(props: { titulo: string }) {
             gap="10px"
             mb="10px"
           >
-            {empresas.map((item, index) => {
-              return (
-                <>
-                  <motion.li key={index} className="item" variants={item}>
-                    <EmpresaView
-                      onClick={(event) => handlePresEmpresa(event)}
-                      avatar={item.url}
-                      name={item?.nombre}
-                      job={"a"}
-                      key={item.id}
-                      path={item?.key}
-                      empresa={item}
-                    />
-                  </motion.li>
-                </>
-              );
-            })}
+            {empresas ? (
+              empresas.map((item, index) => {
+                return (
+                  <>
+                    <motion.li key={index} className="item" variants={item}>
+                      <EmpresaView
+                        onClick={(event) => handlePresEmpresa(event)}
+                        avatar={item.url}
+                        name={item?.nombre}
+                        job={"a"}
+                        key={item.id}
+                        path={item?.key}
+                        empresa={item}
+                      />
+                    </motion.li>
+                  </>
+                );
+              })
+            ) : (
+              <></>
+            )}
             <EmpresaAdd
               onClick={onOpen}
               name={"Agregar nueva Empresa"}
@@ -98,6 +114,7 @@ export default function Empresas(props: { titulo: string }) {
         onOpen={onOpen}
         onClose={onClose}
         onAddFinish={(finish) => {
+          console.log(finish);
           if (finish) {
             refreshData();
           }

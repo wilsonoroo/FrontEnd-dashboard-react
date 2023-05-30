@@ -10,48 +10,48 @@ import { createBrowserRouter, useRoutes } from "react-router-dom";
 export default function Dashboard(props: { [x: string]: any }) {
   const { toggled, ...rest } = props;
 
-  const getActiveRoute = (routes: Menus): string => {
-    const activeRoute = "Default Brand Text";
-    // for (let i = 0; i < routes.length; i++) {
-    //   if (
-    //     window.location.href.indexOf(
-    //       routes[i].layout + "/" + routes[i].path
-    //     ) !== -1
-    //   ) {
-    //     return routes[i].name;
-    //   }
-    // }
+  // const getActiveRoute = (routes: Menus): string => {
+  //   const activeRoute = "Default Brand Text";
+  //   // for (let i = 0; i < routes.length; i++) {
+  //   //   if (
+  //   //     window.location.href.indexOf(
+  //   //       routes[i].layout + "/" + routes[i].path
+  //   //     ) !== -1
+  //   //   ) {
+  //   //     return routes[i].name;
+  //   //   }
+  //   // }
 
-    return activeRoute;
-  };
-  const getActiveNavbar = (routes: Menus): boolean => {
-    const activeNavbar = true;
-    // for (let i = 0; i < routes.length; i++) {
-    //   if (
-    //     window.location.href.indexOf(
-    //       routes[i].layout + "/" + routes[i].path
-    //     ) !== -1
-    //   ) {
-    //     return routes[i].secondary;
-    //   }
-    // }
+  //   return activeRoute;
+  // };
+  // const getActiveNavbar = (routes: Menus): boolean => {
+  //   const activeNavbar = true;
+  //   // for (let i = 0; i < routes.length; i++) {
+  //   //   if (
+  //   //     window.location.href.indexOf(
+  //   //       routes[i].layout + "/" + routes[i].path
+  //   //     ) !== -1
+  //   //   ) {
+  //   //     return routes[i].secondary;
+  //   //   }
+  //   // }
 
-    return activeNavbar;
-  };
-  const getActiveNavbarText = (routes: Menus): string | boolean => {
-    const activeNavbar = false;
-    // for (let i = 0; i < routes.length; i++) {
-    //   if (
-    //     window.location.href.indexOf(
-    //       routes[i].layout + "/" + routes[i].path
-    //     ) !== -1
-    //   ) {
-    //     return routes[i].name;
-    //   }
-    // }
-    // console.log(activeNavbar);
-    return activeNavbar;
-  };
+  //   return activeNavbar;
+  // };
+  // const getActiveNavbarText = (routes: Menus): string | boolean => {
+  //   const activeNavbar = false;
+  //   // for (let i = 0; i < routes.length; i++) {
+  //   //   if (
+  //   //     window.location.href.indexOf(
+  //   //       routes[i].layout + "/" + routes[i].path
+  //   //     ) !== -1
+  //   //   ) {
+  //   //     return routes[i].name;
+  //   //   }
+  //   // }
+  //   // console.log(activeNavbar);
+  //   return activeNavbar;
+  // };
 
   // eslint-disable-next-line prefer-const
   let rutas = createBrowserRouter(routesAdmin);
@@ -59,7 +59,7 @@ export default function Dashboard(props: { [x: string]: any }) {
 
   return (
     <Box id="containerAdmin">
-      <Flex>
+      <Flex id="sidebar-flex">
         <SidebarContainer
           menu={menuApp}
           transitionDuration={1000}
@@ -74,8 +74,8 @@ export default function Dashboard(props: { [x: string]: any }) {
           width={"100%"}
           maxWidth={{
             base: "100%",
-            md: !toggled ? "calc( 100% - 85px )" : "calc( 100% - 250px )",
-            xl: !toggled ? "calc( 100% - 85px )" : "calc( 100% - 250px )",
+            md: !toggled ? "calc( 100% - 85px )" : "calc( 100% - 210px )",
+            xl: !toggled ? "calc( 100% - 85px )" : "calc( 100% - 210px )",
           }}
         >
           <Box
@@ -83,7 +83,7 @@ export default function Dashboard(props: { [x: string]: any }) {
             height="100%"
             overflow="auto"
             position="relative"
-            px={"50px"}
+            px={"5px"}
             maxHeight="100vh"
             w={{ base: "100%", md: "100%", xl: "100%" }}
             transition="all 0.33s cubic-bezier(0.685, 0.0473, 0.346, 1)"

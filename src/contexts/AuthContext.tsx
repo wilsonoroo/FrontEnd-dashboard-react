@@ -7,6 +7,7 @@ import { getActive, getUtils } from "@services/database/empresaServices";
 import {
   getUsuario,
   getUsuarioByUid,
+  getUsuarioV1,
 } from "@services/database/usuariosServices";
 import React from "react";
 
@@ -33,19 +34,35 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
     auth.onAuthStateChanged(async (user) => {
       if (user != null) {
         const userSemiComplete = await getUsuarioByUid(user?.uid);
+
+        const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
         console.log(
-          "🚀 ~ file: AuthContext.tsx:35 ~ auth.onAuthStateChanged ~ userSemiComplete:",
+          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ empresaId:",
+          empresaId
+        );
+        console.log(
+          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ userSemiComplete:",
           userSemiComplete
         );
-
-        const { divisionId, empresaId, gerenciaId } = userSemiComplete;
-
-        const userComplete = await getUsuario(
-          user?.uid,
-          empresaId,
-          gerenciaId,
-          divisionId
-        );
+        let userComplete;
+        if (typeof divisionId === "undefined") {
+          userComplete = await getUsuarioV1(id, empresaId);
+          console.log(
+            "🚀 ~ file: AuthContext.tsx:50 ~ auth.onAuthStateChanged ~ userComplete:",
+            userComplete
+          );
+        } else {
+          userComplete = await getUsuario(
+            user?.uid,
+            empresaId,
+            gerenciaId,
+            divisionId
+          );
+          console.log(
+            "🚀 ~ file: AuthContext.tsx:57 ~ auth.onAuthStateChanged ~ userComplete:",
+            userComplete
+          );
+        }
 
         setCurrentUser(userComplete);
 

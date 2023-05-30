@@ -180,6 +180,32 @@ export const getUsuario = async (uid, empresa, gerencia, division) => {
 };
 
 /**
+ * Obtiene los datos del usuario de la base de datos.
+ * @param uid - La identificación del usuario.
+ * @param empresa - El ID de la empresa
+ * @returns El objeto de usuario
+ */
+export const getUsuarioV1 = async (uid, empresa) => {
+  try {
+    //empresas/shingeki_no_sushi-v2/gerencia-id_1/divisiones/division-id_1/contenido/usuarios/auth/jc7IxBgOnchtk91ftbPbcpvcsj33
+    var snapshot = await get(
+      child(ref(database), `empresas/${empresa}/usuarios/auth/${uid}`)
+    );
+
+    if (snapshot.exists()) {
+      console.log(
+        "🚀 ~ file: usuariosServices.jsx:196 ~ getUsuarioV1 ~ snapshot.exists():",
+        snapshot.val()
+      );
+
+      return snapshot.val();
+    }
+  } catch (err) {
+    return false;
+  }
+};
+
+/**
  * Actualiza la contraseña del usuario, luego actualiza los datos del usuario en la base de datos.
  * @param uid - La identificación única del usuario.
  * @param data - Los datos que desea almacenar en la base de datos.

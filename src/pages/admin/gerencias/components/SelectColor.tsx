@@ -32,7 +32,7 @@ const ChakraNextImage = chakra(PopoverTrigger);
 //   const { getTriggerProps } = usePopoverContext();
 //   return React.cloneElement(child, getTriggerProps(child.props, child.ref));
 // };
-export default function SelectColors(props: ISelectColorsProps) {
+export default function SelectColors({}) {
   const [color, setColor] = useState("gray.500");
   const colors = [
     "gray.500",

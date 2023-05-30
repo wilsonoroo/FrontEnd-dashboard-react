@@ -30,15 +30,14 @@ function SignIn() {
   // Chakra color mode
 
   const [error, setError] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+
   const textColor = useColorModeValue("vaku.500", "white");
   const textColorSecondary = "vaku.500";
-  const textColorDetails = useColorModeValue("vaku.500", "secondaryGray.600");
+
   const textColorBrand = useColorModeValue("brand.500", "white");
   const brandStars = useColorModeValue("brand.500", "brand.400");
   const [show, setShow] = React.useState(false);
-  const handleClick = () => setShow(!show);
+
   const navigate = useNavigate();
   const authVaku = useAuth();
   console.log(authVaku);
@@ -73,7 +72,7 @@ function SignIn() {
   }
 
   return (
-    <DefaultAuth illustrationBackground={illustration} image={illustration}>
+    <DefaultAuth illustrationBackground={illustration}>
       <form onSubmit={formik.handleSubmit}>
         <Flex
           maxW={{ base: "100%", md: "max-content" }}

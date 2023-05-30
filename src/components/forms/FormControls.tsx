@@ -20,14 +20,13 @@ const FormControls: React.FC<FormControlsProps> = ({
   errors,
   touched,
   fields,
-  values,
   getItemForm,
   camposForm,
   setFieldValue,
 }) => {
   return (
     <>
-      {fields.map(function (field, index) {
+      {fields.map(function (field) {
         return (
           <>
             <FormControl
