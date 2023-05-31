@@ -27,6 +27,8 @@ interface AgregarFormProps<T> {
   loading: boolean;
   options?: any;
   titulo?: string;
+  size?: string;
+  grid?: { base: number; md: number; xl?: number; "2xl"?: number };
 }
 const FormVaku = <T extends VakuModel>({
   isOpen,
@@ -37,7 +39,9 @@ const FormVaku = <T extends VakuModel>({
   loading,
   onSubmit,
   options,
-}: AgregarFormProps<T>) => {
+  size,
+}: // grid = { base: 1, md: 2 },
+AgregarFormProps<T>) => {
   const initialValues = model.getEmptyObject();
   const validationSchema = model.getValidationSchema();
   const camposForm = model.getFormBuilder(options);
@@ -59,6 +63,7 @@ const FormVaku = <T extends VakuModel>({
       {({ handleSubmit, errors, touched, values, setFieldValue }) => (
         <DrawerComponent
           isOpen={isOpen}
+          size={size}
           onClose={onClose}
           handleSubmit={() => {
             console.log(errors);
@@ -93,7 +98,7 @@ const FormVaku = <T extends VakuModel>({
           )}
           <Stack spacing="24px">
             <Box>
-              <VStack spacing={4} align="flex-start">
+              <VStack spacing={4} align="flex-start" alignItems={"stretch"}>
                 <FormControls
                   errors={errors}
                   touched={touched}

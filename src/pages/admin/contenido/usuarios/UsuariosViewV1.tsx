@@ -22,7 +22,7 @@ import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function UsuariosView1(props: { titulo: string }) {
@@ -34,12 +34,60 @@ export default function UsuariosView1(props: { titulo: string }) {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({
-    licencia: [],
+    licencia: [
+      { value: "clase_a1", label: "Clase A1" },
+      { value: "clase_a2", label: "Clase A2" },
+      { value: "clase_a3", label: "Clase A3" },
+      { value: "clase_a4", label: "Clase A4" },
+      { value: "clase_b", label: "Clase B" },
+      { value: "clase_c", label: "Clase C" },
+      { value: "clase_d", label: "Clase D" },
+      { value: "clase_e", label: "Clase E" },
+      { value: "clase_F", label: "Clase F" },
+    ],
     permisos: [],
     rol: [],
-    sexo: [],
+    sexo: [
+      {
+        value: "masculino",
+        label: "Masculino",
+      },
+      {
+        value: "femenino",
+        label: "Femenino",
+      },
+    ],
     turno: [],
   });
+
+  useEffect(() => {
+    setOptions({
+      licencia: [
+        { value: "clase_a1", label: "Clase A1" },
+        { value: "clase_a2", label: "Clase A2" },
+        { value: "clase_a3", label: "Clase A3" },
+        { value: "clase_a4", label: "Clase A4" },
+        { value: "clase_b", label: "Clase B" },
+        { value: "clase_c", label: "Clase C" },
+        { value: "clase_d", label: "Clase D" },
+        { value: "clase_e", label: "Clase E" },
+        { value: "clase_F", label: "Clase F" },
+      ],
+      permisos: [],
+      rol: [],
+      sexo: [
+        {
+          value: "masculino",
+          label: "Masculino",
+        },
+        {
+          value: "femenino",
+          label: "Femenino",
+        },
+      ],
+      turno: [],
+    });
+  }, []);
   const navigate = useNavigate();
   const newUser = new UsuarioVaku();
   const { currentUser } = useContext(AuthContext);
@@ -70,6 +118,7 @@ export default function UsuariosView1(props: { titulo: string }) {
     divisionRepository
       .add(null, data)
       .then(() => {
+        console.error("exito");
         toast({
           title: `Se ha creado el usuario con éxito `,
           position: "top",
@@ -83,6 +132,7 @@ export default function UsuariosView1(props: { titulo: string }) {
         console.error(error);
       })
       .finally(() => {
+        console.error("error");
         setLoading(false);
       });
 
@@ -145,7 +195,7 @@ export default function UsuariosView1(props: { titulo: string }) {
       minSize: 100,
     }),
     columnHelper.accessor("id", {
-      cell: (info) => {
+      cell: () => {
         return (
           <Flex>
             <Box

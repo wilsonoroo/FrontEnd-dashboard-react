@@ -82,7 +82,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
     placeholder,
     onChangeValue,
     options,
-    single,
+    single = false,
     ...restProps
   } = props;
   const [field] = useField(nombre);
@@ -153,7 +153,10 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
         }
       }}
       isMulti={false}
-      onChange={(val: any) => handleOnChange(val)}
+      onChange={(val: any) => {
+        console.log(val, single);
+        !single ? handleOnChange(val) : handleOnChange(val.label);
+      }}
     />
   );
 };

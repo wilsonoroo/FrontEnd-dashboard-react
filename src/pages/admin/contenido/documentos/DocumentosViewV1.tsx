@@ -2,10 +2,18 @@ import {
   Avatar,
   Badge,
   Box,
+  Card,
+  CardBody,
   Flex,
   Grid,
   IconButton,
   Stack,
+  Stat,
+  StatArrow,
+  StatGroup,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
   Text,
   useDisclosure,
   useToast,
@@ -248,6 +256,38 @@ export default function DocumentosViewV1(props: { titulo: string }) {
   return (
     <>
       <>
+        <StatGroup
+          display="flex"
+          alignItems={"start"}
+          justifyContent={"start"}
+          gap={2}
+        >
+          <Card variant={"outline"} w={250}>
+            <CardBody>
+              <Stat>
+                <StatLabel>Sent</StatLabel>
+                <StatNumber>345,670</StatNumber>
+                <StatHelpText>
+                  <StatArrow type="increase" />
+                  23.36%
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card variant={"outline"} w={250}>
+            <CardBody>
+              <Stat>
+                <StatLabel>Clicked</StatLabel>
+                <StatNumber>45</StatNumber>
+                <StatHelpText>
+                  <StatArrow type="decrease" />
+                  9.05%
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+        </StatGroup>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>

@@ -16,13 +16,7 @@ import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV
 import DivisionPage from "@/pages/admin/gerencias/Division";
 import { Icon } from "@chakra-ui/react";
 import { ComponentType, ReactNode } from "react";
-import {
-  MdGroups2,
-  MdHome,
-  MdLock,
-  MdOutlineAddChart,
-  MdPerson2,
-} from "react-icons/md";
+import { MdHome, MdLock, MdOutlineAddChart, MdPerson2 } from "react-icons/md";
 import DetalleEmpresa from "../pages/admin/empresas/DetalleEmpresa";
 import SignInCentered from "../pages/auth/signIn";
 
@@ -38,20 +32,20 @@ export const menuApp: Menus[] = [
         icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
       },
 
-      {
-        titulo: "Usuarios",
-        layout: "admin",
-        path: "/usuarios",
-        id: "main_dash",
+      // {
+      //   titulo: "Usuarios",
+      //   layout: "admin",
+      //   path: "/usuarios",
+      //   id: "main_dash",
 
-        icon: (
-          <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
-        ),
-      },
+      //   icon: (
+      //     <Icon as={MdGroups2} width="20px" height="20px" color="inherit" />
+      //   ),
+      // },
       {
         titulo: "Perfil",
         layout: "admin",
-        path: "/perfil",
+        path: "/admin/perfil",
         id: "main_dash",
 
         icon: (

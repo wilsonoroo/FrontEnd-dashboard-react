@@ -36,7 +36,7 @@ export class UsuarioVaku extends VakuModel {
 
   getValidationSchema() {
     return yup.object().shape({
-      nombre: yup.string().required(),
+      email: yup.string().required(),
     });
   }
 
@@ -70,100 +70,101 @@ export class UsuarioVaku extends VakuModel {
     };
   }
 
-  getFormBuilder(): any {
+  getFormBuilder(options: any = {}): any {
     return {
-      areaCargo: {
-        display: "Área Cargo",
-        tipo: CampoFormKey.TEXT,
-        field: "areaCargo",
-        required: true,
-      },
-      cargo: {
-        display: "Cargo",
-        tipo: CampoFormKey.TEXT,
-        field: "cargo",
-        required: true,
-      },
-      codigo: {
-        display: "Código",
-        tipo: CampoFormKey.TEXT,
-        field: "codigo",
-        required: true,
-      },
-
       displayName: {
         display: "Nombre de usuario",
         tipo: CampoFormKey.TEXT,
         field: "displayName",
         required: true,
-      },
-
-      email: {
-        display: "Correo electrónico",
-        tipo: CampoFormKey.TEXT,
-        field: "email",
-        required: true,
-      },
-
-      fechaVencimientoLicencia: {
-        display: "Fecha de Vencimiento de Licencia",
-        tipo: CampoFormKey.FECHA_NATIVO,
-        field: "fechaVencimientoLicencia",
-        required: true,
-      },
-
-      isActive: {
-        display: "Activo",
-        tipo: CampoFormKey.CHECKBOX,
-        field: "isActive",
-        required: true,
-      },
-      isEliminado: {
-        display: "Eliminado",
-        tipo: CampoFormKey.CHECKBOX,
-        field: "isEliminado",
-        required: true,
-      },
-      licencia: {
-        display: "Licencia",
-        tipo: CampoFormKey.DROPDOWN,
-        field: "licencia",
-        required: true,
-      },
-
-      permisos: {
-        display: "Permisos",
-        tipo: CampoFormKey.DROPDOWN,
-        field: "permisos",
-        required: true,
-        options: [], // Agrega las opciones correspondientes
-      },
-      rol: {
-        display: "Rol",
-        tipo: CampoFormKey.DROPDOWN,
-        field: "rol",
-        required: true,
-        options: [], // Agrega las opciones correspondientes
+        orden: 1,
       },
       rut: {
         display: "RUT",
         tipo: CampoFormKey.TEXT,
         field: "rut",
         required: true,
+        orden: 2,
       },
       sexo: {
         display: "Sexo",
         tipo: CampoFormKey.DROPDOWN,
         field: "sexo",
         required: true,
-        options: [], // Agrega las opciones correspondientes
+        options: options.sexo,
+        single: true,
+        orden: 3,
+      },
+      email: {
+        display: "Correo electrónico",
+        tipo: CampoFormKey.TEXT,
+        field: "email",
+        required: true,
+        orden: 4,
+      },
+
+      areaCargo: {
+        display: "Área Cargo",
+        tipo: CampoFormKey.TEXT,
+        field: "areaCargo",
+        required: true,
+        orden: 5,
+      },
+      cargo: {
+        display: "Cargo",
+        tipo: CampoFormKey.TEXT,
+        field: "cargo",
+        required: true,
+        orden: 6,
+      },
+
+      rol: {
+        display: "Rol",
+        tipo: CampoFormKey.DROPDOWN,
+        field: "rol",
+        required: true,
+        options: options.rol,
+        orden: 8,
       },
       turno: {
         display: "Turno",
         tipo: CampoFormKey.DROPDOWN,
         field: "turno",
         required: true,
-        options: [], // Agrega las opciones correspondientes
+        options: options.turno,
+        orden: 9,
+      },
+      fechaVencimientoLicencia: {
+        display: "Fecha de Vencimiento de Licencia",
+        tipo: CampoFormKey.FECHA_NATIVO,
+        field: "fechaVencimientoLicencia",
+        required: true,
+        orden: 10,
+      },
+
+      licencia: {
+        display: "Licencia",
+        tipo: CampoFormKey.DROPDOWN,
+        field: "licencia",
+        required: true,
+        options: options.licencia,
+        orden: 11,
+      },
+      permisos: {
+        display: "Permisos",
+        tipo: CampoFormKey.DROPDOWN,
+        field: "permisos",
+        required: true,
+        options: options.permisos,
+        orden: 12,
+      },
+      isActive: {
+        display: "Usuario activo",
+        tipo: CampoFormKey.SWITCH,
+        field: "isActive",
+        required: true,
+
+        orden: 13,
       },
     };
   }

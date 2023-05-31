@@ -2,13 +2,11 @@ import {
   Box,
   Flex,
   Grid,
-  Spacer,
   Tag,
   TagLabel,
   Text,
   useDisclosure,
   useToast,
-  VStack,
 } from "@chakra-ui/react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
@@ -175,43 +173,16 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
 
   return (
     <>
-      <VStack align={"start"} pl={"20px"}>
-        <Text
-          as="b"
-          fontSize="5xl"
-          color={"vaku.700"}
-          fontFamily="Oswald"
-          textStyle="secondary"
-        >
-          {titulo}
-        </Text>
-
-        <Flex width={"100%"} alignItems={"end"}>
-          {/* titulo de la tabla  */}
-          <Box>
-            <Text
-              fontSize="md"
-              color={"secondaryGray.600"}
-              mt={0}
-              marginTop={"0px"}
-            >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
-            </Text>
-          </Box>
-          <Spacer />
-          {/* Contenido de la tabla */}
-          {/* encabezado */}
-        </Flex>
-      </VStack>
       <>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
-                titulo={"Divisiones"}
+                titulo={"Planes de Accion"}
                 textButtonAdd={" Agregar Division"}
                 onOpen={onOpen}
                 onReload={refreshData}
+                hiddenButtonAdd
               >
                 <DataTable columns={columns} data={division} />
               </TableLayout>

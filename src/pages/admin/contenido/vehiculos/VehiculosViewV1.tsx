@@ -18,7 +18,7 @@ import { AuthContext } from "@/contexts/AuthContext";
 import useFetch from "@/hooks/useFetch";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function VehiculosViewV1(props: { titulo: string }) {
@@ -30,6 +30,25 @@ export default function VehiculosViewV1(props: { titulo: string }) {
   const toast = useToast();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
+
+  useEffect(() => {
+    setOptions({
+      tipoVehiculo: [
+        {
+          value: "semiremolque",
+          label: "Semiremolque",
+        },
+        {
+          value: "vehiculo_de_carga",
+          label: "Vehículo de Carga",
+        },
+        {
+          value: "vehiculo_liviano",
+          label: "Vehículo Liviano",
+        },
+      ],
+    });
+  }, []);
   const navigate = useNavigate();
   const newVehiculo = new Vehiculo();
   const { currentUser } = useContext(AuthContext);
@@ -56,12 +75,12 @@ export default function VehiculosViewV1(props: { titulo: string }) {
 
   const handleSaveGerencia = (data: Vehiculo) => {
     setLoading(true);
-
+    console.log(data);
     divisionRepository
       .add(null, data)
       .then(() => {
         toast({
-          title: `Se ha creado la gerencia con éxito `,
+          title: `Se ha creado el vehiculo con éxito `,
           position: "top",
           status: "success",
           isClosable: true,
@@ -170,7 +189,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Vehiculos"}
-                textButtonAdd={" Agregar Division"}
+                textButtonAdd={" Agregar Vehiculo"}
                 onOpen={onOpen}
                 onReload={refreshData}
               >
@@ -193,6 +212,8 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           onSubmit={handleSaveGerencia}
           loading={loading}
           options={options}
+          size="xl"
+          grid={{ base: 1, md: 2 }}
         />
       </Flex>
     </>

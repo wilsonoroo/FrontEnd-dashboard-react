@@ -2,6 +2,7 @@ import FormikReactSelectClientes from "@/components/select/SelectClientes";
 import VakuModel from "@/models/Vaku";
 import {
   Checkbox,
+  FormControl,
   FormLabel,
   Input,
   NumberDecrementStepper,
@@ -9,6 +10,8 @@ import {
   NumberInput,
   NumberInputField,
   NumberInputStepper,
+  SimpleGrid,
+  Switch,
 } from "@chakra-ui/react";
 // import { DatePicker } from "chakra-ui-date-input";
 import { Field } from "formik";
@@ -34,11 +37,18 @@ export enum CampoFormKey {
   DROPDOWN = "dropdown",
   NUMBER = "number",
   EMAIL = "email",
+  SWITCH = "switch",
 }
 
 export default {};
 
-const generateInputField = (item: CampoForm, type: string) => (
+const generateInputField = (
+  item: CampoForm,
+  type: string,
+  setFieldValue: {
+    (field: string, value: any, shouldValidate?: boolean): void;
+  }
+) => (
   <>
     <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
     <Field
@@ -46,6 +56,16 @@ const generateInputField = (item: CampoForm, type: string) => (
       id={item.field}
       name={item.field}
       type={type}
+      onChange={
+        type === "date"
+          ? (event: any) => {
+              const newDate = new Date(event.target.value);
+              setFieldValue(item.field, newDate.toISOString().slice(0, 10));
+            }
+          : (event: any) => {
+              setFieldValue(item.field, event.target.value);
+            }
+      }
       placeholder={`Ingresa ${item.display}`}
     />
   </>
@@ -66,7 +86,6 @@ const generateInputNumberFiels = (
           name={item.field}
           placeholder={`Ingresa ${item.display}`}
           onChange={(v) => {
-            console.log(item.field, v.target.value);
             setFieldValue(item.field, v.target.value);
           }}
         />
@@ -84,6 +103,15 @@ const generateCheckboxField = (item: CampoForm) => (
     <Field as={Checkbox} id={item.field} name={item.field} colorScheme="orange">
       {item.display}
     </Field>
+  </>
+);
+
+const generateSwitchField = (item: CampoForm) => (
+  <>
+    <FormControl as={SimpleGrid} columns={{ base: 2, lg: 2 }}>
+      <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
+      <Switch id={item.field} name={item.field} />
+    </FormControl>
   </>
 );
 
@@ -116,9 +144,9 @@ export function getItemForm<T extends VakuModel>(
     switch (item.tipo) {
       case CampoFormKey.FECHA:
       case CampoFormKey.FECHA_NATIVO:
-        return generateInputField(item, "date");
+        return generateInputField(item, "date", setFieldValue);
       case CampoFormKey.TEXT:
-        return generateInputField(item, "text");
+        return generateInputField(item, "text", setFieldValue);
       case CampoFormKey.NUMBER:
         return generateInputNumberFiels(item, setFieldValue);
       case CampoFormKey.DROPDOWN:
@@ -141,6 +169,8 @@ export function getItemForm<T extends VakuModel>(
         );
       case CampoFormKey.CHECKBOX:
         return generateCheckboxField(item);
+      case CampoFormKey.SWITCH:
+        return generateSwitchField(item);
     }
   }
 }

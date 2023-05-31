@@ -16,6 +16,7 @@ interface DrawerComponentProps {
   isLoading: boolean;
   children: React.ReactNode;
   titulo?: string;
+  size?: string;
 }
 
 const DrawerComponent: React.FC<DrawerComponentProps> = ({
@@ -25,9 +26,10 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
   isLoading,
   children,
   titulo = "Agregar",
+  size = "md",
 }) => {
   return (
-    <Drawer size={"md"} isOpen={isOpen} placement="right" onClose={onClose}>
+    <Drawer size={size} isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
