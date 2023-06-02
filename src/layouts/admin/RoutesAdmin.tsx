@@ -1,4 +1,4 @@
-import { RouterJson } from "@routes/routes";
+import { RouterJson } from "@/navigation/routes";
 import { useRoutes } from "react-router-dom";
 
 export default function RouterAdmin(props: {

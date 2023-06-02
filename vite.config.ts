@@ -36,6 +36,7 @@ export default defineConfig({
       "@routes": path.resolve(__dirname, "./src/routes"),
       "@theme": path.resolve(__dirname, "./src/theme"),
       "@pages": path.resolve(__dirname, "./src/pages"),
+      "@navigation": path.resolve(__dirname, "./src/navigation"),
       "@repositories": path.resolve(__dirname, "./src/repositories"),
     },
   },

@@ -46,8 +46,8 @@
       "@hooks/*": [
         "src/hooks/*"
       ],
-      "@routes/*": [
-        "src/routes/*"
+      "@navigation/*": [
+        "src/navigation/*"
       ],
       "@theme/*": [
         "src/theme/*"

@@ -10,9 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 
-import { BiEditAlt } from "react-icons/bi";
-import { BsTrash } from "react-icons/bs";
-
 import TableLayout from "@/components/dataTable/TableLayout";
 
 import { AuthContext } from "@/contexts/AuthContext";
@@ -73,7 +70,14 @@ export default function UsuariosView1(props: { titulo: string }) {
         { value: "clase_e", label: "Clase E" },
         { value: "clase_F", label: "Clase F" },
       ],
-      permisos: [],
+      permisos: [
+        { value: "administrador", label: "Administrador" },
+        { value: "usuario", label: "Usuario" },
+        { value: "supervisor", label: "Supervisor" },
+        { value: "coordinador", label: "Coordinador" },
+        { value: "secretaria", label: "Secretaria" },
+        { value: "contador", label: "Contador" },
+      ],
       rol: [],
       sexo: [
         {
@@ -113,6 +117,10 @@ export default function UsuariosView1(props: { titulo: string }) {
   const columnHelper = createColumnHelper<UsuarioVaku>();
 
   const handleSaveGerencia = (data: UsuarioVaku) => {
+    console.log(
+      "🚀 ~ file: UsuariosViewV1.tsx:123 ~ handleSaveGerencia ~ data:",
+      data
+    );
     setLoading(true);
 
     divisionRepository
@@ -194,35 +202,35 @@ export default function UsuariosView1(props: { titulo: string }) {
       size: 100,
       minSize: 100,
     }),
-    columnHelper.accessor("id", {
-      cell: () => {
-        return (
-          <Flex>
-            <Box
-              onClick={() => {}}
-              fontSize={"lg"}
-              cursor={"pointer"}
-              m={1}
-              title="Editar"
-            >
-              <BiEditAlt />
-            </Box>
-            <Box
-              onClick={() => {}}
-              fontSize={"lg"}
-              cursor={"pointer"}
-              m={1}
-              title="Eliminar"
-            >
-              <BsTrash />
-            </Box>
-          </Flex>
-        );
-      },
-      header: "Acciones",
-      size: 100,
-      minSize: 100,
-    }),
+    // columnHelper.accessor("id", {
+    //   cell: () => {
+    //     return (
+    //       <Flex>
+    //         <Box
+    //           onClick={() => {}}
+    //           fontSize={"lg"}
+    //           cursor={"pointer"}
+    //           m={1}
+    //           title="Editar"
+    //         >
+    //           <BiEditAlt />
+    //         </Box>
+    //         <Box
+    //           onClick={() => {}}
+    //           fontSize={"lg"}
+    //           cursor={"pointer"}
+    //           m={1}
+    //           title="Eliminar"
+    //         >
+    //           <BsTrash />
+    //         </Box>
+    //       </Flex>
+    //     );
+    //   },
+    //   header: "Acciones",
+    //   size: 100,
+    //   minSize: 100,
+    // }),
   ];
 
   return (
@@ -258,6 +266,8 @@ export default function UsuariosView1(props: { titulo: string }) {
           onSubmit={handleSaveGerencia}
           loading={loading}
           options={options}
+          size="xl"
+          grid={{ base: 1, md: 2 }}
         />
       </Flex>
     </>

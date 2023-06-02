@@ -5,8 +5,9 @@ import { DataTable } from "@/components/dataTable/DataTable";
 
 import CustomCard from "@/components/card/Card";
 import useFetch from "@/hooks/useFetch";
-import { UsuarioVaku } from "@/model/user";
+
 import { DocumentoVaku } from "@/models/documento/Documento";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { useParams } from "react-router-dom";
 

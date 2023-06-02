@@ -1,4 +1,3 @@
-import { UsuarioVaku } from "@/model/user";
 import { CampoFormKey } from "@/utils/global";
 import VakuModel, {
   IEmptyObject,
@@ -9,6 +8,7 @@ import VakuModel, {
 } from "../Vaku";
 
 import * as yup from "yup";
+import { UsuarioVaku } from "../usuario/Usuario";
 
 export class Empresa
   extends VakuModel

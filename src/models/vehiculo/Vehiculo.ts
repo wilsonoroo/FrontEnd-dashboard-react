@@ -40,14 +40,14 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
     };
   }
   getFormBuilder(options: any = {}) {
-    console.log(options);
     return {
       numeroInterno: {
         display: "Número Interno",
-        tipo: CampoFormKey.TEXT,
+        tipo: CampoFormKey.TEXT_V2,
         field: "numeroInterno",
         required: true,
         orden: 1,
+        mask: [/^[A-Z]/, /^[A-Z]/, "-", /^[1-9]$/, /^[1-9]$/],
       },
 
       kilometraje: {
@@ -73,8 +73,9 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       },
       tipoVehiculo: {
         display: "Tipo de Vehículo",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "tipoVehiculo",
+        placeholder: "Seleccione un tipo de vehículo",
         required: true,
         options: options.tipoVehiculo,
         orden: 5,
@@ -82,22 +83,33 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       },
       tipo: {
         display: "Tipo",
-        tipo: CampoFormKey.TEXT,
+        tipo: CampoFormKey.CREATE_SELECT,
         field: "tipo",
+        options: options.tipo,
         required: true,
         orden: 6,
       },
 
       patente: {
         display: "Patente",
-        tipo: CampoFormKey.TEXT,
+        tipo: CampoFormKey.TEXT_V2,
+        mask: [
+          /^[A-Z]/,
+          /^[A-Z]/,
+          "-",
+          /^[A-Z]/,
+          /^[A-Z]/,
+          "-",
+          /^[1-9]$/,
+          /^[1-9]$/,
+        ], //"aa-aa-99",
         field: "patente",
         required: true,
         orden: 7,
       },
       proximaMantencion: {
         display: "Próxima Mantención",
-        tipo: CampoFormKey.TEXT,
+        tipo: CampoFormKey.FECHA_NATIVO,
         field: "proximaMantencion",
         required: true,
         orden: 8,
@@ -119,7 +131,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       },
 
       isEliminado: {
-        display: "Esta Eliminado",
+        display: "Dado de baja",
         tipo: CampoFormKey.SWITCH,
         field: "isEliminado",
         orden: 11,

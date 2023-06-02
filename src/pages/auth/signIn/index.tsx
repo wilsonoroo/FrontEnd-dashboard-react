@@ -40,7 +40,7 @@ function SignIn() {
 
   const navigate = useNavigate();
   const authVaku = useAuth();
-  console.log(authVaku);
+
   const validationSchema = yup.object({
     email: yup.string().required("Este campo es requerido"),
     password: yup.string().required("Este campo es requerido"),
@@ -54,8 +54,6 @@ function SignIn() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        console.log(values);
-
         await signInWithEmailAndPassword(auth, values.email, values.password);
         navigate("/admin");
       } catch (error) {
@@ -66,7 +64,6 @@ function SignIn() {
   });
   const { currentUser } = useContext(AuthContext);
 
-  console.log(currentUser);
   if (currentUser && !!currentUser?.permisos?.administrador) {
     return <Navigate to={"/admin"} />;
   }

@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Center,
   ModalContent,
@@ -28,6 +30,7 @@ interface AgregarFormProps<T> {
   options?: any;
   titulo?: string;
   size?: string;
+
   grid?: { base: number; md: number; xl?: number; "2xl"?: number };
 }
 const FormVaku = <T extends VakuModel>({
@@ -53,6 +56,8 @@ AgregarFormProps<T>) => {
   return (
     <Formik
       validationSchema={validationSchema}
+      validateOnChange={false}
+      validateOnBlur={false}
       initialValues={initialValues}
       onSubmit={async (values, { resetForm }) => {
         handleSubmitForm(values);
@@ -60,61 +65,89 @@ AgregarFormProps<T>) => {
         onClose();
       }}
     >
-      {({ handleSubmit, errors, touched, values, setFieldValue }) => (
-        <DrawerComponent
-          isOpen={isOpen}
-          size={size}
-          onClose={onClose}
-          handleSubmit={() => {
-            console.log(errors);
-            console.log(values);
-            handleSubmit();
-          }}
-          titulo={titulo}
-          isLoading={loading}
-        >
-          {loading ? (
-            <ModalContent h="100%" w="100%">
-              <ModalOverlay
-                bg="whiteAlpha"
-                w="100%"
-                backdropFilter="auto"
-                backdropInvert="0%"
-                backdropBlur="10px"
-              >
-                <Center h="100%">
-                  <Spinner
-                    thickness="4px"
-                    speed="0.65s"
-                    emptyColor="gray.200"
-                    color="vaku.500"
-                    size="xl"
+      {({
+        handleSubmit,
+        resetForm,
+        errors,
+        touched,
+        values,
+        setFieldValue,
+      }) => {
+        Object.keys(errors).map((key) => {
+          console.log(typeof errors[key]);
+          return errors[key];
+        });
+        return (
+          <DrawerComponent
+            isOpen={isOpen}
+            size={size}
+            onClose={() => {
+              resetForm();
+              onClose();
+            }}
+            handleSubmit={() => {
+              console.log(errors);
+              console.log(values);
+
+              handleSubmit();
+            }}
+            titulo={titulo}
+            isLoading={loading}
+          >
+            {loading ? (
+              <ModalContent h="100%" w="100%">
+                <ModalOverlay
+                  bg="whiteAlpha"
+                  w="100%"
+                  backdropFilter="auto"
+                  backdropInvert="0%"
+                  backdropBlur="10px"
+                >
+                  <Center h="100%">
+                    <Spinner
+                      thickness="4px"
+                      speed="0.65s"
+                      emptyColor="gray.200"
+                      color="vaku.500"
+                      size="xl"
+                    />
+                  </Center>
+                </ModalOverlay>
+              </ModalContent>
+            ) : (
+              <></>
+            )}
+            <Stack spacing="24px">
+              <Box>
+                {errors &&
+                  Object.keys(errors).map((key) => {
+                    console.log(errors[key]);
+                    return (
+                      <Alert status="error" variant="left-accent">
+                        <AlertIcon />
+
+                        {errors[key].toString()}
+                      </Alert>
+                    );
+                  })}
+                <VStack spacing={4} align="flex-start" alignItems={"stretch"}>
+                  <FormControls
+                    errors={errors}
+                    touched={touched}
+                    fields={Object.keys(initialValues).filter(
+                      (key) => !fieldsToExclude.includes(key)
+                    )}
+                    values={values}
+                    setFieldValue={setFieldValue}
+                    getItemForm={getItemForm}
+                    camposForm={camposForm}
                   />
-                </Center>
-              </ModalOverlay>
-            </ModalContent>
-          ) : (
-            <></>
-          )}
-          <Stack spacing="24px">
-            <Box>
-              <VStack spacing={4} align="flex-start" alignItems={"stretch"}>
-                <FormControls
-                  errors={errors}
-                  touched={touched}
-                  fields={Object.keys(initialValues).filter(
-                    (key) => !fieldsToExclude.includes(key)
-                  )}
-                  values={values}
-                  setFieldValue={setFieldValue}
-                  getItemForm={getItemForm}
-                  camposForm={camposForm}
-                />
-              </VStack>
-            </Box>
-          </Stack>
-        </DrawerComponent>
-      )}
+                </VStack>
+              </Box>
+            </Stack>
+          </DrawerComponent>
+        );
+      }}
     </Formik>
   );
 };

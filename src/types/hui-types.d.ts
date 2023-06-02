@@ -30,6 +30,7 @@ declare global {
     secondary?: boolean;
     sections?: SubCatergoria[];
     id?: string;
+    disabled?: boolean;
     route?: string;
   }
   interface SubCatergoria {

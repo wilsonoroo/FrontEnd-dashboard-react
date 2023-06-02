@@ -1,10 +1,9 @@
-import { CampoFormKey } from "@/utils/global";
+import { CampoFormKey, TypeField } from "@/utils/global";
 import * as yup from "yup";
 import VakuModel from "../Vaku";
 import { Cuadrilla } from "../cuadrilla/Cuadrilla";
 import { Dispositivos } from "../dispositivo/Dispositivo";
 import { Fotografia } from "../fotografia/Fotografia";
-import { Permisos } from "../permisos/Permisos";
 import { Rol } from "../rol/Rol";
 import { Enrolamiento } from "./Enrolamiento";
 
@@ -27,7 +26,7 @@ export class UsuarioVaku extends VakuModel {
   notificacionMisDocumentos: number;
   notificacionMisSeguimientosDePlanes: number;
   notificacionSeguimientosDePlanes: number;
-  permisos: Permisos[];
+  permisos: any;
   rol: Rol;
   rut: string;
   sexo: string;
@@ -70,7 +69,7 @@ export class UsuarioVaku extends VakuModel {
     };
   }
 
-  getFormBuilder(options: any = {}): any {
+  getFormBuilder(options: any = {}) {
     return {
       displayName: {
         display: "Nombre de usuario",
@@ -88,7 +87,7 @@ export class UsuarioVaku extends VakuModel {
       },
       sexo: {
         display: "Sexo",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "sexo",
         required: true,
         options: options.sexo,
@@ -120,7 +119,7 @@ export class UsuarioVaku extends VakuModel {
 
       rol: {
         display: "Rol",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "rol",
         required: true,
         options: options.rol,
@@ -128,7 +127,7 @@ export class UsuarioVaku extends VakuModel {
       },
       turno: {
         display: "Turno",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.CREATE_SELECT,
         field: "turno",
         required: true,
         options: options.turno,
@@ -144,20 +143,38 @@ export class UsuarioVaku extends VakuModel {
 
       licencia: {
         display: "Licencia",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "licencia",
         required: true,
+        isMulti: true,
         options: options.licencia,
         orden: 11,
       },
       permisos: {
         display: "Permisos",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "permisos",
         required: true,
         options: options.permisos,
         orden: 12,
+        isMulti: true,
+        typeField: TypeField.Object,
+        transform: (value: any) => {
+          console.log(
+            "🚀 ~ file: Usuario.ts:172 ~ UsuarioVaku ~ getFormBuilder ~ any:",
+            value
+          );
+          return value.map((item: any) => {
+            return {
+              codigo: item.value,
+              displayName: item.label,
+              id: item.value,
+            };
+          });
+        },
+        single: false,
       },
+
       isActive: {
         display: "Usuario activo",
         tipo: CampoFormKey.SWITCH,

@@ -1,9 +1,9 @@
 import { useState } from "react";
 
+import { routesAuth } from "@/navigation/route/route.auth";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { SidebarContext } from "@contexts/SidebarContext";
 import RoutesAuth from "@layouts/auth/RoutesAuth";
-import { routesAuth } from "@routes/routes";
 import { useRoutes } from "react-router-dom";
 // Layout components
 // import { SidebarContext } from "contexts/SidebarContext";

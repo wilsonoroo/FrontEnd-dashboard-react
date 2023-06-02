@@ -23,14 +23,22 @@ export interface IValidationSchema {
   getValidationSchema(): any;
 }
 
+export interface ITransformObject {
+  transformObject(object: any): void;
+}
+
 export default abstract class VakuModel
   implements
     IVakuModel,
     ISchemaValidation,
     IEmptyObject,
     IFormBuilder,
-    IValidationSchema
+    IValidationSchema,
+    ITransformObject
 {
+  transformObject() {
+    return this;
+  }
   id: string;
   nombre: string;
   createdAt: Date;
@@ -48,7 +56,7 @@ export default abstract class VakuModel
   abstract getEmptyObject(): any;
 }
 
-export class BaseModel extends VakuModel {
+export class BaseModel extends VakuModel implements ITransformObject {
   getValidationSchema() {
     throw new Error("Method not implemented.");
   }

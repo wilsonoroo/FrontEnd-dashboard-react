@@ -56,21 +56,28 @@ export function SidebarPro(props: {
                   <Menu
                     key={"car-" + categoria.id + "-" + index + "-" + subIndex}
                     menuItemStyles={{
-                      button: ({ level, active, disabled }) => {
+                      button: ({ level, disabled }) => {
                         // only apply styles on first level elements of the tree
 
                         if (level === 0)
                           return {
-                            color: disabled ? "#00244d" : "#00244d",
-                            backgroundColor: active ? "#9cff00" : undefined,
+                            color: disabled ? "#8f8f8f" : "#00244d",
+                            // backgroundColor: active ? "#9cff00" : undefined,
                           };
                       },
                     }}
                   >
                     {!categoria?.sections ? (
-                      <NavLink to={categoria.path} end>
+                      <NavLink
+                        to={!categoria?.disabled ? categoria.path : "#"}
+                        end
+                      >
                         {({ isActive }) => (
-                          <MenuItem icon={categoria?.icon} active={isActive}>
+                          <MenuItem
+                            disabled={categoria?.disabled}
+                            icon={categoria?.icon}
+                            active={isActive}
+                          >
                             <Text fontSize="md">{categoria?.titulo}</Text>
                           </MenuItem>
                         )}
@@ -89,18 +96,6 @@ export function SidebarPro(props: {
                               "-" +
                               subIndex2
                             }
-                            // key={
-                            //   "sub2-" +
-                            //   categoria.id +
-                            //   "-" +
-                            //   subMenu.id +
-                            //   "-" +
-                            //   index +
-                            //   "-" +
-                            //   subIndex +
-                            //   "-" +
-                            //   subIndex2
-                            // }
                             defaultOpen
                             label={subMenu.titulo}
                             rootStyles={{

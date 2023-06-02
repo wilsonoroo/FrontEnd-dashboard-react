@@ -1,7 +1,8 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 
 import Loading from "@components/Loading";
-import { UsuarioVaku } from "@model/user";
+
+import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { auth } from "@services/config";
 import { getActive, getUtils } from "@services/database/empresaServices";
 import {

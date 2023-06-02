@@ -1,7 +1,7 @@
-import { UsuarioVaku } from "@/model/user";
 import * as yup from "yup";
 import VakuModel from "../Vaku";
 import { Checklist } from "../checkList/CheckList";
+import { UsuarioVaku } from "../usuario/Usuario";
 
 export class DocumentoVaku extends VakuModel {
   division?: string;

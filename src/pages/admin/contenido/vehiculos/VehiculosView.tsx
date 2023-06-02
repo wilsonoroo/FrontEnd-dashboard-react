@@ -16,9 +16,10 @@ import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
 import useFetch from "@/hooks/useFetch";
-import { UsuarioVaku } from "@/model/user";
+
 import { Divisiones } from "@/models/division/Disvision";
 import { DocumentoVaku } from "@/models/documento/Documento";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";

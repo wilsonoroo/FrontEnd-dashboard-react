@@ -1,57 +1,16 @@
 // Chakra imports
+import { menuApp } from "@/navigation/menu/menu.admin";
+import { routesAdmin } from "@/navigation/route/route.admin";
 import { Box, Flex } from "@chakra-ui/react";
 // Layout components
+
 import SidebarContainer from "@components/sidebar/Sidebar";
 import RouterAdmin from "@layouts/admin/RoutesAdmin";
-import { menuApp, routesAdmin } from "@routes/routes";
 import { createBrowserRouter, useRoutes } from "react-router-dom";
 
 // Custom Chakra theme
 export default function Dashboard(props: { [x: string]: any }) {
   const { toggled, ...rest } = props;
-
-  // const getActiveRoute = (routes: Menus): string => {
-  //   const activeRoute = "Default Brand Text";
-  //   // for (let i = 0; i < routes.length; i++) {
-  //   //   if (
-  //   //     window.location.href.indexOf(
-  //   //       routes[i].layout + "/" + routes[i].path
-  //   //     ) !== -1
-  //   //   ) {
-  //   //     return routes[i].name;
-  //   //   }
-  //   // }
-
-  //   return activeRoute;
-  // };
-  // const getActiveNavbar = (routes: Menus): boolean => {
-  //   const activeNavbar = true;
-  //   // for (let i = 0; i < routes.length; i++) {
-  //   //   if (
-  //   //     window.location.href.indexOf(
-  //   //       routes[i].layout + "/" + routes[i].path
-  //   //     ) !== -1
-  //   //   ) {
-  //   //     return routes[i].secondary;
-  //   //   }
-  //   // }
-
-  //   return activeNavbar;
-  // };
-  // const getActiveNavbarText = (routes: Menus): string | boolean => {
-  //   const activeNavbar = false;
-  //   // for (let i = 0; i < routes.length; i++) {
-  //   //   if (
-  //   //     window.location.href.indexOf(
-  //   //       routes[i].layout + "/" + routes[i].path
-  //   //     ) !== -1
-  //   //   ) {
-  //   //     return routes[i].name;
-  //   //   }
-  //   // }
-  //   // console.log(activeNavbar);
-  //   return activeNavbar;
-  // };
 
   // eslint-disable-next-line prefer-const
   let rutas = createBrowserRouter(routesAdmin);

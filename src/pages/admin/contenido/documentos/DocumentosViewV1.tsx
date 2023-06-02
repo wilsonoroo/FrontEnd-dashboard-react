@@ -9,7 +9,6 @@ import {
   IconButton,
   Stack,
   Stat,
-  StatArrow,
   StatGroup,
   StatHelpText,
   StatLabel,
@@ -20,19 +19,30 @@ import {
 } from "@chakra-ui/react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { DataTable } from "@/components/dataTable/DataTable";
-
-import TableLayout from "@/components/dataTable/TableLayout";
 import { AuthContext } from "@/contexts/AuthContext";
 import useFetch from "@/hooks/useFetch";
-import { UsuarioVaku } from "@/model/user";
+
+import { DataTable } from "@/components/dataTable/DataTable";
+import TableLayout from "@/components/dataTable/TableLayout";
 import { Divisiones } from "@/models/division/Disvision";
 import { DocumentoVaku } from "@/models/documento/Documento";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { formatInTimeZone } from "date-fns-tz";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+
+type Estadisticas = {
+  [key: string]: number;
+};
+
+type EstadisticasCompleja = {
+  [key: string]: {
+    cantidad: number;
+    displayName: string;
+  };
+};
 
 export default function DocumentosViewV1(props: { titulo: string }) {
   const { titulo } = props;
@@ -43,6 +53,9 @@ export default function DocumentosViewV1(props: { titulo: string }) {
   const navigate = useNavigate();
   const newDivision = new Divisiones();
   const { currentUser } = useContext(AuthContext);
+  const [estadisticas, setEstadisticas] = useState<Estadisticas>({});
+  const [estadisticasTipo, setEstadisticasTipo] =
+    useState<EstadisticasCompleja>({});
 
   let divisionRepository: FirebaseRealtimeRepository<DocumentoVaku>;
   if (idEmpresa === undefined) {
@@ -61,6 +74,43 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     refreshData,
     isLoading,
   } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
+
+  useEffect(() => {
+    const estadistic = division.reduce(
+      (acc: { [key: string]: number }, obj) => {
+        const { estado } = obj;
+        acc[estado] = (acc[estado] || 0) + 1;
+        return acc;
+      },
+      {}
+    );
+
+    const countByTipo = division.reduce((acc, obj) => {
+      const { checklist } = obj;
+      const tipoKey = checklist.tipo; // Utilizamos el nombre del tipo como clave en el acumulador
+
+      if (!acc[tipoKey]) {
+        acc[tipoKey] = {
+          cantidad: 1,
+          displayName: checklist.abreviatura,
+        };
+      } else {
+        acc[tipoKey].cantidad++;
+      }
+      return acc;
+    }, {});
+
+    console.log(
+      "🚀 ~ file: DocumentosViewV1.tsx:72 ~ estadistic ~ estadistic:",
+      estadistic
+    );
+    console.log(
+      "🚀 ~ file: DocumentosViewV1.tsx:72 ~ estadistic ~ estadistic:",
+      countByTipo
+    );
+    setEstadisticas(estadistic);
+    setEstadisticasTipo(countByTipo);
+  }, [division]);
 
   const columnHelper = createColumnHelper<DocumentoVaku>();
 
@@ -92,6 +142,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "Docs",
     }),
+
     columnHelper.accessor("correlativo", {
       cell: (info) => {
         console.log(info.getValue());
@@ -117,6 +168,34 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       header: "Correlativo",
       size: 140,
       minSize: 180,
+    }),
+    columnHelper.accessor("correlativo", {
+      cell: (info) => {
+        console.log(info.row.original);
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <Badge
+                variant="solid"
+                colorScheme={
+                  info.row.original.checklist.tipo === "checklist"
+                    ? "blue"
+                    : "yellow"
+                }
+                fontSize="0.7em"
+              >
+                {info.row.original.checklist.abreviatura}
+              </Badge>
+            </Box>
+            <Box>
+              <Badge variant="outline" colorScheme="vaku" fontSize="0.7em">
+                {info.row.original.checklist.nombre}
+              </Badge>
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Tipo Documento",
     }),
     columnHelper.accessor("fechaCreacion", {
       cell: (info) => {
@@ -197,7 +276,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       cell: (info) => {
         const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
         const data = info.getValue() as UsuarioVaku | undefined;
-        console.log(data?.fotografia.url);
+
         return (
           <>
             {data ? (
@@ -236,8 +315,25 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     }),
   ];
 
+  const getEstateText = (estado: string) => {
+    switch (estado) {
+      case "finalizado":
+        return "Finalizado";
+      case "finalizado_sin_plan_accion":
+        return "Finalizado sin plan de accion";
+      case "rechazado":
+        return "Rechazado";
+      case "doc_sin_problemas":
+        return "En Espera de validacion";
+      case "pendiente_validar":
+        return "En Espera de validacion";
+
+      default:
+        return "";
+    }
+  };
+
   const getEstateColor = (estado: string) => {
-    console.log(estado);
     switch (estado) {
       case "finalizado":
         return { color: "green", text: "finalizado" };
@@ -262,31 +358,38 @@ export default function DocumentosViewV1(props: { titulo: string }) {
           justifyContent={"start"}
           gap={2}
         >
-          <Card variant={"outline"} w={250}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Sent</StatLabel>
-                <StatNumber>345,670</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="increase" />
-                  23.36%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
-
-          <Card variant={"outline"} w={250}>
-            <CardBody>
-              <Stat>
-                <StatLabel>Clicked</StatLabel>
-                <StatNumber>45</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="decrease" />
-                  9.05%
-                </StatHelpText>
-              </Stat>
-            </CardBody>
-          </Card>
+          {Object.keys(estadisticas).map((estado: string) => (
+            <Card variant={"outline"} w={250}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>{getEstateText(estado)}</StatLabel>
+                  <StatNumber>{estadisticas[estado]?.toString()} </StatNumber>
+                  <StatHelpText></StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          ))}
+        </StatGroup>
+        <StatGroup
+          display="flex"
+          alignItems={"start"}
+          justifyContent={"start"}
+          gap={2}
+          mt={2}
+        >
+          {Object.keys(estadisticasTipo).map((estado: string) => (
+            <Card variant={"outline"} w={250}>
+              <CardBody>
+                <Stat>
+                  <StatLabel>
+                    Cant. de {estadisticasTipo[estado]?.displayName}
+                  </StatLabel>
+                  <StatNumber>{estadisticasTipo[estado]?.cantidad} </StatNumber>
+                  <StatHelpText></StatHelpText>
+                </Stat>
+              </CardBody>
+            </Card>
+          ))}
         </StatGroup>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
