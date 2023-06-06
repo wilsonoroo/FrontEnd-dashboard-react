@@ -1,10 +1,12 @@
 import {
+  Badge,
   Box,
   Flex,
   Grid,
   Tag,
   TagLabel,
   Text,
+  VStack,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -12,13 +14,19 @@ import { createColumnHelper } from "@tanstack/react-table";
 
 import TableLayout from "@/components/dataTable/TableLayout";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 
 import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
+import { Permiso } from "@/models/permisos/Permiso";
+import { Rol } from "@/models/rol/Rol";
+import { Enrolamiento } from "@/models/usuario/Enrolamiento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { CategoriaVehiculo } from "@/models/utils/Utils";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { createUserAuth } from "@/services/usuarioVakuApi";
+import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -42,6 +50,7 @@ export default function UsuariosView1(props: { titulo: string }) {
       { value: "clase_e", label: "Clase E" },
       { value: "clase_F", label: "Clase F" },
     ],
+    categoriaVehiculos: [],
     permisos: [],
     rol: [],
     sexo: [
@@ -90,17 +99,36 @@ export default function UsuariosView1(props: { titulo: string }) {
         },
       ],
       turno: [],
+      categoriaVehiculos: [],
     });
   }, []);
   const navigate = useNavigate();
   const newUser = new UsuarioVaku();
+  const newRol = new Rol();
   const { currentUser } = useContext(AuthContext);
 
   let divisionRepository: FirebaseRealtimeRepository<UsuarioVaku>;
+  let usuarioGlobal: FirebaseRealtimeRepository<UsuarioVaku>;
+  let rolesRepository: FirebaseRealtimeRepository<Rol>;
+  let categoriaVehiculoRepository: FirebaseRealtimeRepository<CategoriaVehiculo>;
+  let permisosVehiculoRepository: FirebaseRealtimeRepository<Permiso>;
+
   if (idEmpresa === undefined) {
     divisionRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
       `empresas/${currentUser.empresaId}/usuarios/auth`
     );
+    rolesRepository = new FirebaseRealtimeRepository<Rol>(
+      `empresas/${currentUser.empresaId}/utils/usuarios/roles`
+    );
+    categoriaVehiculoRepository =
+      new FirebaseRealtimeRepository<CategoriaVehiculo>(
+        `empresas/${currentUser.empresaId}/utils/vehiculos/tipo`
+      );
+    permisosVehiculoRepository = new FirebaseRealtimeRepository<Permiso>(
+      `empresas/${currentUser.empresaId}/utils/usuarios/permisos`
+    );
+
+    usuarioGlobal = new FirebaseRealtimeRepository<UsuarioVaku>(`auth`);
   } else {
     divisionRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
       `empresas/${idEmpresa}/usuarios`
@@ -114,53 +142,104 @@ export default function UsuariosView1(props: { titulo: string }) {
     isLoading,
   } = useFetch(() => divisionRepository.getAll(UsuarioVaku));
 
+  const {
+    data: roles,
+    firstLoading: loadingRoles,
+    refreshData: refreshRoles,
+    isLoading: loadingRolesData,
+  } = useFetch(() => rolesRepository.getAll(Rol));
+  const {
+    data: categoriaVehiculos,
+    firstLoading: loadingCategoriaVehiculos,
+    refreshData: refreshCategoriaVehiculos,
+    isLoading: loadingCategoriaVehiculosData,
+  } = useFetch(() => categoriaVehiculoRepository.getAll(CategoriaVehiculo));
+
+  const {
+    data: permisos,
+    firstLoading: loadingPermisos,
+    refreshData: refreshPermisos,
+    isLoading: loadingPermisosData,
+  } = useFetch(() => permisosVehiculoRepository.getAll(Permiso));
+
+  useEffect(() => {
+    options.rol = roles;
+    options.categoriaVehiculos = categoriaVehiculos;
+    options.permisos = permisos;
+    setOptions(options);
+  }, [roles, categoriaVehiculos, permisos]);
+
   const columnHelper = createColumnHelper<UsuarioVaku>();
 
-  const handleSaveGerencia = (data: UsuarioVaku) => {
-    console.log(
-      "🚀 ~ file: UsuariosViewV1.tsx:123 ~ handleSaveGerencia ~ data:",
-      data
-    );
+  const handleSaveGerencia = async (
+    data: UsuarioVaku,
+    resetForm: () => void
+  ) => {
     setLoading(true);
+    data.empresaId = currentUser.empresaId;
+    data.empresa = currentUser.empresa;
+    data.enrolamiento = new Enrolamiento(false);
+    data.fechaVencimientoLicencia = moment(
+      data.fechaVencimientoLicencia
+    ).format("YYYY-MM-DD HH:mm:ss");
+    data.rol.nombre = data.rol.id;
 
-    divisionRepository
-      .add(null, data)
+    createUserAuth(
+      data.email,
+      data.email.split("@")[0] + "1234",
+      data.displayName
+    )
+      .then((userCredential) => {
+        data.id = userCredential.uid;
+        data.nombre = data.displayName;
+        return divisionRepository.add(userCredential.uid, data);
+      })
       .then(() => {
-        console.error("exito");
         toast({
           title: `Se ha creado el usuario con éxito `,
           position: "top",
           status: "success",
           isClosable: true,
         });
-        onClose();
-        refreshData();
       })
       .catch((error) => {
         console.error(error);
+        toast({
+          title: `Se ha ocurrido un problema al crear el usuario`,
+          position: "top",
+          status: "error",
+          isClosable: true,
+        });
       })
       .finally(() => {
-        console.error("error");
         setLoading(false);
+        resetForm();
+        onClose();
+        refreshData();
       });
-
-    return;
   };
 
   const columns = [
     columnHelper.accessor("displayName", {
       cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
+        <VStack alignItems={"flex-start"}>
+          <Box px={5}>
+            <Tag
+              bg={"#fb8500"}
+              color="#fff"
+              alignItems={"center"}
+              alignContent={"center"}
+              size={"sm"}
+            >
+              <TagLabel>{info.getValue()}</TagLabel>
+            </Tag>
+          </Box>
+          <Box px={5}>
+            <Badge variant="outline" colorScheme="vaku" fontSize="0.7em">
+              id: {info.row.original.id}
+            </Badge>
+          </Box>
+        </VStack>
       ),
       header: "Nombre de Usuario",
       size: 100,
@@ -190,6 +269,36 @@ export default function UsuariosView1(props: { titulo: string }) {
       size: 100,
       minSize: 100,
     }),
+    columnHelper.accessor("enrolamiento", {
+      cell: (info) => {
+        const color = info.getValue()?.isCompletado ? "green" : "red";
+        return (
+          <>
+            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
+              {info.getValue()?.isCompletado ? "Si" : "No"}
+            </Badge>
+          </>
+        );
+      },
+      header: "Enrolamiento Completado",
+      size: 100,
+      minSize: 100,
+    }),
+    columnHelper.accessor("isActive", {
+      cell: (info) => {
+        const color = info.getValue() ? "green" : "red";
+        return (
+          <>
+            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
+              {info.getValue() ? "Si" : "No"}
+            </Badge>
+          </>
+        );
+      },
+      header: "Usuario Activo",
+      size: 100,
+      minSize: 100,
+    }),
     columnHelper.accessor("rol", {
       cell: (info) => {
         return (
@@ -202,35 +311,6 @@ export default function UsuariosView1(props: { titulo: string }) {
       size: 100,
       minSize: 100,
     }),
-    // columnHelper.accessor("id", {
-    //   cell: () => {
-    //     return (
-    //       <Flex>
-    //         <Box
-    //           onClick={() => {}}
-    //           fontSize={"lg"}
-    //           cursor={"pointer"}
-    //           m={1}
-    //           title="Editar"
-    //         >
-    //           <BiEditAlt />
-    //         </Box>
-    //         <Box
-    //           onClick={() => {}}
-    //           fontSize={"lg"}
-    //           cursor={"pointer"}
-    //           m={1}
-    //           title="Eliminar"
-    //         >
-    //           <BsTrash />
-    //         </Box>
-    //       </Flex>
-    //     );
-    //   },
-    //   header: "Acciones",
-    //   size: 100,
-    //   minSize: 100,
-    // }),
   ];
 
   return (

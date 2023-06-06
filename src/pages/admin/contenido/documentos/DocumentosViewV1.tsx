@@ -19,7 +19,7 @@ import {
 } from "@chakra-ui/react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 
 import { DataTable } from "@/components/dataTable/DataTable";
@@ -28,8 +28,8 @@ import { Divisiones } from "@/models/division/Disvision";
 import { DocumentoVaku } from "@/models/documento/Documento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { formatInTimeZone } from "date-fns-tz";
-import { useContext, useEffect, useState } from "react";
+import moment from "moment-timezone";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -54,6 +54,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
   const newDivision = new Divisiones();
   const { currentUser } = useContext(AuthContext);
   const [estadisticas, setEstadisticas] = useState<Estadisticas>({});
+
   const [estadisticasTipo, setEstadisticasTipo] =
     useState<EstadisticasCompleja>({});
 
@@ -75,7 +76,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     isLoading,
   } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
 
-  useEffect(() => {
+  const calculateEstadisticas = useCallback(() => {
     const estadistic = division.reduce(
       (acc: { [key: string]: number }, obj) => {
         const { estado } = obj;
@@ -87,7 +88,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
 
     const countByTipo = division.reduce((acc, obj) => {
       const { checklist } = obj;
-      const tipoKey = checklist.tipo; // Utilizamos el nombre del tipo como clave en el acumulador
+      const tipoKey = checklist.tipo;
 
       if (!acc[tipoKey]) {
         acc[tipoKey] = {
@@ -100,24 +101,19 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       return acc;
     }, {});
 
-    console.log(
-      "🚀 ~ file: DocumentosViewV1.tsx:72 ~ estadistic ~ estadistic:",
-      estadistic
-    );
-    console.log(
-      "🚀 ~ file: DocumentosViewV1.tsx:72 ~ estadistic ~ estadistic:",
-      countByTipo
-    );
     setEstadisticas(estadistic);
     setEstadisticasTipo(countByTipo);
   }, [division]);
+
+  useEffect(() => {
+    calculateEstadisticas();
+  }, [calculateEstadisticas]);
 
   const columnHelper = createColumnHelper<DocumentoVaku>();
 
   const columns = [
     columnHelper.accessor("correlativo", {
       cell: (info) => {
-        console.log(info.row.original);
         return (
           <>
             {info.row.original?.pdf ? (
@@ -145,7 +141,6 @@ export default function DocumentosViewV1(props: { titulo: string }) {
 
     columnHelper.accessor("correlativo", {
       cell: (info) => {
-        console.log(info.getValue());
         return (
           <Stack spacing={2}>
             <Box>
@@ -171,7 +166,6 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     }),
     columnHelper.accessor("correlativo", {
       cell: (info) => {
-        console.log(info.row.original);
         return (
           <Stack spacing={2}>
             <Box>
@@ -199,15 +193,11 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     }),
     columnHelper.accessor("fechaCreacion", {
       cell: (info) => {
-        let fecha = new Date(info.getValue() + " UTC");
+        let fecha = moment.utc(info.getValue());
         return (
           <>
             <Text fontSize="sm">
-              {formatInTimeZone(
-                new Date(fecha),
-                "America/Santiago",
-                "dd-MM-yyyy hh:mm"
-              )}
+              {moment(fecha).tz("America/Santiago").format("DD/MM/YYYY hh:mm")}
             </Text>
           </>
         );
@@ -218,11 +208,11 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     }),
     columnHelper.accessor("fechaValidacion", {
       cell: (info) => {
-        let fecha = new Date(info.getValue() + " UTC");
+        let fecha = moment.utc(info.getValue());
         return (
           <Text fontSize="sm">
             {info?.getValue()
-              ? formatInTimeZone(fecha, "America/Santiago", "dd-MM-yyyy hh:mm")
+              ? moment(fecha).tz("America/Santiago").format("DD/MM/YYYY hh:mm")
               : "--"}
           </Text>
         );
@@ -281,7 +271,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
           <>
             {data ? (
               <Flex>
-                <Avatar src={data?.fotografia.url} />
+                <Avatar src={data?.fotografia?.url} />
                 <Box ml="3">
                   <Text fontWeight="bold" fontSize="md">
                     {data?.displayName}
@@ -323,10 +313,20 @@ export default function DocumentosViewV1(props: { titulo: string }) {
         return "Finalizado sin plan de accion";
       case "rechazado":
         return "Rechazado";
+      case "rechazado_sin_plan_accion":
+        return "Rechazado sin plan de accion";
       case "doc_sin_problemas":
-        return "En Espera de validacion";
+        return "En Espera de validacion\n(sin problemas)";
+      case "doc_con_problemas":
+        return "En Espera de validacion\n(con problemas)";
+      case "pendiente_doble_chequeo":
+        return "En Espera de doble chequeo";
       case "pendiente_validar":
         return "En Espera de validacion";
+      case "generado":
+        return "Doc registrado";
+      case "validado":
+        return "Validado";
 
       default:
         return "";
@@ -341,8 +341,20 @@ export default function DocumentosViewV1(props: { titulo: string }) {
         return { color: "green", text: "finalizado" };
       case "rechazado":
         return { color: "red", text: "Rechazado" };
+      case "rechazado_sin_plan_accion":
+        return { color: "red", text: "Rechazado sin plan acción" };
       case "doc_sin_problemas":
-        return { color: "yellow", text: "En Espera de validacion" };
+        return { color: "yellow", text: "En Espera de validación" };
+      case "doc_con_problemas":
+        return { color: "yellow", text: "En Espera de validación" };
+      case "pendiente_validar":
+        return { color: "yellow", text: "En Espera de validación" };
+      case "pendiente_doble_chequeo":
+        return { color: "yellow", text: "En Espera de doble chequeo" };
+      case "generado":
+        return { color: "blue", text: "registrado" };
+      case "validado":
+        return { color: "blue", text: "Validado" };
 
       default:
         return { color: "blue", text: "..." };

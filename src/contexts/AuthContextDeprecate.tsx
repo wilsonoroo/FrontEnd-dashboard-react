@@ -37,31 +37,16 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
         const userSemiComplete = await getUsuarioByUid(user?.uid);
 
         const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
-        console.log(
-          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ empresaId:",
-          empresaId
-        );
-        console.log(
-          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ userSemiComplete:",
-          userSemiComplete
-        );
+
         let userComplete;
         if (typeof divisionId === "undefined") {
           userComplete = await getUsuarioV1(id, empresaId);
-          console.log(
-            "🚀 ~ file: AuthContext.tsx:50 ~ auth.onAuthStateChanged ~ userComplete:",
-            userComplete
-          );
         } else {
           userComplete = await getUsuario(
             user?.uid,
             empresaId,
             gerenciaId,
             divisionId
-          );
-          console.log(
-            "🚀 ~ file: AuthContext.tsx:57 ~ auth.onAuthStateChanged ~ userComplete:",
-            userComplete
           );
         }
 

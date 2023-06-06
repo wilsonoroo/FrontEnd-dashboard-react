@@ -13,12 +13,14 @@ import {
   SimpleGrid,
   Switch,
 } from "@chakra-ui/react";
+import { SingleDatepicker } from "chakra-dayzed-datepicker";
 // import { DatePicker } from "chakra-ui-date-input";
 
 import { Field } from "formik";
 import InputMask from "react-input-mask";
 
 import { CreatableSelect, Select as SelectCH } from "chakra-react-select";
+import moment from "moment";
 
 export enum TypeField {
   Object = "object",
@@ -37,11 +39,13 @@ export interface CampoForm {
   transform?: (value: any) => any;
   onChangeValue?: (newValue: any) => void;
   mask?: null | string;
+  uppercase?: boolean | null;
 }
 
 export enum CampoFormKey {
   FECHA = "fecha",
   FECHA_NATIVO = "fecha_nativo",
+  FECHA_CUSTOM = "fecha_custom",
   TEXT = "text",
   TEXT_V2 = "textV2",
   LIST = "lista",
@@ -81,10 +85,15 @@ const generateInputFieldText = (
                 setFieldValue(item.field, newDate.toISOString().slice(0, 10));
               }
             : (event: any) => {
-                setFieldValue(item.field, event.target.value);
+                setFieldValue(
+                  item.field,
+                  item.uppercase
+                    ? event.target.value.toUpperCase()
+                    : event.target.value
+                );
               }
         }
-        placeholder="Ingresa tu número de teléfono"
+        placeholder="Ingresa tu número de teléfono "
         component={MaskedInput}
       />
     </>
@@ -105,12 +114,14 @@ const generateInputField = (
       id={item.field}
       name={item.field}
       type={type}
+      value={item.value}
       onChange={
         type === "date"
           ? (event: any) => {
               console.log(event.target.value);
-              const newDate = new Date(event.target.value);
-              setFieldValue(item.field, newDate.toISOString().slice(0, 10));
+              const newDate = moment.utc(event.target.value);
+              console.log(newDate.format("YYYY-MM-DD hh:mm:ss"));
+              setFieldValue(item.field, newDate.format("YYYY-MM-DD hh:mm:ss"));
             }
           : (event: any) => {
               setFieldValue(item.field, event.target.value);
@@ -156,11 +167,18 @@ const generateCheckboxField = (item: CampoForm) => (
   </>
 );
 
-const generateSwitchField = (item: CampoForm) => (
+const generateSwitchField = (item: CampoForm, setFieldValue: any) => (
   <>
     <FormControl as={SimpleGrid} columns={{ base: 2, lg: 2 }}>
       <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
-      <Switch id={item.field} name={item.field} />
+      <Switch
+        id={item.field}
+        name={item.field}
+        onChange={(e) => {
+          console.log(e.target.checked);
+          setFieldValue(item.field, e.target.checked);
+        }}
+      />
     </FormControl>
   </>
 );
@@ -188,7 +206,8 @@ export function cleanObject<T>(obj: T): Partial<T> {
 
 export function getItemForm<T extends VakuModel>(
   item: CampoForm,
-  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+  setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void,
+  value: any
 ) {
   if (item) {
     switch (item.tipo) {
@@ -219,7 +238,8 @@ export function getItemForm<T extends VakuModel>(
                     item.onChangeValue(v.label);
                   }
                 }
-                console.log(!item.single);
+
+                console.log("🚀 ~ file: global.tsx:223 ~ item:", item);
                 if (!item.single) {
                   if (
                     typeof item.typeField === "undefined" ||
@@ -227,16 +247,13 @@ export function getItemForm<T extends VakuModel>(
                   ) {
                     setFieldValue(item.field, v);
                   } else {
-                    const finalValue =
-                      typeof item.transform === "undefined"
-                        ? v
-                        : item.transform(v);
-                    //transformedObject
-                    console.log(
-                      "🚀 ~ file: global.tsx:228 ~ finalValue:",
-                      finalValue
-                    );
-                    setFieldValue(item.field, finalValue);
+                    try {
+                      const values = item.transform(v);
+
+                      setFieldValue(item.field, values);
+                    } catch (e) {
+                      console.error("transform no ha sido implementado");
+                    }
                   }
                 } else {
                   console.log(v.label);
@@ -262,10 +279,33 @@ export function getItemForm<T extends VakuModel>(
               onChange={(v) => {
                 console.log(v, typeof item!.onChangeValue);
                 if (typeof item.onChangeValue !== "undefined") {
-                  item.onChangeValue(v);
+                  if (!item.single) {
+                    item.onChangeValue(v);
+                  } else {
+                    item.onChangeValue(v.label);
+                  }
                 }
 
-                setFieldValue(item.field, v);
+                console.log("🚀 ~ file: global.tsx:223 ~ item:", item);
+                if (!item.single) {
+                  if (
+                    typeof item.typeField === "undefined" ||
+                    !(item.typeField === TypeField.Object)
+                  ) {
+                    setFieldValue(item.field, v);
+                  } else {
+                    try {
+                      const values = item.transform(v);
+
+                      setFieldValue(item.field, values);
+                    } catch (e) {
+                      console.error("transform no ha sido implementado");
+                    }
+                  }
+                } else {
+                  console.log(v.label);
+                  setFieldValue(item.field, v.label);
+                }
               }}
               colorScheme="green"
               options={item?.options}
@@ -294,7 +334,30 @@ export function getItemForm<T extends VakuModel>(
       case CampoFormKey.CHECKBOX:
         return generateCheckboxField(item);
       case CampoFormKey.SWITCH:
-        return generateSwitchField(item);
+        return generateSwitchField(item, setFieldValue);
+      case CampoFormKey.FECHA_CUSTOM: {
+        console.log("🚀 ~ file: global.tsx:223 ~ item:", value);
+        return (
+          <>
+            <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
+            <SingleDatepicker
+              name={item.field}
+              id={item.field}
+              date={new Date(value)}
+              onDateChange={(date: Date) => {
+                console.log(date);
+                setFieldValue(item.field, date);
+              }}
+              configs={{
+                dateFormat: "dd-MM-yyyy",
+                dayNames: "abcdefg".split(""), // length of 7
+                monthNames: "ABCDEFGHIJKL".split(""), // length of 12
+                firstDayOfWeek: 2, // default is 0, the dayNames[0], which is Sunday if you don't specify your own dayNames,
+              }}
+            />
+          </>
+        );
+      }
     }
   }
 }
@@ -307,7 +370,7 @@ interface CustomInputProps {
   };
 }
 
-function transformedObject(array: any[], key: string) {
+export function transformedObject(array: any[], key: string) {
   const transformedObject = array.reduce((obj, item) => {
     obj[item[key]] = item;
     return obj;

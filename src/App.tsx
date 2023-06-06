@@ -1,26 +1,45 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-// import { AuthProvider } from "./context/Auth";
+
 import "@assets/css/App.css";
 import { avatarAnatomy as parts } from "@chakra-ui/anatomy";
 import {
   createMultiStyleConfigHelpers,
   defineStyle,
 } from "@chakra-ui/styled-system";
-import AdminLayout from "@layouts/admin";
-import AuthLayout from "@layouts/auth";
-import PrivateRoute from "@navigation/PrivateRoute";
-import Error404Page from "@pages/Error404Page/Error404Page";
+
+import AdminLayout from "@/layouts/admin";
+import AuthLayout from "@/layouts/auth";
+import { PrivateRouteDos } from "@navigation/PrivateRoute";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* <Route
+          path="/admin/*"
+          element={<PrivateRoute component={AdminLayout} />}
+        />
+        <Route path="/auth/*" element={<AuthLayout />} />
+
+        <Route
+          path="/admin/*"
+          element={<PrivateRoute component={AdminLayout} />}
+        />
+
+        <Route path="/" element={<Navigate replace={true} to="auth" />} /> */}
+
+        <Route
+          path={`/admin/*`}
+          element={
+            <PrivateRouteDos
+              permisos={["admin"]}
+              component={AdminLayout}
+              componente={AdminLayout}
+            />
+          }
+        />
         <Route path={`/auth/*`} element={<AuthLayout />} />
-        <PrivateRoute path="/dashboard" component={AdminLayout} />
-
-        <Route path="/" element={<Navigate replace={true} to="auth" />} />
-
-        <Route path="*" element={<Error404Page />} />
+        <Route path="/" element={<Navigate replace={true} to="/auth" />} />
       </Routes>
     </BrowserRouter>
   );

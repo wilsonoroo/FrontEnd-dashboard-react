@@ -1,9 +1,8 @@
 import {
+  Badge,
   Box,
   Flex,
   Grid,
-  Tag,
-  TagLabel,
   Text,
   useDisclosure,
   useToast,
@@ -14,10 +13,11 @@ import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
 import FormVaku from "@/components/forms/FormVaku";
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -75,7 +75,19 @@ export default function VehiculosViewV1(props: { titulo: string }) {
 
   const handleSaveGerencia = (data: Vehiculo) => {
     setLoading(true);
-    console.log(data);
+
+    data.fechaVencimiento = moment(data.fechaVencimiento).format(
+      "YYYY-MM-DD HH:mm:ss"
+    );
+
+    data.proximaMantencion = moment(data.proximaMantencion).format(
+      "YYYY-MM-DD HH:mm:ss"
+    );
+
+    data.ultimaMantencion = moment(data.ultimaMantencion).format(
+      "YYYY-MM-DD HH:mm:ss"
+    );
+
     divisionRepository
       .add(null, data)
       .then(() => {
@@ -101,23 +113,33 @@ export default function VehiculosViewV1(props: { titulo: string }) {
   const columns = [
     columnHelper.accessor("numeroInterno", {
       cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
+        <Box px={5} alignItems={"start"} alignContent={"start"}>
+          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.getValue()}
+          </Badge>
+          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.row.original.id}
+          </Badge> */}
         </Box>
       ),
       header: "numero Interno",
-      size: 100,
-      minSize: 120,
     }),
     columnHelper.accessor("fechaVencimiento", {
+      cell: (info) => {
+        let fecha = moment(info.getValue())
+          .tz("America/Santiago")
+          .format("DD/MM/YYYY");
+        fecha === "Invalid date" ? (fecha = info.getValue().toString()) : fecha;
+
+        return (
+          <span>
+            <Text fontSize="sm">{fecha}</Text>
+          </span>
+        );
+      },
+      header: "Fecha revisión técnica",
+    }),
+    columnHelper.accessor("tipoVehiculo", {
       cell: (info) => {
         return (
           <span>
@@ -125,11 +147,8 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fechaVencimiento",
-      size: 300,
-      minSize: 250,
+      header: "Tipo vehiculo",
     }),
-
     columnHelper.accessor("marca", {
       cell: (info) => {
         return (
@@ -139,8 +158,16 @@ export default function VehiculosViewV1(props: { titulo: string }) {
         );
       },
       header: "marca",
-      size: 300,
-      minSize: 250,
+    }),
+    columnHelper.accessor("modelo", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "modelo",
     }),
     columnHelper.accessor("patente", {
       cell: (info) => {
@@ -154,7 +181,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("modelo", {
+    columnHelper.accessor("kilometraje", {
       cell: (info) => {
         return (
           <span>
@@ -162,22 +189,32 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "modelo",
-      size: 300,
-      minSize: 250,
+      header: "kilometraje",
     }),
-    columnHelper.accessor("tipoVehiculo", {
+    columnHelper.accessor("numeroInterno", {
       cell: (info) => {
+        let color = info.row.original.isEliminado
+          ? "red"
+          : info.row.original.isServicio
+          ? "green"
+          : "yellow";
+        let texto = info.row.original.isEliminado
+          ? "dado de baja"
+          : info.row.original.isServicio
+          ? "en servicio"
+          : "en mantenimiento";
         return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
+          <Box px={5} alignItems={"start"} alignContent={"start"}>
+            <Badge variant="solid" bg={color} fontSize="0.7em">
+              {texto}
+            </Badge>
+          </Box>
         );
       },
-      header: "tipoVehiculo",
-      size: 300,
-      minSize: 250,
+      header: "marca",
     }),
+
+    ,
   ];
 
   return (

@@ -13,7 +13,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 import { Divisiones } from "@/models/division/Disvision";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
@@ -76,7 +76,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
       cell: (info) => {
         return (
           <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
+            <Text fontSize="sm">{info.getValue().toLocaleString()}</Text>
           </span>
         );
       },

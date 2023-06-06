@@ -1,4 +1,5 @@
 import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { getLogoEmpresa } from "@/services/database/empresaServices";
 import {
   getUsuario,
   getUsuarioByUid,
@@ -10,9 +11,10 @@ import { auth } from "../services/config/";
 
 // Define el tipo para el contexto de autenticación
 interface AuthContextType {
-  user: UsuarioVaku | null;
+  currentUser: UsuarioVaku | null;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  logoEmpresa: string | null;
 }
 
 // Crea el contexto de autenticación
@@ -25,40 +27,26 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<UsuarioVaku | null>(null);
+  const [currentUser, setUser] = useState<UsuarioVaku | null>(null);
+  const [logoEmpresa, setLogoEmpresa] = useState<string | null>(null);
 
   useEffect(() => {
     // Observador de estado de autenticación de Firebase
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
         const userSemiComplete = await getUsuarioByUid(user?.uid);
-
+        const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
+        setLogoEmpresa(empresa);
         const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
-        console.log(
-          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ empresaId:",
-          empresaId
-        );
-        console.log(
-          "🚀 ~ file: AuthContext.tsx:39 ~ auth.onAuthStateChanged ~ userSemiComplete:",
-          userSemiComplete
-        );
         let userComplete;
         if (typeof divisionId === "undefined") {
           userComplete = await getUsuarioV1(id, empresaId);
-          console.log(
-            "🚀 ~ file: AuthContext.tsx:50 ~ auth.onAuthStateChanged ~ userComplete:",
-            userComplete
-          );
         } else {
           userComplete = await getUsuario(
             user?.uid,
             empresaId,
             gerenciaId,
             divisionId
-          );
-          console.log(
-            "🚀 ~ file: AuthContext.tsx:57 ~ auth.onAuthStateChanged ~ userComplete:",
-            userComplete
           );
         }
         // El usuario está autenticado
@@ -89,9 +77,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const authContextValue: AuthContextType = {
-    user,
+    currentUser,
     signIn,
     signOut,
+    logoEmpresa,
   };
 
   return (

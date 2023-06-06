@@ -3,7 +3,7 @@ import * as yup from "yup";
 import VakuModel, { IFormBuilder } from "../Vaku";
 
 export class Vehiculo extends VakuModel implements IFormBuilder {
-  fechaVencimiento: string;
+  fechaVencimiento: string | Date;
   isEliminado: boolean;
   isServicio: boolean;
   kilometraje: string;
@@ -11,21 +11,21 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
   modelo: string;
   numeroInterno: string;
   patente: string;
-  proximaMantencion: Date;
+  proximaMantencion: string | Date;
   tipo: string;
   tipoVehiculo: string;
-  ultimaMantencion: Date;
+  ultimaMantencion: string | Date;
 
   getValidationSchema() {
     return yup.object().shape({
       patente: yup.string().required(),
     });
   }
+
   getEmptyObject() {
     return {
       id: "",
       nombre: "",
-      fechaVencimiento: "",
       isEliminado: false,
       isServicio: true,
       kilometraje: "",
@@ -33,10 +33,11 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       modelo: "",
       numeroInterno: "",
       patente: "",
-      proximaMantencion: "",
+      fechaVencimiento: new Date().toISOString(),
+      proximaMantencion: new Date().toISOString(),
+      ultimaMantencion: new Date().toISOString(),
       tipo: "",
       tipoVehiculo: "",
-      ultimaMantencion: "",
     };
   }
   getFormBuilder(options: any = {}) {
@@ -47,7 +48,8 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
         field: "numeroInterno",
         required: true,
         orden: 1,
-        mask: [/^[A-Z]/, /^[A-Z]/, "-", /^[1-9]$/, /^[1-9]$/],
+        uppercase: true,
+        // mask: [/^[A-Z]/, /^[A-Z]/, "-", /^[1-9]$/, /^[1-9]$/],
       },
 
       kilometraje: {
@@ -88,28 +90,30 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
         options: options.tipo,
         required: true,
         orden: 6,
+        single: true,
       },
 
       patente: {
         display: "Patente",
         tipo: CampoFormKey.TEXT_V2,
         mask: [
-          /^[A-Z]/,
-          /^[A-Z]/,
+          /^[A-Za-z]/,
+          /^[A-Za-z]/,
           "-",
-          /^[A-Z]/,
-          /^[A-Z]/,
+          /^[A-Za-z]/,
+          /^[A-Za-z]/,
           "-",
           /^[1-9]$/,
           /^[1-9]$/,
         ], //"aa-aa-99",
+        uppercase: true,
         field: "patente",
         required: true,
         orden: 7,
       },
       proximaMantencion: {
         display: "Próxima Mantención",
-        tipo: CampoFormKey.FECHA_NATIVO,
+        tipo: CampoFormKey.FECHA_CUSTOM,
         field: "proximaMantencion",
         required: true,
         orden: 8,
@@ -117,14 +121,14 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
 
       ultimaMantencion: {
         display: "Última Mantención",
-        tipo: CampoFormKey.FECHA_NATIVO,
+        tipo: CampoFormKey.FECHA_CUSTOM,
         field: "ultimaMantencion",
         required: true,
         orden: 9,
       },
       fechaVencimiento: {
         display: "Fecha de Vencimiento",
-        tipo: CampoFormKey.FECHA_NATIVO,
+        tipo: CampoFormKey.FECHA_CUSTOM,
         field: "fechaVencimiento",
         required: true,
         orden: 10,

@@ -1,4 +1,4 @@
-import { CampoFormKey, TypeField } from "@/utils/global";
+import { CampoFormKey, TypeField, transformedObject } from "@/utils/global";
 import * as yup from "yup";
 import VakuModel from "../Vaku";
 import { Cuadrilla } from "../cuadrilla/Cuadrilla";
@@ -17,11 +17,12 @@ export class UsuarioVaku extends VakuModel {
   email: string;
   empresa: string;
   empresaId: string;
-  fechaVencimientoLicencia: string;
+  fechaVencimientoLicencia: string | Date;
   fotografia: Fotografia;
   isActive: boolean;
   isEliminado: boolean;
   licencia: string;
+  licencias: [];
   notificacionDocumentos: number;
   notificacionMisDocumentos: number;
   notificacionMisSeguimientosDePlanes: number;
@@ -51,11 +52,11 @@ export class UsuarioVaku extends VakuModel {
       email: "",
       empresa: "",
       empresaId: "",
-      fechaVencimientoLicencia: "",
+      fechaVencimientoLicencia: new Date().toISOString(),
       fotografia: {},
-      isActive: false,
+      isActive: true,
       isEliminado: false,
-      licencia: "",
+      licencias: [],
       notificacionDocumentos: 0,
       notificacionMisDocumentos: 0,
       notificacionMisSeguimientosDePlanes: 0,
@@ -132,23 +133,30 @@ export class UsuarioVaku extends VakuModel {
         required: true,
         options: options.turno,
         orden: 9,
+        single: true,
       },
+
       fechaVencimientoLicencia: {
         display: "Fecha de Vencimiento de Licencia",
-        tipo: CampoFormKey.FECHA_NATIVO,
+        tipo: CampoFormKey.FECHA_CUSTOM,
         field: "fechaVencimientoLicencia",
         required: true,
         orden: 10,
       },
 
-      licencia: {
-        display: "Licencia",
+      licencias: {
+        display: "Licencias",
         tipo: CampoFormKey.DROPDOWN_V2,
-        field: "licencia",
+        field: "licencias",
         required: true,
         isMulti: true,
         options: options.licencia,
         orden: 11,
+        typeField: TypeField.Object,
+        transform: (value: any) => {
+          let permisos = transformedObject(value, "value");
+          return permisos;
+        },
       },
       permisos: {
         display: "Permisos",
@@ -164,13 +172,12 @@ export class UsuarioVaku extends VakuModel {
             "🚀 ~ file: Usuario.ts:172 ~ UsuarioVaku ~ getFormBuilder ~ any:",
             value
           );
-          return value.map((item: any) => {
-            return {
-              codigo: item.value,
-              displayName: item.label,
-              id: item.value,
-            };
-          });
+          let permisos = transformedObject(value, "value");
+          console.log(
+            "🚀 ~ file: Usuario.ts:174 ~ UsuarioVaku ~ permisos ~ permisos:",
+            permisos
+          );
+          return permisos;
         },
         single: false,
       },

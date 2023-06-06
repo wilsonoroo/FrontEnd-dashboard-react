@@ -10,7 +10,12 @@ interface FormControlsProps {
   values: any;
   getItemForm: (
     item: CampoForm,
-    setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void
+    setFieldValue: (
+      field: string,
+      value: any,
+      shouldValidate?: boolean
+    ) => void,
+    value?: any
   ) => JSX.Element;
   camposForm: Record<string, any>;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
@@ -23,6 +28,7 @@ const FormControls: React.FC<FormControlsProps> = ({
   getItemForm,
   camposForm,
   setFieldValue,
+  values,
 }) => {
   const filteredObjects = fields
     .filter((key) => Object.keys(camposForm).includes(key))
@@ -36,6 +42,7 @@ const FormControls: React.FC<FormControlsProps> = ({
   return (
     <SimpleGrid columns={2} spacing={2}>
       {filteredObjects.map(function (field) {
+        console.log(getIn(values, field as string));
         return (
           <FormControl
             key={field as string}
@@ -44,7 +51,11 @@ const FormControls: React.FC<FormControlsProps> = ({
             }
             isRequired={getIn(camposForm, field as string)?.required ?? false}
           >
-            {getItemForm(camposForm[`${field}`], setFieldValue)}
+            {getItemForm(
+              camposForm[`${field}`],
+              setFieldValue,
+              getIn(values, field as string)
+            )}
             <ErrorMessage name={field}>
               {(msg) => <FormErrorMessage>{msg}ss</FormErrorMessage>}
             </ErrorMessage>

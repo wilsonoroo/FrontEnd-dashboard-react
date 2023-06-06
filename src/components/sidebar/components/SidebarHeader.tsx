@@ -1,6 +1,7 @@
-import { Text } from "@chakra-ui/react";
+import useAuth from "@/hooks/useAuth";
+import { Box, Image } from "@chakra-ui/react";
 import styled from "@emotion/styled";
-import React from "react";
+import React, { useEffect } from "react";
 
 interface SidebarHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
@@ -48,13 +49,26 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
   ...rest
 }) => {
   const rtl = false;
+  const userAuth = useAuth();
+  console.log("🚀 ~ file: SidebarHeader.tsx:53 ~ userAuth:", userAuth);
+
+  const [url, setUrl] = React.useState(userAuth.logoEmpresa);
+
+  useEffect(() => {
+    console.log(url);
+    setUrl(userAuth.logoEmpresa);
+  }, [userAuth]);
   return (
     <StyledSidebarHeader {...rest}>
       <div style={{ display: "flex", alignItems: "center" }}>
-        <StyledLogo rtl={rtl}>V</StyledLogo>
+        <Box>
+          <Image src={url} alt="logo" w={170} />
+        </Box>
+
+        {/* <StyledLogo rtl={rtl}>V</StyledLogo>
         <Text fontSize="md" pl="10px">
           {"Vaku"}
-        </Text>
+        </Text> */}
       </div>
     </StyledSidebarHeader>
   );

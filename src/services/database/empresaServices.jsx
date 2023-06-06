@@ -89,3 +89,19 @@ export const getEmpresaById = async (id) => {
     return null;
   }
 };
+
+export const getLogoEmpresa = async (id) => {
+  try {
+    const snapshot = await get(
+      child(ref(database), `empresas/${id}/config/logo`)
+    );
+    if (snapshot.exists()) {
+      return snapshot.val();
+    } else {
+      return null;
+    }
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};

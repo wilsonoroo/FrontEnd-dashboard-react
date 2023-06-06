@@ -1,23 +1,46 @@
+// En el archivo PrivateRoute.tsx
 import { AuthContext } from "@/contexts/AuthContextFb";
 import React, { useContext } from "react";
-import { Navigate, RouteProps, Route as RouterRoute } from "react-router-dom";
+import { Navigate, Route, RouteProps } from "react-router-dom";
 
 interface PrivateRouteProps extends Omit<RouteProps, "element" | "index"> {
   component: React.ComponentType<any>;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({
+export const PrivateRoute: React.FC<PrivateRouteProps> = ({
   component: Component,
   ...rest
 }) => {
-  const { user } = useContext(AuthContext);
+  const { currentUser } = useContext(AuthContext);
 
-  return (
-    <RouterRoute
-      {...rest}
-      element={user ? <Component {...rest} /> : <Navigate to="/auth" replace />}
-    />
-  );
+  if (currentUser) {
+    return <Route {...rest} element={<Component />} />;
+  } else {
+    return <Navigate to="/auth" replace />;
+  }
 };
 
-export default PrivateRoute;
+import { useEffect } from "react";
+import useAuth from "../hooks/useAuth";
+interface PrivateRouteProps {
+  componente: React.ComponentType<any>;
+  permisos?: Array<any>;
+}
+
+export const PrivateRouteDos: React.FC<PrivateRouteProps> = ({
+  componente: Componente,
+}) => {
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    console.log(currentUser);
+  }, [currentUser]);
+
+  console.log(currentUser);
+
+  if (currentUser) {
+    return <Componente />;
+  } else {
+    return <Navigate to="/auth" />;
+  }
+};

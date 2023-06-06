@@ -25,7 +25,7 @@ interface AgregarFormProps<T> {
   refreshData?: () => void;
   fieldsToExclude: string[];
   model: T;
-  onSubmit: (values: T) => void;
+  onSubmit: (values: T, resetForm: () => void) => void;
   loading: boolean;
   options?: any;
   titulo?: string;
@@ -49,8 +49,8 @@ AgregarFormProps<T>) => {
   const validationSchema = model.getValidationSchema();
   const camposForm = model.getFormBuilder(options);
 
-  const handleSubmitForm = (values: any) => {
-    onSubmit(values);
+  const handleSubmitForm = (values: any, resetForm: () => void) => {
+    onSubmit(values, resetForm);
   };
 
   return (
@@ -60,9 +60,7 @@ AgregarFormProps<T>) => {
       validateOnBlur={false}
       initialValues={initialValues}
       onSubmit={async (values, { resetForm }) => {
-        handleSubmitForm(values);
-        resetForm();
-        onClose();
+        handleSubmitForm(values, resetForm);
       }}
     >
       {({
@@ -74,7 +72,6 @@ AgregarFormProps<T>) => {
         setFieldValue,
       }) => {
         Object.keys(errors).map((key) => {
-          console.log(typeof errors[key]);
           return errors[key];
         });
         return (
@@ -86,9 +83,6 @@ AgregarFormProps<T>) => {
               onClose();
             }}
             handleSubmit={() => {
-              console.log(errors);
-              console.log(values);
-
               handleSubmit();
             }}
             titulo={titulo}
@@ -121,7 +115,6 @@ AgregarFormProps<T>) => {
               <Box>
                 {errors &&
                   Object.keys(errors).map((key) => {
-                    console.log(errors[key]);
                     return (
                       <Alert status="error" variant="left-accent">
                         <AlertIcon />

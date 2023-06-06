@@ -9,7 +9,7 @@ import RouterAdmin from "@layouts/admin/RoutesAdmin";
 import { createBrowserRouter, useRoutes } from "react-router-dom";
 
 // Custom Chakra theme
-export default function Dashboard(props: { [x: string]: any }) {
+export default function AdminLayout(props: { [x: string]: any }) {
   const { toggled, ...rest } = props;
 
   // eslint-disable-next-line prefer-const
