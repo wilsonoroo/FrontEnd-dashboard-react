@@ -124,11 +124,11 @@ function SignIn() {
               />
 
               <InputVakuPass
-                label="Correo electronico"
+                label="Contraseña"
                 id={"password"}
                 name={"password"}
                 extra={<Text color={brandStars}>*</Text>}
-                placeholder={"Correo electronico"}
+                placeholder={"Contraseña"}
                 type={"text"}
                 color={textColor}
                 mb={undefined}

@@ -21,7 +21,7 @@ export class Utils extends VakuModel implements IFormBuilder {
 
 export class CategoriaVehiculo extends VakuModel {
   codigo: string;
-  displayName: string;
+
   tiposVehiculo: TiposDeVehiculo[];
 
   getValidationSchema() {
@@ -37,7 +37,7 @@ export class CategoriaVehiculo extends VakuModel {
 
 export class TiposDeVehiculo extends VakuModel {
   codigo: string;
-  displayName: string;
+
   getValidationSchema() {
     throw new Error("Method not implemented.");
   }

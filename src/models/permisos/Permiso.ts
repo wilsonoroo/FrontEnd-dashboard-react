@@ -1,6 +1,8 @@
 import VakuModel from "../Vaku";
 
 export class Permiso extends VakuModel {
+  codigo: string;
+
   getValidationSchema() {
     throw new Error("Method not implemented.");
   }
@@ -10,8 +12,6 @@ export class Permiso extends VakuModel {
   getEmptyObject() {
     throw new Error("Method not implemented.");
   }
-  codigo: string;
-  displayName: string;
 
   get value(): string {
     return this.codigo;

@@ -36,7 +36,7 @@ export const menuApp: Menus[] = [
         layout: "admin",
         path: "/admin/config",
         id: "main_dash",
-        disabled: false,
+        disabled: true,
         icon: (
           <Icon
             as={MdOutlineSettings}

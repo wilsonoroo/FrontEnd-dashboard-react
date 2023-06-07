@@ -11,7 +11,7 @@ export class Rol extends VakuModel {
   getEmptyObject() {
     throw new Error("Method not implemented.");
   }
-  displayName: string;
+
   permisos: Permiso[];
 
   get value(): string {

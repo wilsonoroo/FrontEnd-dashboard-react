@@ -23,6 +23,7 @@ export interface IChecklist extends VakuModel {
 export class Checklist implements IChecklist {
   abreviatura: string;
   categoria: string;
+  displayName: string;
   configuracion: Configuracion;
   descripcion: string;
   empresa: string;

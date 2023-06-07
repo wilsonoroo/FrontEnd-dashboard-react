@@ -14,6 +14,11 @@ export class DocumentoVaku extends VakuModel {
     token: string;
     url: string;
   };
+  cuadrilla: {
+    integrantes: {
+      [key: string]: UsuarioVaku;
+    };
+  };
   emisor: UsuarioVaku;
   empresaid?: string;
   gerencia?: string;

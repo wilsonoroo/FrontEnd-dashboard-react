@@ -138,7 +138,6 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "Docs",
     }),
-
     columnHelper.accessor("correlativo", {
       cell: (info) => {
         return (
@@ -191,6 +190,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "Tipo Documento",
     }),
+
     columnHelper.accessor("fechaCreacion", {
       cell: (info) => {
         let fecha = moment.utc(info.getValue());
@@ -255,13 +255,6 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "emisor",
     }),
-    columnHelper.accessor("estado", {
-      cell: (info) => {
-        const color = getEstateColor(info.getValue());
-        return <Badge colorScheme={color.color}>{color.text}</Badge>;
-      },
-      header: "estado",
-    }),
     columnHelper.accessor("validadoPor", {
       cell: (info) => {
         const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
@@ -301,7 +294,47 @@ export default function DocumentosViewV1(props: { titulo: string }) {
           </>
         );
       },
-      header: "emisor",
+      header: "Validado por",
+    }),
+    columnHelper.accessor("correlativo", {
+      cell: (info) => {
+        let cuadrilla = info.row.original?.cuadrilla?.integrantes;
+        !cuadrilla ??
+          Object.keys(cuadrilla).map((key) => {
+            console.log(cuadrilla[key]);
+          });
+        return (
+          <Stack spacing={2}>
+            {cuadrilla ? (
+              Object.keys(cuadrilla).map((key) => {
+                console.log(cuadrilla[key]);
+                return (
+                  <Box>
+                    <Badge
+                      variant="outline"
+                      colorScheme="vaku"
+                      fontSize="0.7em"
+                    >
+                      {cuadrilla[key].displayName}
+                    </Badge>
+                  </Box>
+                );
+              })
+            ) : (
+              <></>
+            )}
+          </Stack>
+        );
+      },
+      header: "Participantes",
+    }),
+
+    columnHelper.accessor("estado", {
+      cell: (info) => {
+        const color = getEstateColor(info.getValue());
+        return <Badge colorScheme={color.color}>{color.text}</Badge>;
+      },
+      header: "estado",
     }),
   ];
 

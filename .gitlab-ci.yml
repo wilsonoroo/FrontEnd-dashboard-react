@@ -3,7 +3,7 @@ image: node:latest
 .deploy: &deploy
 - npm install -g pnpm
 - npm install -g firebase-tools
-- firebase use <YOUR PROJECT ID> --token $FIREBASE_TOKEN
+- firebase use vaku-89121 --token $FIREBASE_TOKEN
 - pnpm i
 - pnpm run build
 
