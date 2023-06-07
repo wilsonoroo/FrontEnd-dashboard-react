@@ -4,7 +4,7 @@ export class LogoEmpressa extends VakuModel {
   getValidationSchema() {
     throw new Error("Method not implemented.");
   }
-  getFormBuilder(options?: any) {
+  getFormBuilder(_options?: any) {
     throw new Error("Method not implemented.");
   }
   getEmptyObject() {

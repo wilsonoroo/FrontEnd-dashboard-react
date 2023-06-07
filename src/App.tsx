@@ -15,31 +15,17 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route
-          path="/admin/*"
-          element={<PrivateRoute component={AdminLayout} />}
-        />
-        <Route path="/auth/*" element={<AuthLayout />} />
-
-        <Route
-          path="/admin/*"
-          element={<PrivateRoute component={AdminLayout} />}
-        />
-
-        <Route path="/" element={<Navigate replace={true} to="auth" />} /> */}
-
+        <Route path="/" element={<Navigate replace={true} to="/auth" />} />
         <Route
           path={`/admin/*`}
           element={
-            <PrivateRouteDos
-              permisos={["admin"]}
-              component={AdminLayout}
-              componente={AdminLayout}
-            />
+            <PrivateRouteDos>
+              <AdminLayout />
+            </PrivateRouteDos>
           }
         />
+
         <Route path={`/auth/*`} element={<AuthLayout />} />
-        <Route path="/" element={<Navigate replace={true} to="/auth" />} />
       </Routes>
     </BrowserRouter>
   );

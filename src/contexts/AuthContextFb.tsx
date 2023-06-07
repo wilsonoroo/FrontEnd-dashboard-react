@@ -15,6 +15,7 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   logoEmpresa: string | null;
+  loading: boolean;
 }
 
 // Crea el contexto de autenticación
@@ -29,14 +30,20 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setUser] = useState<UsuarioVaku | null>(null);
   const [logoEmpresa, setLogoEmpresa] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     // Observador de estado de autenticación de Firebase
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
+      console.log(
+        "🚀 ~ file: AuthContextFb.tsx:38 ~ unsubscribe ~ user:",
+        user
+      );
+
       if (user) {
         const userSemiComplete = await getUsuarioByUid(user?.uid);
         const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
-        setLogoEmpresa(empresa);
+
         const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
         let userComplete;
         if (typeof divisionId === "undefined") {
@@ -49,11 +56,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             divisionId
           );
         }
-        // El usuario está autenticado
+
         setUser(userComplete);
+        setLogoEmpresa(empresa);
+        setLoading(true);
       } else {
-        // El usuario no está autenticado
-        setUser(null);
+        setLoading(true);
       }
     });
 
@@ -71,6 +79,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     try {
       await auth.signOut();
+      setUser(null);
+      setLoading(false);
     } catch (error) {
       console.log("Error al cerrar sesión:", error);
     }
@@ -81,8 +91,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signIn,
     signOut,
     logoEmpresa,
+    loading,
   };
-
+  if (!loading) {
+    return <div>Loading</div>;
+  }
   return (
     <AuthContext.Provider value={authContextValue}>
       {children}

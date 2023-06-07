@@ -1,6 +1,7 @@
 import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
 import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
+import Empresas from "@/pages/admin/empresas";
 import DetalleEmpresa from "@/pages/admin/empresas/DetalleEmpresa";
 import DivisionPage from "@/pages/admin/gerencias/Division";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
@@ -16,6 +17,12 @@ export const routesAdmin: RouterJson[] = [
     path: "/admin",
     element: <ContenidoDetalleV1 titulo={"Administrador"} />,
     name: "Admin",
+  },
+  {
+    path: "empresas",
+    element: <Empresas titulo={"Gerencia"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
   },
   {
     path: "empresas/:id",
@@ -47,12 +54,7 @@ export const routesAdmin: RouterJson[] = [
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
-  {
-    path: "empresas",
-    element: <ContenidoDetalleV1 titulo={"Documentos"} />,
-    name: "Empresas",
-    isSubMenu: false,
-  },
+
   {
     path: "logout",
     element: <LogOutview titulo={"Administrador"} />,

@@ -56,11 +56,11 @@ export default function UsuariosView1(props: { titulo: string }) {
     sexo: [
       {
         value: "masculino",
-        label: "Masculino",
+        label: "masculino",
       },
       {
         value: "femenino",
-        label: "Femenino",
+        label: "femenino",
       },
     ],
     turno: [],

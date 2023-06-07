@@ -1,15 +1,28 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
+import { AuthContext } from "@/contexts/AuthContextFb";
 import { routesAuth } from "@/navigation/route/route.auth";
 import { Box, useColorModeValue } from "@chakra-ui/react";
 import { SidebarContext } from "@contexts/SidebarContext";
 import RoutesAuth from "@layouts/auth/RoutesAuth";
-import { useRoutes } from "react-router-dom";
+import { useNavigate, useRoutes } from "react-router-dom";
 // Layout components
 // import { SidebarContext } from "contexts/SidebarContext";
 
 // Custom Chakra theme
 export default function Auth() {
+  const { currentUser } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  // NOTE: console log for testing purposes
+  console.log("User:", !!currentUser);
+
+  // Check if currentUser exists on initial render
+  useEffect(() => {
+    if (currentUser) {
+      navigate("/admin/");
+    }
+  }, [currentUser]);
   // states and functions
   const [toggleSidebar, setToggleSidebar] = useState(false);
   const getRoute = () => {

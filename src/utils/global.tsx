@@ -12,6 +12,15 @@ import {
   NumberInputStepper,
   SimpleGrid,
   Switch,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 // import { DatePicker } from "chakra-ui-date-input";
@@ -40,6 +49,7 @@ export interface CampoForm {
   onChangeValue?: (newValue: any) => void;
   mask?: null | string;
   uppercase?: boolean | null;
+  seccion?: string;
 }
 
 export enum CampoFormKey {
@@ -56,6 +66,7 @@ export enum CampoFormKey {
   NUMBER = "number",
   EMAIL = "email",
   SWITCH = "switch",
+  PERMISOS = "permisos",
 }
 
 export default {};
@@ -350,11 +361,68 @@ export function getItemForm<T extends VakuModel>(
               }}
               configs={{
                 dateFormat: "dd-MM-yyyy",
-                dayNames: "abcdefg".split(""), // length of 7
-                monthNames: "ABCDEFGHIJKL".split(""), // length of 12
-                firstDayOfWeek: 2, // default is 0, the dayNames[0], which is Sunday if you don't specify your own dayNames,
+                dayNames: ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"], // length of 7
+                monthNames: [
+                  "Enero",
+                  "Febrero",
+                  "Marzo",
+                  "Abril",
+                  "Mayo",
+                  "Junio",
+                  "Julio",
+                  "Agosto",
+                  "Septiembre",
+                  "Octubre",
+                  "Noviembre",
+                  "Diciembre",
+                ], // length of 12
+                firstDayOfWeek: 0, // default is 0, the dayNames[0], which is Sunday if you don't specify your own dayNames,
               }}
             />
+          </>
+        );
+      }
+      case CampoFormKey.PERMISOS: {
+        return (
+          <>
+            <TableContainer>
+              <Table variant="simple">
+                <TableCaption>
+                  Imperial to metric conversion factors
+                </TableCaption>
+                <Thead>
+                  <Tr>
+                    <Th>To convert</Th>
+                    <Th>into</Th>
+                    <Th isNumeric>multiply by</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td>inches</Td>
+                    <Td>millimetres (mm)</Td>
+                    <Td isNumeric>25.4</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>feet</Td>
+                    <Td>centimetres (cm)</Td>
+                    <Td isNumeric>30.48</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>yards</Td>
+                    <Td>metres (m)</Td>
+                    <Td isNumeric>0.91444</Td>
+                  </Tr>
+                </Tbody>
+                <Tfoot>
+                  <Tr>
+                    <Th>To convert</Th>
+                    <Th>into</Th>
+                    <Th isNumeric>multiply by</Th>
+                  </Tr>
+                </Tfoot>
+              </Table>
+            </TableContainer>
           </>
         );
       }

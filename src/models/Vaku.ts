@@ -41,6 +41,7 @@ export default abstract class VakuModel
   }
   id: string;
   nombre: string;
+  displayName: string;
   createdAt: Date;
   updatedAt: Date;
 
@@ -48,7 +49,7 @@ export default abstract class VakuModel
     return this.id;
   }
   get label(): string {
-    return this.nombre;
+    return this.displayName;
   }
 
   abstract getValidationSchema(): any;

@@ -74,7 +74,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
         orden: 4,
       },
       tipoVehiculo: {
-        display: "Tipo de Vehículo",
+        display: "Categoria de Vehículo",
         tipo: CampoFormKey.DROPDOWN_V2,
         field: "tipoVehiculo",
         placeholder: "Seleccione un tipo de vehículo",
@@ -84,7 +84,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
         single: true,
       },
       tipo: {
-        display: "Tipo",
+        display: "Tipo de vehículo",
         tipo: CampoFormKey.CREATE_SELECT,
         field: "tipo",
         options: options.tipo,
@@ -127,7 +127,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
         orden: 9,
       },
       fechaVencimiento: {
-        display: "Fecha de Vencimiento",
+        display: "Vencimiento revisión técnica",
         tipo: CampoFormKey.FECHA_CUSTOM,
         field: "fechaVencimiento",
         required: true,

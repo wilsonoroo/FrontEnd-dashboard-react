@@ -20,7 +20,9 @@ interface FormControlsProps {
   camposForm: Record<string, any>;
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void;
 }
-
+type ObjectoType = {
+  [key: string]: CampoForm;
+};
 const FormControls: React.FC<FormControlsProps> = ({
   errors,
   touched,
@@ -30,19 +32,37 @@ const FormControls: React.FC<FormControlsProps> = ({
   setFieldValue,
   values,
 }) => {
-  const filteredObjects = fields
-    .filter((key) => Object.keys(camposForm).includes(key))
+  //AGRUPAR VALORES POR SECCION
+  const seccionado = Object.keys(camposForm).reduce(
+    (acumulador: { [seccion: string]: ObjectoType }, key: string) => {
+      const seccion = camposForm[key].seccion || "global";
+      if (!acumulador[seccion]) {
+        acumulador[seccion] = {};
+      }
+      acumulador[seccion][key] = camposForm[key];
+      return acumulador;
+    },
+    {}
+  );
+
+  const filteredObjects: string[] = fields
+    .filter((key) => Object.keys(seccionado.global).includes(key))
     .sort((a, b) => {
       const ordenA = camposForm[a].orden;
       const ordenB = camposForm[b].orden;
 
       return ordenA - ordenB;
     });
+  console.log(
+    "🚀 ~ file: FormControls.tsx:56 ~ seccionado:",
+    seccionado,
+    filteredObjects,
+    camposForm
+  );
 
   return (
     <SimpleGrid columns={2} spacing={2}>
       {filteredObjects.map(function (field) {
-        console.log(getIn(values, field as string));
         return (
           <FormControl
             key={field as string}

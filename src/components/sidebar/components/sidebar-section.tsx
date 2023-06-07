@@ -21,7 +21,6 @@ export const SidebarSection = (props: SidebarSectionProps) => {
     "secondaryGray.600"
   );
   const subComps = useDisclosure();
-  console.log(section);
 
   return (
     <>

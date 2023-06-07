@@ -61,9 +61,11 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
         <Tabs index={tabIndex} onChange={handleTabsChange}>
           <TabList>
             <Tab>Documuentos</Tab>
-            <Tab isDisabled>Plan de Accion</Tab>
+            <Tab isDisabled>Plan de Acción</Tab>
             <Tab>Vehiculos</Tab>
             <Tab isDisabled>Equipos</Tab>
+            <Tab isDisabled>Herramientas</Tab>
+            <Tab isDisabled>Maquinas</Tab>
             <Tab>Usuarios</Tab>
           </TabList>
           <TabPanels>
@@ -75,6 +77,12 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
             </TabPanel>
             <TabPanel>
               <VehiculosViewV1 titulo="Vehiculos" />
+            </TabPanel>
+            <TabPanel>
+              <EquiposViewV1 titulo="Equipos" />
+            </TabPanel>
+            <TabPanel>
+              <EquiposViewV1 titulo="Equipos" />
             </TabPanel>
             <TabPanel>
               <EquiposViewV1 titulo="Equipos" />

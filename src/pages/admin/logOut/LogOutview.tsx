@@ -17,7 +17,7 @@ export default function LogOutview(props: { titulo: string }) {
         setLogger(true);
       })
       .catch(function (error) {
-        console.log(
+        console.error(
           "🚀 ~ file: LogOutview.tsx:17 ~ auth.signOut ~ error:",
           error
         );

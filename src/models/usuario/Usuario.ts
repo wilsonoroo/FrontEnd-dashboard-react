@@ -12,7 +12,7 @@ export class UsuarioVaku extends VakuModel {
   cargo: string;
   codigo: string;
   cuadrilla: Cuadrilla[];
-  displayName: string;
+
   dispositivos: Dispositivos[];
   email: string;
   empresa: string;
@@ -28,6 +28,7 @@ export class UsuarioVaku extends VakuModel {
   notificacionMisSeguimientosDePlanes: number;
   notificacionSeguimientosDePlanes: number;
   permisos: any;
+  newPermisos: any;
   rol: Rol;
   rut: string;
   sexo: string;
@@ -67,6 +68,7 @@ export class UsuarioVaku extends VakuModel {
       sexo: "",
       turno: "",
       enrolamiento: {},
+      newPermisos: [],
     };
   }
 
@@ -117,31 +119,22 @@ export class UsuarioVaku extends VakuModel {
         required: true,
         orden: 6,
       },
-
-      rol: {
-        display: "Rol",
-        tipo: CampoFormKey.DROPDOWN_V2,
-        field: "rol",
+      fechaVencimientoLicencia: {
+        display: "Fecha de Vencimiento de Licencia de Conducir",
+        tipo: CampoFormKey.FECHA_CUSTOM,
+        field: "fechaVencimientoLicencia",
         required: true,
-        options: options.rol,
-        orden: 8,
+        orden: 7,
       },
+
       turno: {
         display: "Turno",
         tipo: CampoFormKey.CREATE_SELECT,
         field: "turno",
         required: true,
         options: options.turno,
-        orden: 9,
+        orden: 8,
         single: true,
-      },
-
-      fechaVencimientoLicencia: {
-        display: "Fecha de Vencimiento de Licencia",
-        tipo: CampoFormKey.FECHA_CUSTOM,
-        field: "fechaVencimientoLicencia",
-        required: true,
-        orden: 10,
       },
 
       licencias: {
@@ -151,12 +144,21 @@ export class UsuarioVaku extends VakuModel {
         required: true,
         isMulti: true,
         options: options.licencia,
-        orden: 11,
+        orden: 9,
         typeField: TypeField.Object,
         transform: (value: any) => {
           let permisos = transformedObject(value, "value");
           return permisos;
         },
+        seccion: "Licencias",
+      },
+      rol: {
+        display: "Rol",
+        tipo: CampoFormKey.DROPDOWN_V2,
+        field: "rol",
+        required: true,
+        options: options.rol,
+        orden: 10,
       },
       permisos: {
         display: "Permisos",
@@ -164,7 +166,7 @@ export class UsuarioVaku extends VakuModel {
         field: "permisos",
         required: true,
         options: options.permisos,
-        orden: 12,
+        orden: 11,
         isMulti: true,
         typeField: TypeField.Object,
         transform: (value: any) => {
@@ -181,6 +183,22 @@ export class UsuarioVaku extends VakuModel {
         },
         single: false,
       },
+      // newPermisos: {
+      //   display: "Permisos",
+      //   tipo: CampoFormKey.PERMISOS,
+      //   field: "permisos",
+      //   required: true,
+      //   options: options.permisos,
+      //   orden: 11,
+      //   isMulti: true,
+      //   typeField: TypeField.Object,
+      //   transform: (value: any) => {
+      //     let permisos = transformedObject(value, "value");
+
+      //     return permisos;
+      //   },
+      //   single: false,
+      // },
 
       isActive: {
         display: "Usuario activo",
@@ -188,7 +206,7 @@ export class UsuarioVaku extends VakuModel {
         field: "isActive",
         required: true,
 
-        orden: 13,
+        orden: 12,
       },
     };
   }
