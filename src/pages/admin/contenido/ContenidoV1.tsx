@@ -60,8 +60,8 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
       <>
         <Tabs index={tabIndex} onChange={handleTabsChange}>
           <TabList>
-            <Tab>Documuentos</Tab>
-            <Tab isDisabled>Plan de Acción</Tab>
+            <Tab>Documentos</Tab>
+            <Tab >Plan de Acción</Tab>
             <Tab>Vehiculos</Tab>
             <Tab isDisabled>Equipos</Tab>
             <Tab isDisabled>Herramientas</Tab>
