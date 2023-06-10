@@ -17,7 +17,7 @@ import EquiposViewV1 from "./equipos/EquiposViewV1";
 import PlanDeAccionViewV1 from "./planDeAccion/PlanDeAccionViewV1";
 import UsuariosViewV1 from "./usuarios/UsuariosViewV1";
 import VehiculosViewV1 from "./vehiculos/VehiculosViewV1";
-import HerramientasViewV1 from "./herramientas/herramientasViewV1";
+import HerramientasViewV1 from "./herramientas/HerramientasViewV1";
 
 export default function ContenidoDetalleV1(props: { titulo: string }) {
   const { titulo } = props;
@@ -64,12 +64,10 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
             <Tab>Documentos</Tab>
             <Tab >Plan de Acción</Tab>
             <Tab>Vehiculos</Tab>
-            <Tab isDisabled>Equipos</Tab>
-            <Tab isDisabled>Herramientas</Tab>
+            <Tab >Equipos</Tab>
+            <Tab >Herramientas</Tab>
             <Tab isDisabled>Maquinas</Tab>
             <Tab>Usuarios</Tab>
-            <Tab>Herramientas</Tab>
-            <Tab>Equipos</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -85,20 +83,12 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
               <EquiposViewV1 titulo="Equipos" />
             </TabPanel>
             <TabPanel>
-              <EquiposViewV1 titulo="Equipos" />
-            </TabPanel>
-            <TabPanel>
-              <EquiposViewV1 titulo="Equipos" />
-            </TabPanel>
+              <HerramientasViewV1 titulo="Herramientas" />
+            </TabPanel>            
             <TabPanel>
               <UsuariosViewV1 titulo="Usuarios" />
             </TabPanel>
-            <TabPanel>
-              <HerramientasViewV1 titulo="Herramientas" />
-            </TabPanel>
-            <TabPanel>
-              <EquiposViewV1 titulo="Equipos" />
-            </TabPanel>
+          
           </TabPanels>
         </Tabs>
       </>
