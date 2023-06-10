@@ -20,27 +20,30 @@ import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Equipo } from "@/models/equipo/Equipo";
+import FormVaku from "@/components/forms/FormVaku";
 
 export default function EquiposViewV1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState({});
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
   const newDivision = new Divisiones();
   const { currentUser } = useContext(AuthContext);
 
-  let divisionRepository: FirebaseRealtimeRepository<Vehiculo>;
+  let divisionRepository: FirebaseRealtimeRepository<Equipo>;
   if (idEmpresa === undefined) {
-    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
-      `empresas/${currentUser.empresaId}/vehiculos`
+    divisionRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaId}/equipos/maquinasEquipos`
     );
   } else {
-    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
-      `empresas/${idEmpresa}/vehiculos`
+    divisionRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaId}/equipos/maquinasEquipos`
     );
   }
 
@@ -49,41 +52,11 @@ export default function EquiposViewV1(props: { titulo: string }) {
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(Vehiculo));
+  } = useFetch(() => divisionRepository.getAll(Equipo));
 
-  const columnHelper = createColumnHelper<Vehiculo>();
+  const columnHelper = createColumnHelper<Equipo>();
 
   const columns = [
-    columnHelper.accessor("numeroInterno", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "numero Interno",
-      size: 100,
-      minSize: 120,
-    }),
-    columnHelper.accessor("fechaVencimiento", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue().toLocaleString()}</Text>
-          </span>
-        );
-      },
-      header: "fechaVencimiento",
-      size: 300,
-      minSize: 250,
-    }),
 
     columnHelper.accessor("marca", {
       cell: (info) => {
@@ -97,18 +70,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("patente", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "patente",
-      size: 300,
-      minSize: 250,
-    }),
+    
     columnHelper.accessor("modelo", {
       cell: (info) => {
         return (
@@ -121,7 +83,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("tipoVehiculo", {
+    columnHelper.accessor("tipo", {
       cell: (info) => {
         return (
           <span>
@@ -129,7 +91,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "tipoVehiculo",
+      header: "tipo",
       size: 300,
       minSize: 250,
     }),
@@ -137,26 +99,27 @@ export default function EquiposViewV1(props: { titulo: string }) {
 
   return (
     <>
-      <>
-        {!loadingData ? (
-          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
-            <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-              <TableLayout
-                titulo={"Equipos"}
-                textButtonAdd={" Agregar Division"}
-                onOpen={onOpen}
-                onReload={refreshData}
-              >
-                <DataTable columns={columns} data={division} />
-              </TableLayout>
-            </Grid>
-          </Box>
-        ) : (
-          <>Cargando..</>
-        )}
-      </>
-
-      <Flex></Flex>
+    <>
+      {!loadingData ? (
+        <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+          <Grid templateColumns="repeat(1, 1fr)" gap={6}>
+            <TableLayout
+              titulo={"Equipos"}
+              textButtonAdd={" Agregar Division"}
+              onOpen={onOpen}
+              onReload={refreshData}
+              hiddenButtonAdd
+            >
+              <DataTable columns={columns} data={division} />
+            </TableLayout>
+          </Grid>
+        </Box>
+      ) : (
+        <>Cargando..</>
+      )}
     </>
+
+    <Flex></Flex>
+  </>
   );
 }
