@@ -19,7 +19,7 @@ staging:
   before_script:
     - *deploy
   only:
-    - tags
+    - developer
   script:
     - firebase deploy -m "Pipe $CI_PIPELINE_ID Build $CI_BUILD_ID" --only hosting:vaku-admin --non-interactive --token $FIREBASE_TOKEN
 
@@ -28,7 +28,7 @@ production:
   before_script:
     - *deploy
   only:
-    - tags
+    - developer
   when: manual
   allow_failure: false
   script:
