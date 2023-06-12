@@ -1,3 +1,4 @@
+import Loading from "@/components/Loading";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { getLogoEmpresa } from "@/services/database/empresaServices";
 import {
@@ -35,11 +36,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     // Observador de estado de autenticación de Firebase
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log(
-        "🚀 ~ file: AuthContextFb.tsx:38 ~ unsubscribe ~ user:",
-        user
-      );
-
       if (user) {
         const userSemiComplete = await getUsuarioByUid(user?.uid);
         const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
@@ -59,8 +55,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
         setUser(userComplete);
         setLogoEmpresa(empresa);
-        setLoading(true);
+        setTimeout(() => {
+          setLoading(true);
+        }, 15000);
       } else {
+        setUser(null);
         setLoading(true);
       }
     });
@@ -79,8 +78,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const signOut = async () => {
     try {
       await auth.signOut();
+      setTimeout(() => {
+        setLoading(false);
+      }, 5000);
+
       setUser(null);
-      setLoading(false);
     } catch (error) {
       console.log("Error al cerrar sesión:", error);
     }
@@ -94,7 +96,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     loading,
   };
   if (!loading) {
-    return <div>Loading</div>;
+    return <Loading />;
   }
   return (
     <AuthContext.Provider value={authContextValue}>

@@ -84,3 +84,14 @@ para configurar el Tag en local
 ```console
 vaku-dev:~$ git tag 1.2.100
 ```
+
+colores
+
+#0B79F4 azul vaku
+#9CFF00 verde
+#FFE90D amarillo
+
+los vehiculos son verde o amarillo no exite
+
+boton naranja no es azul
+quitar ID

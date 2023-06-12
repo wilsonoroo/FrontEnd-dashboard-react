@@ -3,6 +3,8 @@ import {
   Box,
   Flex,
   Grid,
+  IconButton,
+  Stack,
   Text,
   useDisclosure,
   useToast,
@@ -17,19 +19,26 @@ import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+type EstadoLoading = {
+  [key: string]: boolean;
+};
 export default function VehiculosViewV1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  let vehiculoNew = new Vehiculo();
+  vehiculoNew.setEmptyObject();
   const toast = useToast();
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
+  const [newVehiculo, setNewVehiculo] = useState<Vehiculo>(vehiculoNew);
 
   useEffect(() => {
     setOptions({
@@ -50,7 +59,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
     });
   }, []);
   const navigate = useNavigate();
-  const newVehiculo = new Vehiculo();
+
   const { currentUser } = useContext(AuthContext);
 
   let divisionRepository: FirebaseRealtimeRepository<Vehiculo>;
@@ -87,9 +96,10 @@ export default function VehiculosViewV1(props: { titulo: string }) {
     data.ultimaMantencion = moment(data.ultimaMantencion).format(
       "YYYY-MM-DD HH:mm:ss"
     );
+    let id = data.id === "" ? null : data.id;
 
     divisionRepository
-      .add(null, data)
+      .add(id, data)
       .then(() => {
         toast({
           title: `Se ha creado el vehiculo con éxito `,
@@ -113,13 +123,13 @@ export default function VehiculosViewV1(props: { titulo: string }) {
   const columns = [
     columnHelper.accessor("numeroInterno", {
       cell: (info) => (
-        <Box px={5} alignItems={"start"} alignContent={"start"}>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+        <Box px={0} alignItems={"start"} alignContent={"start"}>
+          <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
             {info.getValue()}
           </Badge>
-          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
             {info.row.original.id}
-          </Badge> */}
+          </Badge>
         </Box>
       ),
       header: "numero Interno",
@@ -138,6 +148,14 @@ export default function VehiculosViewV1(props: { titulo: string }) {
         );
       },
       header: "Fecha revisión técnica",
+      sortingFn: (rowA, rowB, columnId) => {
+        const numA = rowA.getValue(columnId);
+
+        const numB = rowB.getValue(columnId);
+
+        var isafter = moment(numA).isAfter(numB);
+        return isafter ? 1 : -1;
+      },
     }),
     columnHelper.accessor("tipoVehiculo", {
       cell: (info) => {
@@ -147,7 +165,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "Tipo vehiculo",
+      header: "Tipo Vehículo",
     }),
     columnHelper.accessor("marca", {
       cell: (info) => {
@@ -196,7 +214,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
         let color = info.row.original.isEliminado
           ? "red"
           : info.row.original.isServicio
-          ? "green"
+          ? "#9CFF00"
           : "yellow";
         let texto = info.row.original.isEliminado
           ? "dado de baja"
@@ -205,13 +223,43 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           : "en mantenimiento";
         return (
           <Box px={5} alignItems={"start"} alignContent={"start"}>
-            <Badge variant="solid" bg={color} fontSize="0.7em">
+            <Badge bg={color} colorScheme={"green"} fontSize="0.7em">
               {texto}
             </Badge>
           </Box>
         );
       },
-      header: "marca",
+      header: "Estado",
+    }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    setNewVehiculo(select);
+
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
     }),
 
     ,
@@ -227,7 +275,11 @@ export default function VehiculosViewV1(props: { titulo: string }) {
               <TableLayout
                 titulo={"Vehiculos"}
                 textButtonAdd={" Agregar Vehiculo"}
-                onOpen={onOpen}
+                onOpen={() => {
+                  newVehiculo.setEmptyObject();
+                  setNewVehiculo(newVehiculo);
+                  onOpen();
+                }}
                 onReload={refreshData}
               >
                 <DataTable columns={columns} data={division} />
@@ -250,6 +302,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           loading={loading}
           options={options}
           size="xl"
+          initialValues={newVehiculo}
           grid={{ base: 1, md: 2 }}
         />
       </Flex>

@@ -63,7 +63,7 @@ const TableLayout: React.FC<TableLayoutProps> = ({
               <Button
                 rightIcon={<HiPlus />}
                 colorScheme="orange.700"
-                bg={"orange"}
+                bg={"#0B79F4"}
                 variant="solid"
                 size="md"
                 borderRadius={25}

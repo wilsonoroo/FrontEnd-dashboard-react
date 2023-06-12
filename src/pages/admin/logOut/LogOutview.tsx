@@ -1,3 +1,4 @@
+import useAuth from "@/hooks/useAuth";
 import { Box, Flex, Spacer, Text, VStack } from "@chakra-ui/react";
 import { auth } from "@services/config";
 import { useEffect, useState } from "react";
@@ -7,6 +8,7 @@ export default function LogOutview(props: { titulo: string }) {
   const { titulo } = props;
   const navigate = useNavigate();
   const [logger, setLogger] = useState(false);
+  const user = useAuth();
 
   console.log("logout");
   useEffect(() => {
@@ -28,10 +30,15 @@ export default function LogOutview(props: { titulo: string }) {
   }, []);
 
   useEffect(() => {
-    if (logger) {
-      navigate("/auth");
+    console.log(
+      "🚀 ~ file: LogOutview.tsx:32 ~ useEffect ~ logger:",
+      !logger,
+      user
+    );
+    if (!logger) {
+      // navigate("/auth");
     }
-  }, [logger]);
+  }, [logger, user]);
 
   return (
     <>
@@ -54,9 +61,7 @@ export default function LogOutview(props: { titulo: string }) {
               color={"secondaryGray.600"}
               mt={0}
               marginTop={"0px"}
-            >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
-            </Text>
+            ></Text>
           </Box>
           <Spacer />
           {/* Contenido de la tabla */}

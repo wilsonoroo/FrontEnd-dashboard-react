@@ -24,10 +24,12 @@ import useFetch from "@/hooks/useFetch";
 
 import { DataTable } from "@/components/dataTable/DataTable";
 import TableLayout from "@/components/dataTable/TableLayout";
+import { Checklist } from "@/models/checkList/CheckList";
 import { Divisiones } from "@/models/division/Disvision";
 import { DocumentoVaku } from "@/models/documento/Documento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { getEstateColorAndText, getEstateText } from "@/utils/global";
 import moment from "moment-timezone";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
@@ -112,7 +114,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
   const columnHelper = createColumnHelper<DocumentoVaku>();
 
   const columns = [
-    columnHelper.accessor("correlativo", {
+    columnHelper.accessor("pdf", {
       cell: (info) => {
         return (
           <>
@@ -136,7 +138,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
           </>
         );
       },
-      header: "Docs",
+      header: "Ver documento",
     }),
     columnHelper.accessor("correlativo", {
       cell: (info) => {
@@ -144,7 +146,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
           <Stack spacing={2}>
             <Box>
               {info.getValue() ? (
-                <Badge variant="solid" colorScheme="green" fontSize="0.7em">
+                <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
                   {info.getValue()}
                 </Badge>
               ) : (
@@ -163,19 +165,16 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       size: 140,
       minSize: 180,
     }),
-    columnHelper.accessor("correlativo", {
+    columnHelper.accessor("checklist", {
       cell: (info) => {
+        const color = getColorTipoDocs(info.getValue());
         return (
           <Stack spacing={2}>
             <Box>
               <Badge
-                variant="solid"
-                colorScheme={
-                  info.row.original.checklist.tipo === "checklist"
-                    ? "blue"
-                    : "yellow"
-                }
-                fontSize="0.7em"
+                bg={color?.bg}
+                colorScheme={color.color}
+                color={color.color}
               >
                 {info.row.original.checklist.abreviatura}
               </Badge>
@@ -189,6 +188,12 @@ export default function DocumentosViewV1(props: { titulo: string }) {
         );
       },
       header: "Tipo Documento",
+      sortingFn: (rowA, rowB, columnId) => {
+        const numA = rowA.getValue(columnId) as Checklist;
+
+        const numB = rowB.getValue(columnId) as Checklist;
+        return numA.tipo > numB.tipo ? 1 : -1;
+      },
     }),
 
     columnHelper.accessor("fechaCreacion", {
@@ -203,6 +208,14 @@ export default function DocumentosViewV1(props: { titulo: string }) {
         );
       },
       header: "fecha Creacion",
+      sortingFn: (rowA, rowB, columnId) => {
+        const numA = rowA.getValue(columnId);
+
+        const numB = rowB.getValue(columnId);
+
+        var isafter = moment(numA).isAfter(numB);
+        return isafter ? 1 : -1;
+      },
 
       meta: { isSortable: true },
     }),
@@ -218,6 +231,25 @@ export default function DocumentosViewV1(props: { titulo: string }) {
         );
       },
       header: "fecha Validacion",
+      sortingFn: (rowA, rowB, columnId) => {
+        const numA = rowA.getValue(columnId);
+
+        const numB = rowB.getValue(columnId);
+
+        var isafter = moment(numA).isAfter(numB);
+        return isafter ? 1 : -1;
+      },
+    }),
+    columnHelper.accessor("estado", {
+      cell: (info) => {
+        const color = getEstateColorAndText(info.getValue());
+        return (
+          <Badge bg={color?.bg} colorScheme={color.color}>
+            {color.text}
+          </Badge>
+        );
+      },
+      header: "estado",
     }),
     columnHelper.accessor("emisor", {
       cell: (info) => {
@@ -296,18 +328,14 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "Validado por",
     }),
-    columnHelper.accessor("correlativo", {
+    columnHelper.accessor("checklist", {
       cell: (info) => {
         let cuadrilla = info.row.original?.cuadrilla?.integrantes;
-        !cuadrilla ??
-          Object.keys(cuadrilla).map((key) => {
-            console.log(cuadrilla[key]);
-          });
+
         return (
           <Stack spacing={2}>
             {cuadrilla ? (
               Object.keys(cuadrilla).map((key) => {
-                console.log(cuadrilla[key]);
                 return (
                   <Box>
                     <Badge
@@ -328,69 +356,24 @@ export default function DocumentosViewV1(props: { titulo: string }) {
       },
       header: "Participantes",
     }),
-
-    columnHelper.accessor("estado", {
-      cell: (info) => {
-        const color = getEstateColor(info.getValue());
-        return <Badge colorScheme={color.color}>{color.text}</Badge>;
-      },
-      header: "estado",
-    }),
   ];
 
-  const getEstateText = (estado: string) => {
-    switch (estado) {
-      case "finalizado":
-        return "Finalizado";
-      case "finalizado_sin_plan_accion":
-        return "Finalizado sin plan de accion";
-      case "rechazado":
-        return "Rechazado";
-      case "rechazado_sin_plan_accion":
-        return "Rechazado sin plan de accion";
-      case "doc_sin_problemas":
-        return "En Espera de validacion\n(sin problemas)";
-      case "doc_con_problemas":
-        return "En Espera de validacion\n(con problemas)";
-      case "pendiente_doble_chequeo":
-        return "En Espera de doble chequeo";
-      case "pendiente_validar":
-        return "En Espera de validacion";
-      case "generado":
-        return "Doc registrado";
-      case "validado":
-        return "Validado";
+  const getColorTipoDocs = (estado: Checklist) => {
+    console.log(estado);
+
+    // #0B79F4 azul vaku
+    // #9CFF00 verde
+    // #FFE90D amarillo
+    switch (estado.tipo) {
+      case "checklist":
+        return { color: "white", text: "finalizado", bg: "#0B79F4" };
+      case "charla_5_minutos":
+        return { color: "yellow.900", text: "finalizado", bg: "#9CFF00" };
+      case "instructivo_seguridad":
+        return { color: "yellow.900", text: "finalizado", bg: "#FFE90D" };
 
       default:
-        return "";
-    }
-  };
-
-  const getEstateColor = (estado: string) => {
-    switch (estado) {
-      case "finalizado":
-        return { color: "green", text: "finalizado" };
-      case "finalizado_sin_plan_accion":
-        return { color: "green", text: "finalizado" };
-      case "rechazado":
-        return { color: "red", text: "Rechazado" };
-      case "rechazado_sin_plan_accion":
-        return { color: "red", text: "Rechazado sin plan acción" };
-      case "doc_sin_problemas":
-        return { color: "yellow", text: "En Espera de validación" };
-      case "doc_con_problemas":
-        return { color: "yellow", text: "En Espera de validación" };
-      case "pendiente_validar":
-        return { color: "yellow", text: "En Espera de validación" };
-      case "pendiente_doble_chequeo":
-        return { color: "yellow", text: "En Espera de doble chequeo" };
-      case "generado":
-        return { color: "blue", text: "registrado" };
-      case "validado":
-        return { color: "blue", text: "Validado" };
-
-      default:
-        return { color: "blue", text: "..." };
+        return { color: "green", text: "finalizado", bg: "#0B79F4" };
     }
   };
 
@@ -427,7 +410,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
               <CardBody>
                 <Stat>
                   <StatLabel>
-                    Cant. de {estadisticasTipo[estado]?.displayName}
+                    Cantidad. de {estadisticasTipo[estado]?.displayName}
                   </StatLabel>
                   <StatNumber>{estadisticasTipo[estado]?.cantidad} </StatNumber>
                   <StatHelpText></StatHelpText>

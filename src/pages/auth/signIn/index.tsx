@@ -156,6 +156,7 @@ function SignIn() {
                 h="50"
                 mb="24px"
                 type="submit"
+                bg={"#0B79F4"}
                 // onClick={handleLogin}
               >
                 Iniciar Sesion

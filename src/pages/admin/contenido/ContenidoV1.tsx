@@ -49,7 +49,7 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
               mt={0}
               marginTop={"0px"}
             >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
+              {" "}
             </Text>
           </Box>
           <Spacer />
@@ -60,10 +60,10 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
       <>
         <Tabs index={tabIndex} onChange={handleTabsChange}>
           <TabList>
-            <Tab>Documuentos</Tab>
+            <Tab>Documentos</Tab>
             <Tab isDisabled>Plan de Acción</Tab>
             <Tab>Vehiculos</Tab>
-            <Tab isDisabled>Equipos</Tab>
+            <Tab isDisabled>Equípos</Tab>
             <Tab isDisabled>Herramientas</Tab>
             <Tab isDisabled>Maquinas</Tab>
             <Tab>Usuarios</Tab>
@@ -76,7 +76,7 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
               <PlanDeAccionViewV1 titulo="Plan de accion" />
             </TabPanel>
             <TabPanel>
-              <VehiculosViewV1 titulo="Vehiculos" />
+              <VehiculosViewV1 titulo="Vehículos" />
             </TabPanel>
             <TabPanel>
               <EquiposViewV1 titulo="Equipos" />

@@ -73,7 +73,7 @@ export default function DocumentosView(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Validacion",
+      header: "fecha Validación",
       size: 300,
       minSize: 250,
     }),

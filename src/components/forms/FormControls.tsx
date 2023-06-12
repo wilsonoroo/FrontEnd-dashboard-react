@@ -53,12 +53,6 @@ const FormControls: React.FC<FormControlsProps> = ({
 
       return ordenA - ordenB;
     });
-  console.log(
-    "🚀 ~ file: FormControls.tsx:56 ~ seccionado:",
-    seccionado,
-    filteredObjects,
-    camposForm
-  );
 
   return (
     <SimpleGrid columns={2} spacing={2}>

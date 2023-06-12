@@ -116,32 +116,36 @@ const generateInputField = (
   type: string,
   setFieldValue: {
     (field: string, value: any, shouldValidate?: boolean): void;
-  }
-) => (
-  <>
-    <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
-    <Field
-      as={Input}
-      id={item.field}
-      name={item.field}
-      type={type}
-      value={item.value}
-      onChange={
-        type === "date"
-          ? (event: any) => {
-              console.log(event.target.value);
-              const newDate = moment.utc(event.target.value);
-              console.log(newDate.format("YYYY-MM-DD hh:mm:ss"));
-              setFieldValue(item.field, newDate.format("YYYY-MM-DD hh:mm:ss"));
-            }
-          : (event: any) => {
-              setFieldValue(item.field, event.target.value);
-            }
-      }
-      placeholder={`Ingresa ${item.display}`}
-    />
-  </>
-);
+  },
+  value: any
+) => {
+  return (
+    <>
+      <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
+      <Field
+        as={Input}
+        id={item.field}
+        name={item.field}
+        type={type}
+        value={value}
+        onChange={
+          type === "date"
+            ? (event: any) => {
+                const newDate = moment.utc(event.target.value);
+                setFieldValue(
+                  item.field,
+                  newDate.format("YYYY-MM-DD hh:mm:ss")
+                );
+              }
+            : (event: any) => {
+                setFieldValue(item.field, event.target.value);
+              }
+        }
+        placeholder={`Ingresa ${item.display}`}
+      />
+    </>
+  );
+};
 
 const generateInputNumberFiels = (
   item: CampoForm,
@@ -200,6 +204,78 @@ export class GenericCreator<T> {
   }
 }
 
+export const getEstateText = (estado: string) => {
+  switch (estado) {
+    case "finalizado":
+      return "Finalizado";
+    case "finalizado_sin_plan_accion":
+      return "Finalizado sin plan de accion";
+    case "rechazado":
+      return "Rechazado";
+    case "rechazado_sin_plan_accion":
+      return "Rechazado sin plan de accion";
+    case "doc_sin_problemas":
+      return "En Espera de validación\n(sin observaciones)";
+    case "doc_con_problemas":
+      return "En Espera de validación\n(con observaciones)";
+    case "pendiente_doble_chequeo":
+      return "En Espera de doble chequeo";
+    case "pendiente_validar":
+      return "En Espera de validación";
+    case "generado":
+      return "Doc registrado";
+    case "validado":
+      return "Validado";
+
+    default:
+      return "";
+  }
+};
+
+export const getEstateColorAndText = (estado: string) => {
+  switch (estado) {
+    case "finalizado":
+      return { color: "green", text: "finalizado", bg: "#9CFF00" };
+    case "finalizado_sin_plan_accion":
+      return { color: "green", text: "finalizado", bg: "#9CFF00" };
+    case "rechazado":
+      return { color: "red", text: "Rechazado" };
+    case "rechazado_sin_plan_accion":
+      return { color: "red", text: "Rechazado sin plan acción" };
+    case "doc_sin_problemas":
+      return {
+        color: "yellow",
+        text: "En Espera de validación",
+        bg: "#FFE90D",
+      };
+    case "doc_con_problemas":
+      return {
+        color: "yellow",
+        text: "En Espera de validación",
+        bg: "#FFE90D",
+      };
+    case "pendiente_validar":
+      return {
+        color: "yellow",
+        text: "En Espera de validación",
+        bg: "#FFE90D",
+      };
+    case "pendiente_doble_chequeo":
+      return {
+        color: "yellow",
+        text: "En Espera de doble chequeo",
+        bg: "#FFE90D",
+      };
+    case "generado":
+      return { color: "blue", text: "registrado" };
+    case "validado":
+      return { color: "blue", text: "Validado" };
+
+    default:
+      return { color: "blue", text: "..." };
+  }
+};
+
 export function cleanObject<T>(obj: T): Partial<T> {
   if (typeof obj !== "object" || obj === null) {
     return obj;
@@ -224,9 +300,9 @@ export function getItemForm<T extends VakuModel>(
     switch (item.tipo) {
       case CampoFormKey.FECHA:
       case CampoFormKey.FECHA_NATIVO:
-        return generateInputField(item, "date", setFieldValue);
+        return generateInputField(item, "date", setFieldValue, value);
       case CampoFormKey.TEXT:
-        return generateInputField(item, "text", setFieldValue);
+        return generateInputField(item, "text", setFieldValue, value);
       case CampoFormKey.TEXT_V2:
         return generateInputFieldText(item, "text", setFieldValue, item.mask);
       case CampoFormKey.NUMBER:
@@ -241,7 +317,6 @@ export function getItemForm<T extends VakuModel>(
               name={item.field}
               selectedOptionStyle="check"
               onChange={(v) => {
-                console.log(v, typeof item!.onChangeValue);
                 if (typeof item.onChangeValue !== "undefined") {
                   if (!item.single) {
                     item.onChangeValue(v);
@@ -250,7 +325,6 @@ export function getItemForm<T extends VakuModel>(
                   }
                 }
 
-                console.log("🚀 ~ file: global.tsx:223 ~ item:", item);
                 if (!item.single) {
                   if (
                     typeof item.typeField === "undefined" ||
@@ -267,7 +341,6 @@ export function getItemForm<T extends VakuModel>(
                     }
                   }
                 } else {
-                  console.log(v.label);
                   setFieldValue(item.field, v.label);
                 }
               }}
@@ -288,7 +361,6 @@ export function getItemForm<T extends VakuModel>(
               noOptionsMessage={() => "No hay opciones"}
               name={item.field}
               onChange={(v) => {
-                console.log(v, typeof item!.onChangeValue);
                 if (typeof item.onChangeValue !== "undefined") {
                   if (!item.single) {
                     item.onChangeValue(v);
@@ -297,7 +369,6 @@ export function getItemForm<T extends VakuModel>(
                   }
                 }
 
-                console.log("🚀 ~ file: global.tsx:223 ~ item:", item);
                 if (!item.single) {
                   if (
                     typeof item.typeField === "undefined" ||
@@ -314,7 +385,6 @@ export function getItemForm<T extends VakuModel>(
                     }
                   }
                 } else {
-                  console.log(v.label);
                   setFieldValue(item.field, v.label);
                 }
               }}
@@ -347,16 +417,14 @@ export function getItemForm<T extends VakuModel>(
       case CampoFormKey.SWITCH:
         return generateSwitchField(item, setFieldValue);
       case CampoFormKey.FECHA_CUSTOM: {
-        console.log("🚀 ~ file: global.tsx:223 ~ item:", value);
         return (
           <>
             <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
             <SingleDatepicker
               name={item.field}
               id={item.field}
-              date={new Date(value)}
+              date={moment(value).toDate()}
               onDateChange={(date: Date) => {
-                console.log(date);
                 setFieldValue(item.field, date);
               }}
               configs={{
@@ -467,8 +535,6 @@ const MaskedInput: React.FC<MaskedInputProps> = ({
   type,
   ...props
 }) => {
-  console.log("🚀 ~ file: global.tsx:299 ~ field:", props, mask);
-
   return (
     <InputMask
       maskPlaceholder=" "

@@ -40,6 +40,23 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       tipoVehiculo: "",
     };
   }
+
+  setEmptyObject(): void {
+    this.id = "";
+    this.nombre = "";
+    this.isEliminado = false;
+    this.isServicio = true;
+    this.kilometraje = "";
+    this.marca = "";
+    this.modelo = "";
+    this.numeroInterno = "";
+    this.patente = "";
+    this.fechaVencimiento = new Date().toISOString();
+    this.proximaMantencion = new Date().toISOString();
+    this.ultimaMantencion = new Date().toISOString();
+    this.tipo = "";
+    this.tipoVehiculo = "";
+  }
   getFormBuilder(options: any = {}) {
     return {
       numeroInterno: {
@@ -53,7 +70,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       },
 
       kilometraje: {
-        display: "Kilometraje",
+        display: "Kilometraje ",
         tipo: "number",
         field: CampoFormKey.NUMBER,
         required: true,

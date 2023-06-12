@@ -35,6 +35,32 @@ export class UsuarioVaku extends VakuModel {
   turno: string;
   enrolamiento: Enrolamiento;
 
+  constructor() {
+    super();
+    this.areaCargo = "";
+    this.cargo = "";
+    this.codigo = "";
+    this.cuadrilla = [];
+    this.dispositivos = [];
+    this.email = "";
+    this.empresa = "";
+    this.empresaId = "";
+    this.fechaVencimientoLicencia = new Date().toISOString();
+    this.isActive = true;
+    this.isEliminado = false;
+    this.licencia = "";
+    this.licencias = [];
+    this.notificacionDocumentos = 0;
+    this.notificacionMisDocumentos = 0;
+    this.notificacionMisSeguimientosDePlanes = 0;
+    this.notificacionSeguimientosDePlanes = 0;
+    this.permisos = [];
+    this.rut = "";
+    this.sexo = "";
+    this.turno = "";
+    this.newPermisos = [];
+  }
+
   getValidationSchema() {
     return yup.object().shape({
       email: yup.string().required(),

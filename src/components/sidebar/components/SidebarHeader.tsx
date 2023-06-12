@@ -50,12 +50,10 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
 }) => {
   const rtl = false;
   const userAuth = useAuth();
-  console.log("🚀 ~ file: SidebarHeader.tsx:53 ~ userAuth:", userAuth);
 
   const [url, setUrl] = React.useState(userAuth.logoEmpresa);
 
   useEffect(() => {
-    console.log(url);
     setUrl(userAuth.logoEmpresa);
   }, [userAuth]);
   return (

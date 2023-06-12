@@ -62,7 +62,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
           <TabList>
             <Tab>Documuentos</Tab>
             <Tab isDisabled>Plan de Accion</Tab>
-            <Tab>Vehiculos</Tab>
+            <Tab>Vehículo</Tab>
             <Tab isDisabled>Equipos</Tab>
             <Tab>Usuarios</Tab>
           </TabList>
@@ -74,7 +74,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               <PlanDeAccionView titulo="Plan de accion" />
             </TabPanel>
             <TabPanel>
-              <VehiculosView titulo="Vehiculos" />
+              <VehiculosView titulo="Vehículos" />
             </TabPanel>
             <TabPanel>
               <EquiposView titulo="Equipos" />

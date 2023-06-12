@@ -3,6 +3,8 @@ import {
   Box,
   Flex,
   Grid,
+  IconButton,
+  Stack,
   Tag,
   TagLabel,
   Text,
@@ -26,10 +28,14 @@ import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { CategoriaVehiculo } from "@/models/utils/Utils";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { createUserAuth } from "@/services/usuarioVakuApi";
+import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+type EstadoLoading = {
+  [key: string]: boolean;
+};
 export default function UsuariosView1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
@@ -65,6 +71,8 @@ export default function UsuariosView1(props: { titulo: string }) {
     ],
     turno: [],
   });
+
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
 
   useEffect(() => {
     setOptions({
@@ -103,9 +111,11 @@ export default function UsuariosView1(props: { titulo: string }) {
     });
   }, []);
   const navigate = useNavigate();
-  const newUser = new UsuarioVaku();
+  const userNew = new UsuarioVaku();
+
   const newRol = new Rol();
   const { currentUser } = useContext(AuthContext);
+  const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
 
   let divisionRepository: FirebaseRealtimeRepository<UsuarioVaku>;
   let usuarioGlobal: FirebaseRealtimeRepository<UsuarioVaku>;
@@ -176,13 +186,75 @@ export default function UsuariosView1(props: { titulo: string }) {
     resetForm: () => void
   ) => {
     setLoading(true);
-    data.empresaId = currentUser.empresaId;
-    data.empresa = currentUser.empresa;
-    data.enrolamiento = new Enrolamiento(false);
+    console.log(data);
     data.fechaVencimientoLicencia = moment(
       data.fechaVencimientoLicencia
     ).format("YYYY-MM-DD HH:mm:ss");
     data.rol.nombre = data.rol.id;
+    if (data.id !== "") {
+      data.empresaId = currentUser.empresaId;
+      data.empresa = currentUser.empresa;
+      data.enrolamiento = new Enrolamiento(false);
+      createUserAuth(
+        data.email,
+        data.email.split("@")[0] + "1234",
+        data.displayName
+      )
+        .then((userCredential) => {
+          data.id = userCredential.uid;
+          data.nombre = data.displayName;
+          return divisionRepository.add(userCredential.uid, data);
+        })
+        .then(() => {
+          toast({
+            title: `Se ha creado el usuario con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: `Se ha ocurrido un problema al crear el usuario`,
+            position: "top",
+            status: "error",
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          resetForm();
+          onClose();
+          refreshData();
+        });
+    } else {
+      divisionRepository
+        .add(data.id, data)
+        .then(() => {
+          toast({
+            title: `Se ha creado el usuario con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: `Se ha ocurrido un problema al crear el usuario`,
+            position: "top",
+            status: "error",
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          resetForm();
+          onClose();
+          refreshData();
+        });
+    }
 
     createUserAuth(
       data.email,
@@ -225,7 +297,7 @@ export default function UsuariosView1(props: { titulo: string }) {
         <VStack alignItems={"flex-start"}>
           <Box px={5}>
             <Tag
-              bg={"#fb8500"}
+              bg={"#0B79F4"}
               color="#fff"
               alignItems={"center"}
               alignContent={"center"}
@@ -234,15 +306,15 @@ export default function UsuariosView1(props: { titulo: string }) {
               <TagLabel>{info.getValue()}</TagLabel>
             </Tag>
           </Box>
-          <Box px={5}>
+          {/* <Box px={5}>
             <Badge variant="outline" colorScheme="vaku" fontSize="0.7em">
               id: {info.row.original.id}
             </Badge>
-          </Box>
+          </Box> */}
         </VStack>
       ),
       header: "Nombre de Usuario",
-      size: 100,
+      size: 300,
       minSize: 120,
     }),
     columnHelper.accessor("email", {
@@ -254,8 +326,6 @@ export default function UsuariosView1(props: { titulo: string }) {
         );
       },
       header: "Correo Electrónico",
-      size: 300,
-      minSize: 250,
     }),
     columnHelper.accessor("cargo", {
       cell: (info) => {
@@ -266,21 +336,6 @@ export default function UsuariosView1(props: { titulo: string }) {
         );
       },
       header: "Cargo",
-      size: 100,
-      minSize: 100,
-    }),
-    columnHelper.accessor("enrolamiento", {
-      cell: (info) => {
-        const color = info.getValue()?.isCompletado ? "green" : "red";
-        return (
-          <>
-            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
-              {info.getValue()?.isCompletado ? "Si" : "No"}
-            </Badge>
-          </>
-        );
-      },
-      header: "Enrolamiento Completado",
       size: 100,
       minSize: 100,
     }),
@@ -310,6 +365,77 @@ export default function UsuariosView1(props: { titulo: string }) {
       header: "Rol",
       size: 100,
       minSize: 100,
+    }),
+    columnHelper.accessor("turno", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Turno",
+      size: 100,
+      minSize: 100,
+    }),
+
+    columnHelper.accessor("enrolamiento", {
+      cell: (info) => {
+        const color = info.getValue()?.isCompletado ? "green" : "red";
+        return (
+          <>
+            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
+              {info.getValue()?.isCompletado ? "Si" : "No"}
+            </Badge>
+          </>
+        );
+      },
+      header: "Enrolamiento Completado",
+      size: 100,
+      minSize: 100,
+    }),
+    columnHelper.accessor("empresa", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Empresa",
+      size: 100,
+      minSize: 100,
+    }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    // setNewVehiculo(select);
+                    setNewUser(select);
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
     }),
   ];
 
@@ -343,6 +469,7 @@ export default function UsuariosView1(props: { titulo: string }) {
           refreshData={refreshData}
           fieldsToExclude={["id"]}
           model={newUser}
+          initialValues={newUser}
           onSubmit={handleSaveGerencia}
           loading={loading}
           options={options}

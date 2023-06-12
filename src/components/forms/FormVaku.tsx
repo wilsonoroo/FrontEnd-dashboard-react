@@ -17,6 +17,7 @@ import FormControls from "./FormControls";
 
 import VakuModel from "@/models/Vaku";
 import { getItemForm } from "@/utils/global";
+import { useEffect } from "react";
 import DrawerComponent from "../drawer/DrawerComponent";
 
 interface AgregarFormProps<T> {
@@ -30,7 +31,7 @@ interface AgregarFormProps<T> {
   options?: any;
   titulo?: string;
   size?: string;
-
+  initialValues: T;
   grid?: { base: number; md: number; xl?: number; "2xl"?: number };
 }
 const FormVaku = <T extends VakuModel>({
@@ -43,21 +44,25 @@ const FormVaku = <T extends VakuModel>({
   onSubmit,
   options,
   size,
+  initialValues,
 }: // grid = { base: 1, md: 2 },
 AgregarFormProps<T>) => {
-  const initialValues = model.getEmptyObject();
   const validationSchema = model.getValidationSchema();
   const camposForm = model.getFormBuilder(options);
 
   const handleSubmitForm = (values: any, resetForm: () => void) => {
     onSubmit(values, resetForm);
   };
+  useEffect(() => {
+    console.log("🚀 ~ file: FormVaku.tsx:59 ~ initialValues:", initialValues);
+  }, [initialValues]);
 
   return (
     <Formik
       validationSchema={validationSchema}
       validateOnChange={false}
       validateOnBlur={false}
+      enableReinitialize={true}
       initialValues={initialValues}
       onSubmit={async (values, { resetForm }) => {
         handleSubmitForm(values, resetForm);
@@ -71,9 +76,6 @@ AgregarFormProps<T>) => {
         values,
         setFieldValue,
       }) => {
-        Object.keys(errors).map((key) => {
-          return errors[key];
-        });
         return (
           <DrawerComponent
             isOpen={isOpen}
@@ -119,7 +121,7 @@ AgregarFormProps<T>) => {
                       <Alert status="error" variant="left-accent">
                         <AlertIcon />
 
-                        {errors[key].toString()}
+                        {/* {errors[key].toString()} */}
                       </Alert>
                     );
                   })}
@@ -127,9 +129,13 @@ AgregarFormProps<T>) => {
                   <FormControls
                     errors={errors}
                     touched={touched}
-                    fields={Object.keys(initialValues).filter(
-                      (key) => !fieldsToExclude.includes(key)
-                    )}
+                    fields={
+                      initialValues
+                        ? Object.keys(initialValues).filter((key) => {
+                            return !fieldsToExclude.includes(key);
+                          })
+                        : []
+                    }
                     values={values}
                     setFieldValue={setFieldValue}
                     getItemForm={getItemForm}

@@ -10,24 +10,29 @@ import {
 import AdminLayout from "@/layouts/admin";
 import AuthLayout from "@/layouts/auth";
 import { PrivateRouteDos } from "@navigation/PrivateRoute";
+import { AnimatePresence } from "framer-motion";
+import Loading from "./components/Loading";
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate replace={true} to="/auth" />} />
-        <Route
-          path={`/admin/*`}
-          element={
-            <PrivateRouteDos>
-              <AdminLayout />
-            </PrivateRouteDos>
-          }
-        />
+    <AnimatePresence>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate replace={true} to="/auth" />} />
+          <Route
+            path={`/admin/*`}
+            element={
+              <PrivateRouteDos>
+                <AdminLayout />
+              </PrivateRouteDos>
+            }
+          />
 
-        <Route path={`/auth/*`} element={<AuthLayout />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path={`/auth/*`} element={<AuthLayout />} />
+          <Route path={`/load`} element={<Loading />} />
+        </Routes>
+      </BrowserRouter>
+    </AnimatePresence>
   );
 }
 
