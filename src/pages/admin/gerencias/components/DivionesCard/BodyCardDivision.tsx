@@ -1,3 +1,4 @@
+import { Divisiones } from "@/models/division/Disvision";
 import { Gerencia } from "@/models/gerencia/Gerencia";
 import { Avatar, Box, Flex, Spacer } from "@chakra-ui/react";
 
@@ -6,7 +7,7 @@ import { formatInTimeZone } from "date-fns-tz";
 import { Timestamp } from "firebase/firestore";
 
 import { HiOutlineCalendarDays } from "react-icons/hi2";
-export function BodyCardGerencia(props: { item: Gerencia }) {
+export function BodyCardDivision(props: { item: Divisiones }) {
   const { item } = props;
   // console.log(typeof item.createdAt)
 

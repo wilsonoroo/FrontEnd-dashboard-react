@@ -25,6 +25,7 @@ export class Gerencia
   cantDivisiones: number;
   cantDocumentos: number;
   responsable: AuthUser[] | AuthUser | null;
+  
 
   getValidationSchema() {
     return yup.object().shape({
@@ -46,6 +47,12 @@ export class Gerencia
   }
   getFormBuilder(options?: any) {
     return {
+      id: {
+        display: "id",
+        tipo: CampoFormKey.TEXT,
+        field: "id",
+        required: true,
+      },
       nombre: {
         display: "Nombre Gerencia",
         tipo: CampoFormKey.TEXT,
@@ -86,4 +93,5 @@ export class Gerencia
       },
     };
   }
+ 
 }

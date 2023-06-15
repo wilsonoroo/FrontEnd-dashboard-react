@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AgregarUsuario from "./agregarEmpresa";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -37,26 +38,21 @@ export default function Empresas(props: { titulo: string }) {
 
   const navigate = useNavigate();
 
-  const divisionRepository = new FirebaseRealtimeRepository<Empresa>(
-    `empresasCompact`
+  const divisionRepository = new FirestoreRepository<Empresa>(
+    `empresas`
   );
+  
 
   const {
     data: empresas,
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(Empresa));
+  } = useFetch(() => divisionRepository.getAll());
 
-  // const {
-  //   data: empresas,
-  //   firstLoading,
-  //   refreshData,
-  //   isLoading,
-  // } = useFetch(() => getEmpresasArray());
 
   useEffect(() => {
-    console.log(empresas);
+    // console.log(empresas);
   }, [empresas]);
 
   const handlePresEmpresa = (e: any) => {

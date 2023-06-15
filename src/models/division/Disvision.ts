@@ -26,6 +26,12 @@ export class Divisiones
   }
   getFormBuilder(options?: any) {
     return {
+      id: {
+        display: "id",
+        tipo: CampoFormKey.TEXT,
+        field: "id",
+        required: true,
+      },
       nombre: {
         display: "Nombre",
         tipo: CampoFormKey.TEXT,

@@ -6,6 +6,7 @@ import DetalleEmpresa from "@/pages/admin/empresas/DetalleEmpresa";
 import DivisionPage from "@/pages/admin/gerencias/Division";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
+import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerencia";
 
 export const routesAdmin: RouterJson[] = [
   {
@@ -20,22 +21,28 @@ export const routesAdmin: RouterJson[] = [
   },
   {
     path: "empresas",
-    element: <Empresas titulo={"Gerencia"} />,
+    element: <Empresas titulo={"Empresas"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
   {
     path: "empresas/:id",
-    element: <DetalleEmpresa titulo={"Gerencia"} />,
+    element: <DetalleEmpresa titulo={"Gerencias"} />,//todas las gerencias
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
   {
     path: "empresas/:idEmpresa/:idGerencia",
-    element: <DivisionPage titulo={"Detalle Gerencia"} />,
+    element: <DetalleGerencia titulo={"Divisiones"} />,//todas las divisiones de la gerencia
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
+  // {
+  //   path: "gerencias/:idEmpresa/:idGerencia",
+  //   element: <DivisionPage titulo={"Detalle Gerencia"} />,
+  //   name: "Detalle Empresas ",
+  //   isSubMenu: true,
+  // },
   {
     path: "empresas/:idEmpresa/:idGerencia/:idDivision",
     element: <ContenidoDetalle titulo={"Division"} />,

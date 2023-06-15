@@ -14,6 +14,7 @@ import {
 import { useState } from "react";
 import DocumentosViewV1 from "./documentos/DocumentosViewV1";
 import EquiposViewV1 from "./equipos/EquiposViewV1";
+import HerramientasViewV1 from "./herramientas/HerramientasViewV1";
 import PlanDeAccionViewV1 from "./planDeAccion/PlanDeAccionViewV1";
 import UsuariosViewV1 from "./usuarios/UsuariosViewV1";
 import VehiculosViewV1 from "./vehiculos/VehiculosViewV1";
@@ -82,10 +83,7 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
               <EquiposViewV1 titulo="Equipos" />
             </TabPanel>
             <TabPanel>
-              <EquiposViewV1 titulo="Equipos" />
-            </TabPanel>
-            <TabPanel>
-              <EquiposViewV1 titulo="Equipos" />
+              <HerramientasViewV1 titulo="Herramientas" />
             </TabPanel>
             <TabPanel>
               <UsuariosViewV1 titulo="Usuarios" />

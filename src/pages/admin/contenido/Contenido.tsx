@@ -49,7 +49,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               mt={0}
               marginTop={"0px"}
             >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
+              {"En esta seccion se especifica los detalles de la división"}
             </Text>
           </Box>
           <Spacer />

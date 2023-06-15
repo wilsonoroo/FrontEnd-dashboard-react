@@ -2,8 +2,6 @@ import {
   Box,
   Flex,
   Grid,
-  Tag,
-  TagLabel,
   Text,
   useDisclosure,
   useToast,
@@ -16,19 +14,21 @@ import TableLayout from "@/components/dataTable/TableLayout";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 import { Divisiones } from "@/models/division/Disvision";
+import { Equipo } from "@/models/equipo/Equipo";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useContext, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { IRepository } from "@/repositories/IRepository";
+import { useContext, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function EquiposViewV1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const [loading, setLoading] = useState(false);
+  const [options, setOptions] = useState({});
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
@@ -37,14 +37,13 @@ export default function EquiposViewV1(props: { titulo: string }) {
 
   let divisionRepository: IRepository<Vehiculo>;
   if (idEmpresa === undefined) {
-    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
-      `empresas/${currentUser.empresaId}/vehiculos`
+    divisionRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaId}/equipos/maquinasEquipos`
     );
   } else {
     divisionRepository = new FirestoreRepository<Vehiculo>(
       `empresas/${idEmpresa}/vehiculos`
     );
-  
   }
 
   const {
@@ -52,42 +51,11 @@ export default function EquiposViewV1(props: { titulo: string }) {
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(Vehiculo));
+  } = useFetch(() => divisionRepository.getAll(Equipo));
 
-  const columnHelper = createColumnHelper<Vehiculo>();
+  const columnHelper = createColumnHelper<Equipo>();
 
   const columns = [
-    columnHelper.accessor("numeroInterno", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "numero Interno",
-      size: 100,
-      minSize: 120,
-    }),
-    columnHelper.accessor("fechaVencimiento", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue().toLocaleString()}</Text>
-          </span>
-        );
-      },
-      header: "fechaVencimiento",
-      size: 300,
-      minSize: 250,
-    }),
-
     columnHelper.accessor("marca", {
       cell: (info) => {
         return (
@@ -100,18 +68,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("patente", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "patente",
-      size: 300,
-      minSize: 250,
-    }),
+
     columnHelper.accessor("modelo", {
       cell: (info) => {
         return (
@@ -124,7 +81,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
       size: 300,
       minSize: 250,
     }),
-    columnHelper.accessor("tipoVehiculo", {
+    columnHelper.accessor("tipo", {
       cell: (info) => {
         return (
           <span>
@@ -132,7 +89,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
           </span>
         );
       },
-      header: "tipoVehiculo",
+      header: "tipo",
       size: 300,
       minSize: 250,
     }),
@@ -146,9 +103,10 @@ export default function EquiposViewV1(props: { titulo: string }) {
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Equipos"}
-                textButtonAdd={" Agregar Division"}
+                textButtonAdd={" Agregar Equipo"}
                 onOpen={onOpen}
                 onReload={refreshData}
+                hiddenButtonAdd
               >
                 <DataTable columns={columns} data={division} />
               </TableLayout>

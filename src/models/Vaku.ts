@@ -1,4 +1,5 @@
 import { CampoFormKey } from "@/utils/global";
+import { Timestamp } from "firebase/firestore";
 
 export interface IVakuModel {
   readonly value: string;
