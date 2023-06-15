@@ -6,7 +6,6 @@ import {
   Button,
   Flex,
   FormControl,
-  Heading,
   Text,
   useColorModeValue,
 } from "@chakra-ui/react";
@@ -14,7 +13,6 @@ import {
 import DefaultAuth from "@layouts/auth/Default";
 import * as yup from "yup";
 // Assets
-import { signInWithEmailAndPassword } from "firebase/auth";
 import { useContext } from "react";
 
 import illustration from "@assets/vakumanos.png";
@@ -24,7 +22,6 @@ import { useFormik } from "formik";
 
 import { AuthContext } from "@contexts/AuthContextFb";
 import useAuth from "@hooks/useAuth";
-import { auth } from "@services/config";
 
 function SignIn() {
   // Chakra color mode
@@ -36,6 +33,7 @@ function SignIn() {
 
   const textColorBrand = useColorModeValue("brand.500", "white");
   const brandStars = useColorModeValue("brand.500", "brand.400");
+  const [loginLoading, setLoginLoading] = React.useState(false);
   const [show, setShow] = React.useState(false);
 
   const navigate = useNavigate();
@@ -54,8 +52,11 @@ function SignIn() {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        await signInWithEmailAndPassword(auth, values.email, values.password);
-        navigate("/admin");
+        setLoginLoading(true);
+        await authVaku.signIn(values.email, values.password);
+        setLoginLoading(false);
+        // await signInWithEmailAndPassword(auth, values.email, values.password);
+        // navigate("/admin");
       } catch (error) {
         console.log(error);
         setError(true);
@@ -85,9 +86,10 @@ function SignIn() {
           flexDirection="column"
         >
           <Box me="auto">
-            <Heading color={textColor} fontSize="36px" mb="10px">
+            <Text fontSize="4xl" as={"b"} color={textColorSecondary}>
               Acceso Vaku
-            </Heading>
+            </Text>
+
             <Text
               mb="36px"
               ms="4px"
@@ -115,7 +117,7 @@ function SignIn() {
                 id={"email"}
                 name={"email"}
                 extra={<Text color={brandStars}>*</Text>}
-                placeholder={"Correo electronico"}
+                placeholder={"Correo electrónico"}
                 type={"text"}
                 color={textColor}
                 mb={undefined}
@@ -138,13 +140,8 @@ function SignIn() {
 
               <Flex justifyContent="space-between" align="center" mb="24px">
                 <NavLink to="/auth/forgot-password">
-                  <Text
-                    color={textColorBrand}
-                    fontSize="sm"
-                    w="124px"
-                    fontWeight="500"
-                  >
-                    Olvidaste tu contraseña?
+                  <Text color={textColorBrand} fontSize="sm" fontWeight="500">
+                    ¿Olvidaste tu contraseña?
                   </Text>
                 </NavLink>
               </Flex>
@@ -157,6 +154,9 @@ function SignIn() {
                 mb="24px"
                 type="submit"
                 bg={"#0B79F4"}
+                colorScheme="vaku"
+                _hover={{ bg: "vaku.300" }}
+                isLoading={loginLoading}
                 // onClick={handleLogin}
               >
                 Iniciar Sesion

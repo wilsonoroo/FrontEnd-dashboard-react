@@ -14,9 +14,6 @@ export default function Auth() {
   const { currentUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // NOTE: console log for testing purposes
-  console.log("User:", !!currentUser);
-
   // Check if currentUser exists on initial render
   useEffect(() => {
     if (currentUser) {

@@ -76,7 +76,7 @@ export default function Default(props: {
           placeholder={placeholder}
           _placeholder={{ fontWeight: "400", color: "secondaryGray.600" }}
           h="44px"
-          maxH="44px"
+          maxH="45px"
         />
         <InputRightElement width="4.5rem" borderRadius="16px">
           <Button
@@ -84,8 +84,9 @@ export default function Default(props: {
             size="sm"
             onClick={handleClick}
             borderRadius="10px"
+            marginEnd={2}
           >
-            {show ? "Hide" : "Show"}
+            {show ? "Ocultar" : "Mostrar"}
           </Button>
         </InputRightElement>
       </InputGroup>

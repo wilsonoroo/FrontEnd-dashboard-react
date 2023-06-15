@@ -1,11 +1,7 @@
 import Loading from "@/components/Loading";
+import { Empresa } from "@/models/empresa/Empresa";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
-import { getLogoEmpresa } from "@/services/database/empresaServices";
-import {
-  getUsuario,
-  getUsuarioByUid,
-  getUsuarioV1,
-} from "@/services/database/usuariosServices";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { auth } from "../services/config/";
@@ -17,6 +13,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   logoEmpresa: string | null;
   loading: boolean;
+  userLogger: boolean;
 }
 
 // Crea el contexto de autenticación
@@ -31,36 +28,42 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setUser] = useState<UsuarioVaku | null>(null);
   const [logoEmpresa, setLogoEmpresa] = useState<string | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [userLogger, setUserLogger] = useState<boolean>(false);
+
+  const usuarioRepository = new FirestoreRepository<UsuarioVaku>("auth");
+  const empresaRepository = new FirestoreRepository<Empresa>("empresas");
 
   useEffect(() => {
     // Observador de estado de autenticación de Firebase
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
       if (user) {
-        const userSemiComplete = await getUsuarioByUid(user?.uid);
-        const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
-
-        const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
-        let userComplete;
-        if (typeof divisionId === "undefined") {
-          userComplete = await getUsuarioV1(id, empresaId);
-        } else {
-          userComplete = await getUsuario(
-            user?.uid,
-            empresaId,
-            gerenciaId,
-            divisionId
-          );
-        }
-
-        setUser(userComplete);
-        setLogoEmpresa(empresa);
-        setTimeout(() => {
-          setLoading(true);
-        }, 15000);
-      } else {
-        setUser(null);
+        console.log(
+          "🚀 ~ file: AuthContextFb.tsx:39 ~ unsubscribe ~ user:",
+          user.uid
+        );
         setLoading(true);
+        const userSemiComplete = await usuarioRepository.get(user?.uid);
+        const empresa = await empresaRepository.get(
+          userSemiComplete?.empresaId
+        );
+        console.log(
+          "🚀 ~ file: AuthContextFb.tsx:50 ~ unsubscribe ~ empresa:",
+          empresa.url
+        );
+
+        setTimeout(() => {
+          setUser(userSemiComplete);
+          setLogoEmpresa(empresa.url);
+          setUserLogger(true);
+          setLoading(false);
+        }, 1500);
+      } else {
+        setTimeout(() => {
+          setUserLogger(false);
+          setUser(null);
+          setLoading(false);
+        }, 1500);
       }
     });
 
@@ -94,8 +97,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     signOut,
     logoEmpresa,
     loading,
+    userLogger,
   };
-  if (!loading) {
+  console.log("🚀 ~ file: AuthContextFb.tsx:88 ~ loading:", loading);
+
+  if (loading) {
     return <Loading />;
   }
   return (

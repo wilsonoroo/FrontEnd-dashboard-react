@@ -1,7 +1,6 @@
 // Chakra imports
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, Image } from "@chakra-ui/react";
 
-import FixedPlugin from "@components/fixedPlugin/FixedPlugin";
 // Custom components
 import { NavLink } from "react-router-dom";
 // Assets
@@ -15,7 +14,7 @@ function AuthIllustration(props: {
   const { children, illustrationBackground } = props;
 
   const textColor = useColorModeValue("verdevaku.900", "white");
-
+  const textColorSecondary = "vaku.500";
   // Chakra color mode
   return (
     <Flex position="relative" h="max-content">
@@ -53,7 +52,6 @@ function AuthIllustration(props: {
           right="0px"
         >
           <Flex
-            bg={`url(${illustrationBackground})`}
             justify="center"
             align="end"
             w="100%"
@@ -61,13 +59,18 @@ function AuthIllustration(props: {
             bgSize="cover"
             bgPosition="50%"
             position="absolute"
-            style={{ backgroundColor: "#8ce600" }}
+            bgColor={textColorSecondary}
+            // style={{ backgroundColor: "#8ce600" }}
             borderBottomLeftRadius={{ lg: "120px", xl: "200px" }}
-          />
+          >
+            <Box>
+              <Image src={illustrationBackground} alt="illustration" />
+            </Box>
+          </Flex>
         </Box>
         {/* <Footer /> */}
       </Flex>
-      <FixedPlugin />
+      {/* <FixedPlugin /> */}
     </Flex>
   );
 }

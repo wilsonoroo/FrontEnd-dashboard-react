@@ -1,4 +1,3 @@
-import { CampoFormKey } from "@/utils/global";
 import VakuModel, {
   IEmptyObject,
   IFormBuilder,
@@ -62,7 +61,6 @@ export class Empresa
       //   field: "cantDivisiones",
       //   required: true,
       // },
-
       // cantUsuarios: {
       //   display: "Cantidad de Usuarios",
       //   tipo: CampoFormKey.NUMBER,
@@ -77,6 +75,7 @@ export class Empresa
   cantDivisiones: number;
   cantDocumentos: number;
   usuarios: UsuarioVaku[] | null;
+  url: string | null;
 
   get value(): string {
     return this.id;

@@ -11,7 +11,7 @@ import {
 import CustomCard from "@/components/card/Card";
 import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
-import { BaseModel } from "@/models/Vaku";
+import { Gerencia } from "@/models/gerencia/Gerencia";
 import { AddIcon } from "@chakra-ui/icons";
 import useFetch from "@hooks/useFetch";
 import { getDivisionesPorGerencia } from "@services/database/gerenciasServices";
@@ -141,7 +141,7 @@ export default function GerenciasPage({}) {
   //   },
   // };
 
-  const vaku = new BaseModel();
+  const vaku = new Gerencia();
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -167,7 +167,7 @@ export default function GerenciasPage({}) {
         onClose={onClose}
         refreshData={refreshData}
       /> */}
-      <FormVaku
+      <FormVaku<Gerencia>
         isOpen={isOpen}
         onClose={onClose}
         refreshData={refreshData}
