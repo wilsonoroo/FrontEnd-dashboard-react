@@ -228,9 +228,9 @@ export default function DetalleEmpresa(props: { titulo: string }) {
                       index={index}
                       item={item}
                       gerencia={item}
-                      onClick={() => {
+                      onClick={(itemEvent) => {
                         console.log(item);
-                        handleClick(item);
+                        handleClick(itemEvent);
                       }}
                     />
                   </motion.div>

@@ -20,6 +20,8 @@ import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { IRepository } from "@/repositories/IRepository";
 
 export default function EquiposViewV1(props: { titulo: string }) {
   const { titulo } = props;
@@ -33,15 +35,16 @@ export default function EquiposViewV1(props: { titulo: string }) {
   const newDivision = new Divisiones();
   const { currentUser } = useContext(AuthContext);
 
-  let divisionRepository: FirebaseRealtimeRepository<Vehiculo>;
+  let divisionRepository: IRepository<Vehiculo>;
   if (idEmpresa === undefined) {
     divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
       `empresas/${currentUser.empresaId}/vehiculos`
     );
   } else {
-    divisionRepository = new FirebaseRealtimeRepository<Vehiculo>(
+    divisionRepository = new FirestoreRepository<Vehiculo>(
       `empresas/${idEmpresa}/vehiculos`
     );
+  
   }
 
   const {

@@ -15,7 +15,7 @@ interface GerenciaCardProps {
   index: number;
   item: { nombre: string; key: string; isEliminado: boolean; id: string };
   gerencia: Gerencia;
-  onClick: (item: Gerencia) => void;
+  onClick?: (item: Gerencia) => void;
 }
 
 // })

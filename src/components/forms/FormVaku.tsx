@@ -31,7 +31,7 @@ interface AgregarFormProps<T> {
   options?: any;
   titulo?: string;
   size?: string;
-  initialValues: T;
+  initialValues?: T;
   grid?: { base: number; md: number; xl?: number; "2xl"?: number };
 }
 const FormVaku = <T extends VakuModel>({

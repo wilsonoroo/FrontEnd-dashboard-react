@@ -63,8 +63,8 @@ export default function ContenidoDetalleV1(props: { titulo: string }) {
             <Tab>Documentos</Tab>
             <Tab isDisabled>Plan de Acción</Tab>
             <Tab>Vehiculos</Tab>
-            <Tab isDisabled>Equípos</Tab>
-            <Tab isDisabled>Herramientas</Tab>
+            <Tab>Equípos</Tab>
+            <Tab>Herramientas</Tab>
             <Tab isDisabled>Maquinas</Tab>
             <Tab>Usuarios</Tab>
           </TabList>
