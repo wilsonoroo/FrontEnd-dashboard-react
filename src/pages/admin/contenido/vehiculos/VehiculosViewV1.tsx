@@ -19,14 +19,12 @@ import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { EstadoLoading } from "@/utils/global";
 import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-type EstadoLoading = {
-  [key: string]: boolean;
-};
 export default function VehiculosViewV1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();

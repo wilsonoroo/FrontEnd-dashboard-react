@@ -25,7 +25,6 @@ export class Gerencia
   cantDivisiones: number;
   cantDocumentos: number;
   responsable: AuthUser[] | AuthUser | null;
-  
 
   getValidationSchema() {
     return yup.object().shape({
@@ -44,6 +43,12 @@ export class Gerencia
       cantDocumentos: 0,
       isEliminado: false,
     };
+  }
+
+  setEmptyObject(): void {
+    this.id = "";
+    this.nombre = "";
+    this.isEliminado = false;
   }
   getFormBuilder(options?: any) {
     return {
@@ -93,5 +98,4 @@ export class Gerencia
       },
     };
   }
- 
 }

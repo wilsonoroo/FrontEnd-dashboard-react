@@ -52,6 +52,10 @@ export interface CampoForm {
   seccion?: string;
 }
 
+export type EstadoLoading = {
+  [key: string]: boolean;
+};
+
 export enum CampoFormKey {
   FECHA = "fecha",
   FECHA_NATIVO = "fecha_nativo",
