@@ -25,9 +25,23 @@ export class FirestoreRepository<T> implements IRepository<T> {
     const snapshot = await getDocs(collectionRef);
     return snapshot.docs.map((doc) => doc.data() as T);
   }
+  // async getAll(factory: new () => T): Promise<T[]> {
+  //   const collectionRef = collection(db, this.collectionPath);
+  //   const snapshot = await getDocs(collectionRef);
+  //   const values: T[] = [];
+  
+  //   snapshot.forEach((doc) => {
+  //     const value = new factory();
+  //     Object.assign(value, doc.data());
+  //     values.push(value);
+  //   });
+  
+  //   return values;
+  // }
+ 
 
   async add(id: string, item: T): Promise<void> {
-    if (id !== null) {
+    if (id === null) {
       const collectionRef = collection(db, this.collectionPath);
       await addDoc(collectionRef, item);
     } else {
@@ -35,7 +49,7 @@ export class FirestoreRepository<T> implements IRepository<T> {
       await setDoc(docRef, item);
     }
   }
-
+  
   async update(id: string, item: T): Promise<void> {
     const docRef = doc(db, this.collectionPath, id);
     await setDoc(docRef, item);

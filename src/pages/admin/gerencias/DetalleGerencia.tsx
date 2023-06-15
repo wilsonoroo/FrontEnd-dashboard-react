@@ -27,13 +27,15 @@ import { getGerenciasArray } from "@services/database/gerenciasServices";
 import { useContext, useEffect, useState } from "react";
 import { BsFillGrid3X3GapFill, BsListStars } from "react-icons/bs";
 import { IoIosRefresh } from "react-icons/io";
-import { useNavigate, useParams } from "react-router-dom";
-import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+// import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
 import { Empresa } from "@/models/empresa/Empresa";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { identity } from "lodash";
+import { Divisiones } from "@/models/division/Disvision";
+import DivisionCard from "./components/DivionesCard/DivisionCard";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -55,30 +57,43 @@ const itemAnim = {
   },
 };
 
-export default function DetalleEmpresa(props: { titulo: string }) {
+export default function DetalleGerencia(props: { titulo: string }) {
   const { titulo } = props;
-  const { id } = useParams();
+//   const { id, idGerencia } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isList, setIsList] = useState(false);
   const [options, setOptions] = useState({});
   const { currentUser } = useContext(AuthContext);
+  
+  const { idEmpresa } = useParams(); // Obtener el valor de idEmpresa de la ruta
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // Obtener el valor de id y idGerencia de la ruta
+  const idMatch = pathname.match(/\/empresas\/([^/]+)\/([^/]+)/);
+  const id = idMatch ? idMatch[1] : "";
+  const idGerencia = idMatch ? idMatch[2] : "";
 
   const toast = useToast();
-  // console.log(id)
-  const newGerencia = new Gerencia();
-  
-  let empresaRepository: FirestoreRepository<Gerencia>;
-  if (id === undefined) {
-    empresaRepository = new FirestoreRepository<Gerencia>(
-      `empresas/${currentUser.empresaId}/gerencias`
+  console.log(idEmpresa, idGerencia)
+
+  const newDivision = new Divisiones();  
+  let divisonRepository: FirestoreRepository<Divisiones>;
+  if (idEmpresa === undefined) {
+    divisonRepository = new FirestoreRepository<Divisiones>(
+      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones`
     );
   } else {
-    empresaRepository = new FirestoreRepository<Gerencia>(
-      `empresas/${id}/gerencias`
+    divisonRepository = new FirestoreRepository<Divisiones>(
+      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
     );
   }
 
+  // const empresaRepository = new FirebaseRealtimeRepository<Gerencia>(
+  //   `empresas/${id}/gerencias`
+  // );
+  
   // useEffect(() => {
   //   const getUsuarios = async () => {
   //     const db = new FirebaseRealtimeRepository<AuthUser>("auth");
@@ -89,21 +104,21 @@ export default function DetalleEmpresa(props: { titulo: string }) {
   // }, []);
   const navigate = useNavigate();
   const {
-    data: gerencias,
+    data: divisiones,
     firstLoading,
     refreshData,
     isLoading,
-  } = useFetch(() => empresaRepository.getAll());
-  console.log(gerencias)
+  } = useFetch(() => divisonRepository.getAll());
+  
 
   const handleClick = (item: any) => {
-    console.log(item.id)
-    navigate("/admin/empresas/" + id + "/" + item.id, { state: { item } });
+    // console.log(item.id)
+    navigate("/admin/empresas/" + idEmpresa + `/${idGerencia}/` + item.id, { state: { item } });
   };
 
-  const handleSaveGerencia = (data: Gerencia) => {
+  const handleSaveDivision = (data: Divisiones) => {
     setLoading(true);
-    empresaRepository
+    divisonRepository
       .add(null, data)
       .then(() => {
         toast({
@@ -123,6 +138,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
       });
 
     return;
+    console.log(divisonRepository)
   };
 
   return (
@@ -204,7 +220,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
               borderRadius={25}
               onClick={onOpen}
             >
-              Agregar Gerencia
+              Agregar Division
             </Button>
           </HStack>
         </Flex>
@@ -213,7 +229,7 @@ export default function DetalleEmpresa(props: { titulo: string }) {
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
           <Loading />
-        ) : gerencias.length !== 0 ? (
+        ) : divisiones.length !== 0 ? (
           <motion.div
             className="container"
             variants={container}
@@ -236,14 +252,14 @@ export default function DetalleEmpresa(props: { titulo: string }) {
               }}
               gap={{ base: "2", sm: "1", xl: "2", "2xl": "4" }}
             >
-              {gerencias.map((item, index) => {
+              {divisiones.map((item, index) => {
                 return (
                   <motion.div key={index} className="item" variants={itemAnim}>
-                    <GerenciaCard
+                    <DivisionCard
                       key={item.id + "-" + index}
                       index={index}
                       item={item}
-                      gerencia={item}
+                      division={item}
                       onClick={() => {
                         console.log(item);
                         handleClick(item);
@@ -277,42 +293,23 @@ export default function DetalleEmpresa(props: { titulo: string }) {
                 borderRadius={25}
                 onClick={onOpen}
               >
-                Crear Gerencia
+                Crear Division
               </Button>
             </Box>
           </VStack>
         )}
       </Box>
-      <FormVaku<Gerencia>
+      <FormVaku<Divisiones>
         isOpen={isOpen}
         onClose={onClose}
         refreshData={refreshData}
         fieldsToExclude={[""]}
-        // fieldsToExclude={["id"]}
-        model={newGerencia}
-        onSubmit={handleSaveGerencia}
+        model={newDivision}
+        onSubmit={handleSaveDivision}
         loading={loading}
         options={options}
       />
-      {/* <AgregarGerenciaForm
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={function (): void {
-          console.log("on open ");
-        }}
-        onAddFinish={function (isFinish: boolean): void {
-          console.log("on add finish ");
-        }}
-      /> */}
+     
     </>
   );
 }
-
-//    const users =  Object.keys(dataEmpresa.usuarios.auth).map((key) => dataEmpresa.usuarios.auth[key]);
-
-// console.log(users)
-// const listaEmpresa = dataEmpresa ? Object.keys(dataEmpresa).map((key) => dataEmpresa[key]) : [];
-// console.log(listaEmpresa)
-// const { correlativo, documentos } = dataEmpresa;
-// console.log(correlativo);
-// console.log(documentos);

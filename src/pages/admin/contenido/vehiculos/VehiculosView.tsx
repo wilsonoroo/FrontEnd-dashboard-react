@@ -9,6 +9,13 @@ import {
   useDisclosure,
   useToast,
   VStack,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
@@ -35,6 +42,7 @@ export default function VehiculosView(props: { titulo: string }) {
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
   const newDivision = new Divisiones();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
     `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
@@ -48,6 +56,14 @@ export default function VehiculosView(props: { titulo: string }) {
   } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
 
   const columnHelper = createColumnHelper<DocumentoVaku>();
+
+  const onOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const onCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   const columns = [
     columnHelper.accessor("id", {
@@ -173,57 +189,114 @@ export default function VehiculosView(props: { titulo: string }) {
       minSize: 250,
     }),
   ];
+  const columns1 = [
+    columnHelper.accessor("id", {
+      cell: (info) => (
+        <Box px={5}>
+          <Tag
+            bg={"#fb8500"}
+            color="#fff"
+            alignItems={"center"}
+            alignContent={"center"}
+            size={"sm"}
+          >
+            <TagLabel>{info.getValue()}</TagLabel>
+          </Tag>
+        </Box>
+      ),
+      header: "ID.",
+      size: 100,
+      minSize: 120,
+    }),
+    columnHelper.accessor("correlativo", {
+      cell: (info) => (
+        <Box px={5}>
+          <Tag
+            bg={"#fb8500"}
+            color="#fff"
+            alignItems={"center"}
+            alignContent={"center"}
+            size={"sm"}
+          >
+            <TagLabel>{info.getValue()}</TagLabel>
+          </Tag>
+        </Box>
+      ),
+      header: "Correlativo",
+      size: 100,
+      minSize: 120,
+    }),
+
+  ];
 
   return (
     <>
-      <VStack align={"start"} pl={"20px"}>
-        <Text
-          as="b"
-          fontSize="5xl"
-          color={"vaku.700"}
-          fontFamily="Oswald"
-          textStyle="secondary"
-        >
-          {titulo}
-        </Text>
+    <VStack align={"start"} pl={"20px"}>
+      <Text
+        as="b"
+        fontSize="5xl"
+        color={"vaku.700"}
+        fontFamily="Oswald"
+        textStyle="secondary"
+      >
+        {titulo}
+      </Text>
+    </VStack>
 
-        <Flex width={"100%"} alignItems={"end"}>
-          {/* titulo de la tabla  */}
-          <Box>
-            <Text
-              fontSize="md"
-              color={"secondaryGray.600"}
-              mt={0}
-              marginTop={"0px"}
+    <>
+      {!loadingData ? (
+        <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+          <Grid templateColumns="repeat(1, 1fr)" gap={6}>
+            <TableLayout
+              titulo={"Vehiculos"}
+              textButtonAdd={"Asignar Vehiculo"}
+              onOpen={onOpenModal}
+              onReload={refreshData}
             >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
-            </Text>
-          </Box>
-          <Spacer />
-          {/* Contenido de la tabla */}
-          {/* encabezado */}
-        </Flex>
-      </VStack>
-      <>
-        {!loadingData ? (
-          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
-            <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-              <TableLayout
-                titulo={"Divisiones"}
-                textButtonAdd={" Agregar Division"}
-                onOpen={onOpen}
-                onReload={refreshData}
-              >
-                <DataTable columns={columns} data={division} />
-              </TableLayout>
-            </Grid>
-          </Box>
-        ) : (
-          <>Cargando..</>
-        )}
-      </>
-
-      <Flex></Flex>
+              <DataTable columns={columns} data={division} />
+            </TableLayout>
+          </Grid>
+        </Box>
+      ) : (
+        <>Cargando..</>
+      )}
     </>
+
+    <Flex>
+      <Modal isOpen={isModalOpen} onClose={onCloseModal} size="md">
+        <ModalOverlay />
+        <ModalContent
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <ModalHeader>Asignar Vehiculo</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {/* Agrega aquí el contenido del modal */}
+            {!loadingData ? (
+              <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+                <Grid templateColumns="repeat(1, 1fr)" gap={6}>
+                  <TableLayout
+                    titulo={"Vehiculos"}
+                    textButtonAdd={"Asignar Vehiculo"}
+                    onOpen={onOpenModal}
+                    onReload={refreshData}
+                  >
+                    <DataTable columns={columns} data={division} />
+                  </TableLayout>
+                </Grid>
+              </Box>
+            ) : (
+              <>Cargando..</>
+            )}
+          </ModalBody>
+          <ModalFooter>
+            {/* Agrega aquí el contenido del footer del modal */}
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </Flex>
+  </>
   );
 }

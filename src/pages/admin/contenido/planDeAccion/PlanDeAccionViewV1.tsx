@@ -160,7 +160,7 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Planes de Accion"}
-                textButtonAdd={" Agregar Division"}
+                textButtonAdd={" Agregar Plan de acción"}
                 onOpen={onOpen}
                 onReload={refreshData}
                 hiddenButtonAdd

@@ -19,6 +19,7 @@ import {
   Spinner,
   Stack,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { storage } from "@services/config";
 import { addEmpresas } from "@services/database/empresaServices";
@@ -27,6 +28,9 @@ import { Field, Formik } from "formik";
 import React, { useState } from "react";
 import { v4 as uuid } from "uuid";
 import UpLoadField from "./uploadField";
+import { Empresa } from "@/models/empresa/Empresa";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import useFetch from "@/hooks/useFetch";
 
 export default function AgregarUsuario(props: {
   isOpen: boolean;
@@ -42,9 +46,23 @@ export default function AgregarUsuario(props: {
   const [progresspercent, setProgresspercent] = useState(0);
   const firstField = React.useRef();
 
-  const uploadImage = (values: { id: string; nombre: string; url: string }) => {
-    if (!file) return;
+  // let divisionRepository: FirestoreRepository<Empresa>;
+  const toast = useToast();
 
+  const divisionRepository = new FirestoreRepository<Empresa>(
+    `empresas`
+  );
+  const {
+    data: empresas,
+    firstLoading: loadingData,
+    refreshData,
+    isLoading,
+  } = useFetch(() => divisionRepository.getAll());
+// 
+
+  const uploadImage = (data: any) => {
+    if (!file) return;
+  
     const storageRef = ref(storage, `files/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     setLoading(true);
@@ -60,27 +78,41 @@ export default function AgregarUsuario(props: {
         alert(error);
       },
       () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log(downloadURL);
-          setValues({
-            id: values.id,
-            nombre: values.nombre,
-            url: downloadURL,
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((downloadURL) => {
+            console.log(downloadURL);
+            setValues({
+              id: values.id,
+              nombre: values.nombre,
+              url: downloadURL,
+            });            
+  
+            divisionRepository
+              .add(null, data)
+              .then(() => {
+                toast({
+                  title: `Se ha creado  `,
+                  position: "top",
+                  status: "success",
+                  isClosable: true,
+                });
+                onClose();
+                refreshData();
+              })
+              .catch((error) => {
+                console.error(error);
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          })
+          .catch((error) => {
+            console.error(error);
           });
-
-          addEmpresas({
-            key: values.id,
-            id: uuid(),
-            nombre: values.nombre,
-            url: downloadURL,
-          });
-          setLoading(false);
-          onClose();
-          onAddFinish(true);
-        });
       }
     );
   };
+  
 
   return (
     <>
@@ -133,7 +165,7 @@ export default function AgregarUsuario(props: {
                   <form onSubmit={handleSubmit}>
                     <VStack spacing={4} align="flex-start">
                       <FormControl>
-                        <FormLabel htmlFor="email">Id de Plataforma</FormLabel>
+                        <FormLabel >Id de Plataforma</FormLabel>
                         <Field
                           as={Input}
                           id="id"
@@ -143,7 +175,7 @@ export default function AgregarUsuario(props: {
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel htmlFor="email">Nombre</FormLabel>
+                        <FormLabel >Nombre</FormLabel>
                         <Field
                           as={Input}
                           id="nombre"

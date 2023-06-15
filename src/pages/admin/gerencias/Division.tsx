@@ -28,6 +28,7 @@ import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepos
 import { useEffect, useState } from "react";
 import { HiEllipsisVertical } from "react-icons/hi2";
 import { useNavigate, useParams } from "react-router-dom";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 
 export default function DivisionPage(props: { titulo: string }) {
   const { titulo } = props;
@@ -41,8 +42,8 @@ export default function DivisionPage(props: { titulo: string }) {
   const navigate = useNavigate();
   const newDivision = new Divisiones();
 
-  const divisionRepository = new FirebaseRealtimeRepository<Divisiones>(
-    `empresasCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+  const divisionRepository = new FirestoreRepository<Divisiones>(
+    `empresas/${idEmpresa}/${idGerencia}/divisiones`
   );
 
   const {
@@ -50,7 +51,7 @@ export default function DivisionPage(props: { titulo: string }) {
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(Divisiones));
+  } = useFetch(() => divisionRepository.getAll());
 
   useEffect(() => {
     setOptions({

@@ -105,7 +105,7 @@ import {
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Herramientas"}
-                textButtonAdd={" Agregar Division"}
+                textButtonAdd={" Agregar Herramienta"}
                 onOpen={onOpen}
                 onReload={refreshData}
                 hiddenButtonAdd

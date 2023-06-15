@@ -49,7 +49,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               mt={0}
               marginTop={"0px"}
             >
-              {"En esta seccion se especifica los detalles de cada gerencia "}
+              {"En esta seccion se especifica los detalles de la división"}
             </Text>
           </Box>
           <Spacer />
@@ -74,7 +74,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               <PlanDeAccionView titulo="Plan de accion" />
             </TabPanel>
             <TabPanel>
-              <VehiculosView titulo="Vehiculos" />
+              <VehiculosView titulo="" />
             </TabPanel>
             <TabPanel>
               <EquiposView titulo="Equipos" />

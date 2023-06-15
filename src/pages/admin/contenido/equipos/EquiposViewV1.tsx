@@ -105,7 +105,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
           <Grid templateColumns="repeat(1, 1fr)" gap={6}>
             <TableLayout
               titulo={"Equipos"}
-              textButtonAdd={" Agregar Division"}
+              textButtonAdd={" Agregar Equipo"}
               onOpen={onOpen}
               onReload={refreshData}
               hiddenButtonAdd
