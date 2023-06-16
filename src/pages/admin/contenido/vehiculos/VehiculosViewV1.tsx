@@ -74,6 +74,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
   const columnHelper = createColumnHelper<Vehiculo>();
 
   const handleSaveGerencia = (data: Vehiculo) => {
+    console.log(data)
     setLoading(true);
 
     data.fechaVencimiento = moment(data.fechaVencimiento).format(
@@ -213,8 +214,6 @@ export default function VehiculosViewV1(props: { titulo: string }) {
       },
       header: "marca",
     }),
-
-    ,
   ];
 
   return (

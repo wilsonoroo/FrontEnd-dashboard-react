@@ -40,12 +40,14 @@ export type DataTableProps<Data extends object> = {
   data: Data[];
   columns: ColumnDef<Data, any>[];
   sortees?: SortingState;
+  hiddenEmptyRow?: boolean;
 };
 
 export function DataTable<Data extends object>({
   data,
   columns,
   sortees,
+  hiddenEmptyRow = false,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>(sortees);
 
@@ -170,7 +172,7 @@ export function DataTable<Data extends object>({
                 })}
               </Tr>
             ))}
-            {getRowsEmpty()}
+            {!hiddenEmptyRow ? getRowsEmpty() : <></>}
           </Tbody>
         </Table>
       </div>

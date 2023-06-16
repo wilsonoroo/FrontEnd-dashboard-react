@@ -15,6 +15,10 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
   tipo: string;
   tipoVehiculo: string;
   ultimaMantencion: string | Date;
+  divisiones: [
+    { id: number, displayName: string },
+  ];
+  isAsignado: boolean;
 
   getValidationSchema() {
     return yup.object().shape({
@@ -38,6 +42,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
       ultimaMantencion: new Date().toISOString(),
       tipo: "",
       tipoVehiculo: "",
+      divisiones: "",
     };
   }
   getFormBuilder(options: any = {}) {
