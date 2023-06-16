@@ -130,19 +130,28 @@ export default function VehiculosView(props: { titulo: string }) {
   
     filasSeleccionadas.forEach((fila) => {
       const data = {
-        // Utiliza los valores de los campos de la fila seleccionada para construir la data a guardar
-        numeroInterno: fila.numeroInterno,
-        fechaVencimiento: fila.fechaVencimiento,
-        tipoVehiculo: fila.tipoVehiculo,
         ...fila,
       };
   
-      // Llama a la función de guardado con la data correspondiente a la fila seleccionada
-      divisionRepository
-        .add(null, data)
+      // Actualizar empresaVehiculoRepository con la nueva división en divisiones
+      const nuevaDivision = {
+        id: idDivision, // Usar el id del parámetro idDivision
+        displayName: idDivision, // Usar el nombre del parámetro idDivision
+      };
+  
+      const divisionesActualizadas = [...fila.divisiones, nuevaDivision]; // Agregar la nueva división al arreglo existente
+  
+      // Actualizar empresaVehiculoRepository manteniendo los datos existentes y actualizando divisiones
+      const empresaVehiculoActualizado = {
+        ...fila,
+        divisiones: divisionesActualizadas,
+      };
+  
+      empresaVehiculoRepository
+        .update(fila.id, empresaVehiculoActualizado)
         .then(() => {
           toast({
-            title: `Se ha creado el vehiculo con éxito `,
+            title: `Se ha creado el vehículo con éxito `,
             position: "top",
             status: "success",
             isClosable: true,
@@ -156,10 +165,26 @@ export default function VehiculosView(props: { titulo: string }) {
         .finally(() => {
           setLoading(false);
         });
+  
+      // Actualizar divisionRepository sin incluir el arreglo divisiones
+      const divisionActualizada = {
+        ...fila,
+        divisiones: [], // Vaciar el arreglo divisiones
+      };
+  
+      divisionRepository
+        .update(fila.id, divisionActualizada)
+        .then(() => {
+          console.log("Se ha actualizado divisionRepository sin divisiones");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     });
-
-    
   };
+  
+  
+  
   
 
   const columns = [
@@ -230,8 +255,8 @@ export default function VehiculosView(props: { titulo: string }) {
         );
       },
       header: "patente",
-      size: 300,
-      minSize: 250,
+      // size: 300,
+      // minSize: 250,
     }),
     columnHelper.accessor("kilometraje", {
       cell: (info) => {
@@ -243,28 +268,28 @@ export default function VehiculosView(props: { titulo: string }) {
       },
       header: "kilometraje",
     }),
-    columnHelper.accessor("numeroInterno", {
-      cell: (info) => {
-        let color = info.row.original.isEliminado
-          ? "red"
-          : info.row.original.isServicio
-          ? "green"
-          : "yellow";
-        let texto = info.row.original.isEliminado
-          ? "dado de baja"
-          : info.row.original.isServicio
-          ? "en servicio"
-          : "en mantenimiento";
-        return (
-          <Box px={5} alignItems={"start"} alignContent={"start"}>
-            <Badge variant="solid" bg={color} fontSize="0.7em">
-              {texto}
-            </Badge>
-          </Box>
-        );
-      },
-      header: "marca",
-    }),
+    // columnHelper.accessor("numeroInterno", {
+    //   cell: (info) => {
+    //     let color = info.row.original.isEliminado
+    //       ? "red"
+    //       : info.row.original.isServicio
+    //       ? "green"
+    //       : "yellow";
+    //     let texto = info.row.original.isEliminado
+    //       ? "dado de baja"
+    //       : info.row.original.isServicio
+    //       ? "en servicio"
+    //       : "en mantenimiento";
+    //     return (
+    //       <Box px={5} alignItems={"start"} alignContent={"start"}>
+    //         <Badge variant="solid" bg={color} fontSize="0.7em">
+    //           {texto}
+    //         </Badge>
+    //       </Box>
+    //     );
+    //   },
+    //   header: "marca",
+    // }),
   ];
   const columns1 = [
     columnHelper.accessor("numeroInterno", {
