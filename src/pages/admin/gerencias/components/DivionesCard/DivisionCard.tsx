@@ -1,20 +1,25 @@
-import { Box, Button, Flex, Spacer, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  FormLabel,
+  Spacer,
+  Switch,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
-import { HiChevronRight } from "react-icons/hi2";
-
-import { Gerencia } from "@/models/gerencia/Gerencia";
+import { Divisiones } from "@/models/division/Disvision";
 import CustomCard from "@components/card/Card";
 import { HSeparator } from "@components/separator/Separator";
-import { BodyCardDivision } from "./BodyCardDivision";
 import { motion } from "framer-motion";
-import { HeaderCardDivision} from "./HeaderCardDivision";
-import { Divisiones } from "@/models/division/Disvision";
-import FootterCardDivision from "./FootterCardDivision";
+import { BodyCardDivision } from "./BodyCardDivision";
+import { HeaderCardDivision } from "./HeaderCardDivision";
 
 interface DivisionCardProps {
   index: number;
   item: { nombre: string; key: string; isEliminado: boolean; id: string };
   division: Divisiones;
+
   onClick: (item: Divisiones) => void;
 }
 
@@ -36,24 +41,27 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
   return (
     <motion.div
       className="box"
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 100, damping: 5 }}
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 100, damping: 2 }}
     >
       <CustomCard
         key={index}
         m={3}
+        onClick={() => {
+          onClick(division);
+        }}
         boxShadow={shadow}
         minWidth={{
           base: "flex",
           sm: "100%",
-          md: "370px",
-          lg: "370px",
-          xl: "370px",
+          md: "270px",
+          lg: "270px",
+          xl: "270px",
         }}
         maxWidth={{
           base: "flex",
           sm: "100%",
-          md: "370px",
+          md: "270px",
           lg: "100%",
           xl: "100%",
         }}
@@ -64,13 +72,13 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
           <Flex
             minWidth={300}
             alignItems="start"
-            gap="2"
+            gap="1"
             justifyContent={"start"}
             flexDirection={"column"}
             p={3}
           >
             {/* icono gerencia */}
-            <HeaderCardDivision />
+            <HeaderCardDivision item={division} />
             {/* nombre y detalle */}
             <BodyCardDivision item={division} />
           </Flex>
@@ -89,23 +97,20 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
               xl: "flex",
             }}
           >
-            <FootterCardDivision item={division} />
             <Spacer />
-            <Button
-              rightIcon={<HiChevronRight />}
-              colorScheme="vaku.700"
-              bg={"vaku.700"}
-              variant="solid"
-              size="sm"
-              borderRadius={5}
-              onClick={() => {
-                if (onClick) {
-                  onClick(division);
-                }
-              }}
-            >
-              Ver Mas
-            </Button>
+            <FormLabel htmlFor="isChecked">
+              <Text
+                color="vaku.700"
+                isTruncated
+                noOfLines={1}
+                fontSize="sm"
+                me="14px"
+                pt={2}
+              >
+                {"Activo"}
+              </Text>
+            </FormLabel>
+            <Switch id="isChecked" isChecked />
           </Flex>
         </Box>
       </CustomCard>

@@ -53,9 +53,7 @@ AgregarFormProps<T>) => {
   const handleSubmitForm = (values: any, resetForm: () => void) => {
     onSubmit(values, resetForm);
   };
-  useEffect(() => {
-    console.log("🚀 ~ file: FormVaku.tsx:59 ~ initialValues:", initialValues);
-  }, [initialValues]);
+  useEffect(() => {}, [initialValues]);
 
   return (
     <Formik

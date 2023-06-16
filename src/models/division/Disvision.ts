@@ -8,6 +8,7 @@ import VakuModel, {
   IValidationSchema,
 } from "../Vaku";
 import { TipoDivision } from "../tiposDivision/TipoDivision";
+import { UsuarioVaku } from "../usuario/Usuario";
 import { ContenidoDivision } from "./ContenidoDivision";
 
 export class Divisiones
@@ -38,6 +39,14 @@ export class Divisiones
         field: "nombre",
         required: true,
       },
+      responsable: {
+        display: "Responsable",
+        tipo: CampoFormKey.DROPDOWN_V2,
+        field: "responsable",
+        required: true,
+        options: options.responsable,
+        orden: 2,
+      },
       codigo: {
         display: "Codigo",
         tipo: CampoFormKey.TEXT,
@@ -62,9 +71,17 @@ export class Divisiones
       codigo: "",
     };
   }
+
+  setEmptyObject(): void {
+    this.id = "";
+    this.nombre = "";
+    this.tipoDivision = "";
+    this.codigo = null;
+  }
   tipoDivision: TipoDivision | string;
   contenido: ContenidoDivision;
   codigo: string;
+  responsable: UsuarioVaku[] | UsuarioVaku | null;
 
   readonly tipo: string;
 }

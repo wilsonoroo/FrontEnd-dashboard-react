@@ -4,11 +4,9 @@ import { HiChevronRight } from "react-icons/hi2";
 
 import { Gerencia } from "@/models/gerencia/Gerencia";
 import CustomCard from "@components/card/Card";
-import { HSeparator } from "@components/separator/Separator";
 import { BodyCardGerencia } from "./BodyCardGerencia";
 
 import { motion } from "framer-motion";
-import FotterCardGerencia from "./FootterCardGerencia";
 import { HeaderCardGerencia } from "./HeaderCardGerencia";
 
 interface GerenciaCardProps {
@@ -41,19 +39,24 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
     >
       <CustomCard
         key={index}
+        variant={"outline"}
         m={3}
+        onAbort={() => {
+          console.log("click");
+        }}
+        onClick={() => console.log("click")}
         boxShadow={shadow}
         minWidth={{
           base: "flex",
           sm: "100%",
-          md: "370px",
-          lg: "370px",
-          xl: "370px",
+          md: "270px",
+          lg: "270px",
+          xl: "270px",
         }}
         maxWidth={{
           base: "flex",
           sm: "100%",
-          md: "370px",
+          md: "270px",
           lg: "100%",
           xl: "100%",
         }}
@@ -62,19 +65,17 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
       >
         <Box>
           <Flex
-            minWidth={300}
+            minWidth={270}
             alignItems="start"
             gap="2"
             justifyContent={"start"}
             flexDirection={"column"}
             p={3}
           >
-            {/* icono gerencia */}
-            <HeaderCardGerencia />
+            <HeaderCardGerencia item={gerencia} />
             {/* nombre y detalle */}
             <BodyCardGerencia item={gerencia} />
           </Flex>
-          <HSeparator bg={"gray.100"} />
 
           <Flex
             minWidth="max-content"
@@ -89,7 +90,6 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
               xl: "flex",
             }}
           >
-            <FotterCardGerencia item={gerencia} />
             <Spacer />
             <Button
               rightIcon={<HiChevronRight />}

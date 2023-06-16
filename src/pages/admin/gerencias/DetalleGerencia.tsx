@@ -1,5 +1,8 @@
 import {
   Box,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
   Button,
   Container,
   Flex,
@@ -18,23 +21,18 @@ import { HiPlus } from "react-icons/hi2";
 
 import FormVaku from "@/components/forms/FormVaku";
 import Loading from "@/components/Loading";
-import { Gerencia } from "@/models/gerencia/Gerencia";
-import { AuthUser } from "@/models/usuario/AuthUser";
-import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
-import { getGerenciasArray } from "@services/database/gerenciasServices";
 import { useContext, useEffect, useState } from "react";
 import { BsFillGrid3X3GapFill, BsListStars } from "react-icons/bs";
 import { IoIosRefresh } from "react-icons/io";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
-import { Empresa } from "@/models/empresa/Empresa";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { AuthContext } from "@/contexts/AuthContextFb";
-import { Vehiculo } from "@/models/vehiculo/Vehiculo";
-import { identity } from "lodash";
 import { Divisiones } from "@/models/division/Disvision";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { ChevronRightIcon } from "@chakra-ui/icons";
 import DivisionCard from "./components/DivionesCard/DivisionCard";
 
 const container = {
@@ -59,13 +57,13 @@ const itemAnim = {
 
 export default function DetalleGerencia(props: { titulo: string }) {
   const { titulo } = props;
-//   const { id, idGerencia } = useParams();
+  //   const { id, idGerencia } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isList, setIsList] = useState(false);
   const [options, setOptions] = useState({});
   const { currentUser } = useContext(AuthContext);
-  
+
   const { idEmpresa } = useParams(); // Obtener el valor de idEmpresa de la ruta
   const location = useLocation();
   const pathname = location.pathname;
@@ -76,24 +74,18 @@ export default function DetalleGerencia(props: { titulo: string }) {
   const idGerencia = idMatch ? idMatch[2] : "";
 
   const toast = useToast();
-  console.log(idEmpresa, idGerencia)
 
-  const newDivision = new Divisiones();  
+  const newDivision = new Divisiones();
+  newDivision.setEmptyObject();
   let divisonRepository: FirestoreRepository<Divisiones>;
-  if (idEmpresa === undefined) {
-    divisonRepository = new FirestoreRepository<Divisiones>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones`
-    );
-  } else {
-    divisonRepository = new FirestoreRepository<Divisiones>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
-    );
-  }
+  divisonRepository = new FirestoreRepository<Divisiones>(
+    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+  );
 
   // const empresaRepository = new FirebaseRealtimeRepository<Gerencia>(
   //   `empresas/${id}/gerencias`
   // );
-  
+
   // useEffect(() => {
   //   const getUsuarios = async () => {
   //     const db = new FirebaseRealtimeRepository<AuthUser>("auth");
@@ -102,6 +94,37 @@ export default function DetalleGerencia(props: { titulo: string }) {
   //   };
   //   getUsuarios();
   // }, []);
+  useEffect(() => {
+    const getUsuarios = async () => {
+      const db = new FirestoreRepository<UsuarioVaku>("auth");
+      const result = await db.getAllObject(UsuarioVaku);
+      console.log(
+        "🚀 ~ file: DetalleEmpresa.tsx:76 ~ getUsuarios ~ result:",
+        (result[0] as UsuarioVaku).label,
+        result[0] as UsuarioVaku
+      );
+      setOptions({
+        responsable: result as UsuarioVaku[],
+        tipoDivision: [
+          {
+            value: "proyecto",
+            label: "Proyecto",
+          },
+          {
+            value: "contrato",
+            label: "Contrato",
+          },
+          {
+            value: "area",
+            label: "Área",
+          },
+        ],
+      });
+    };
+    getUsuarios();
+  }, []);
+
+  useEffect(() => {}, []);
   const navigate = useNavigate();
   const {
     data: divisiones,
@@ -109,15 +132,19 @@ export default function DetalleGerencia(props: { titulo: string }) {
     refreshData,
     isLoading,
   } = useFetch(() => divisonRepository.getAll());
-  
 
   const handleClick = (item: any) => {
     // console.log(item.id)
-    navigate("/admin/empresas/" + idEmpresa + `/${idGerencia}/` + item.id, { state: { item } });
+    navigate("/admin/empresas/" + idEmpresa + `/${idGerencia}/` + item.id, {
+      state: { item },
+    });
   };
 
   const handleSaveDivision = (data: Divisiones) => {
     setLoading(true);
+    data.displayName = data.nombre;
+    data.createdAt = new Date();
+    data.updatedAt = new Date();
     divisonRepository
       .add(null, data)
       .then(() => {
@@ -138,12 +165,33 @@ export default function DetalleGerencia(props: { titulo: string }) {
       });
 
     return;
-    console.log(divisonRepository)
+    console.log(divisonRepository);
   };
 
   return (
     <>
       <VStack align={"start"} pl={"20px"}>
+        <Breadcrumb
+          spacing="8px"
+          separator={<ChevronRightIcon color="gray.500" />}
+        >
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#">Configuración</BreadcrumbLink>
+          </BreadcrumbItem>
+          <BreadcrumbItem>
+            <BreadcrumbLink href="#">Gerencias</BreadcrumbLink>
+          </BreadcrumbItem>
+
+          <BreadcrumbItem isCurrentPage>
+            <BreadcrumbLink
+              href="#"
+              color={"celesteVaku.500"}
+              fontWeight={"bold"}
+            >
+              Division
+            </BreadcrumbLink>
+          </BreadcrumbItem>
+        </Breadcrumb>
         <Text
           as="b"
           fontSize="5xl"
@@ -238,12 +286,12 @@ export default function DetalleGerencia(props: { titulo: string }) {
           >
             <Grid
               templateColumns={{
-                base: "repeat(3, 1fr)",
+                base: "repeat(4, 1fr)",
                 sm: "repeat(1, 1fr)",
                 md: "repeat(2, 1fr)",
                 lg: "repeat(2, 1fr)",
-                xl: "repeat(3, 2fr)",
-                "2xl": "repeat(3, 2fr)",
+                xl: "repeat(5, 2fr)",
+                "2xl": "repeat(5, 2fr)",
               }}
               templateRows={{
                 base: "1fr",
@@ -303,13 +351,14 @@ export default function DetalleGerencia(props: { titulo: string }) {
         isOpen={isOpen}
         onClose={onClose}
         refreshData={refreshData}
-        fieldsToExclude={[""]}
+        fieldsToExclude={["id", "createdAt", "updatedAt"]}
         model={newDivision}
+        initialValues={newDivision}
         onSubmit={handleSaveDivision}
         loading={loading}
+        size="xl"
         options={options}
       />
-     
     </>
   );
 }

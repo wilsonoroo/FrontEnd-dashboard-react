@@ -3,14 +3,13 @@ import { Box, SimpleGrid, Text, useDisclosure } from "@chakra-ui/react";
 import useFetch from "@hooks/useFetch";
 
 import { Empresa } from "@/models/empresa/Empresa";
-import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AgregarUsuario from "./agregarEmpresa";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -38,10 +37,7 @@ export default function Empresas(props: { titulo: string }) {
 
   const navigate = useNavigate();
 
-  const divisionRepository = new FirestoreRepository<Empresa>(
-    `empresas`
-  );
-  
+  const divisionRepository = new FirestoreRepository<Empresa>(`empresas`);
 
   const {
     data: empresas,
@@ -49,7 +45,6 @@ export default function Empresas(props: { titulo: string }) {
     refreshData,
     isLoading,
   } = useFetch(() => divisionRepository.getAll());
-
 
   useEffect(() => {
     // console.log(empresas);
@@ -78,7 +73,7 @@ export default function Empresas(props: { titulo: string }) {
               empresas.map((item, index) => {
                 return (
                   <>
-                    <motion.li key={index} className="item" variants={item}>
+                    <motion.div key={index} className="item" variants={item}>
                       <EmpresaView
                         onClick={(event) => handlePresEmpresa(event)}
                         avatar={item.url}
@@ -88,7 +83,7 @@ export default function Empresas(props: { titulo: string }) {
                         path={item?.key}
                         empresa={item}
                       />
-                    </motion.li>
+                    </motion.div>
                   </>
                 );
               })

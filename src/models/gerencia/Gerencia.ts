@@ -10,6 +10,7 @@ import VakuModel, {
 
 import { Divisiones } from "../division/Disvision";
 import { AuthUser } from "../usuario/AuthUser";
+import { UsuarioVaku } from "../usuario/Usuario";
 export class Gerencia
   extends VakuModel
   implements
@@ -21,10 +22,8 @@ export class Gerencia
 {
   divisiones: Divisiones[];
   isEliminado: boolean;
-  cantUsuarios: number;
-  cantDivisiones: number;
-  cantDocumentos: number;
-  responsable: AuthUser[] | AuthUser | null;
+  responsable: UsuarioVaku[] | UsuarioVaku | null;
+  ubicacion: string;
 
   getValidationSchema() {
     return yup.object().shape({
@@ -36,11 +35,10 @@ export class Gerencia
       id: "",
       nombre: "",
       responsable: new AuthUser(),
+      ubicacion: "",
       createdAt: new Date(),
       updatedAt: new Date(),
-      cantUsuarios: 0,
-      cantDivisiones: 0,
-      cantDocumentos: 0,
+
       isEliminado: false,
     };
   }
@@ -49,6 +47,9 @@ export class Gerencia
     this.id = "";
     this.nombre = "";
     this.isEliminado = false;
+    this.divisiones = [];
+    this.responsable = null;
+    this.ubicacion = "";
   }
   getFormBuilder(options?: any) {
     return {
@@ -63,38 +64,30 @@ export class Gerencia
         tipo: CampoFormKey.TEXT,
         field: "nombre",
         required: true,
+        orden: 1,
       },
+
       responsable: {
         display: "Responsable",
-        tipo: CampoFormKey.DROPDOWN,
+        tipo: CampoFormKey.DROPDOWN_V2,
         field: "responsable",
         required: true,
         options: options.responsable,
+        orden: 2,
+      },
+      ubicacion: {
+        display: "Ubicacion",
+        tipo: CampoFormKey.TEXT,
+        field: "ubicacion",
+        required: true,
+        orden: 3,
       },
       isEliminado: {
         display: "Esta elminada?",
         tipo: CampoFormKey.CHECKBOX,
         field: "isEliminado",
         required: true,
-      },
-      cantDocumentos: {
-        display: "Cantidad de Documentos",
-        tipo: CampoFormKey.NUMBER,
-        field: "cantDocumentos",
-        required: true,
-      },
-      cantDivisiones: {
-        display: "Cantidad de divisiones",
-        tipo: CampoFormKey.NUMBER,
-        field: "cantDivisiones",
-        required: true,
-      },
-
-      cantUsuarios: {
-        display: "Cantidad de Usuarios",
-        tipo: CampoFormKey.NUMBER,
-        field: "cantUsuarios",
-        required: true,
+        orden: 4,
       },
     };
   }

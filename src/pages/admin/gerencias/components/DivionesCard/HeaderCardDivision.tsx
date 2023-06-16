@@ -1,5 +1,5 @@
+import { Divisiones } from "@/models/division/Disvision";
 import {
-  Avatar,
   Box,
   Flex,
   IconButton,
@@ -8,18 +8,25 @@ import {
   MenuItem,
   MenuList,
   Spacer,
+  Text,
 } from "@chakra-ui/react";
-import { HiEllipsisVertical, HiOutlineBuildingOffice2 } from "react-icons/hi2";
+import { BsGear } from "react-icons/bs";
 
-export function HeaderCardDivision({}) {
+export function HeaderCardDivision(props: { item: Divisiones }) {
+  const { item } = props;
   return (
     <Box w={"100%"}>
       <Flex minWidth="max-content" alignItems="center" gap="2">
-        <Avatar
-          bg="cyan"
-          size="xs"
-          icon={<HiOutlineBuildingOffice2 fontSize="1.0rem" />}
-        />
+        <Text
+          as="b"
+          fontSize="2xl"
+          me="14px"
+          color={"celesteVaku.500"}
+          style={{ fontFamily: "'Oswald', sans-serif;" }}
+          textStyle="secondary"
+        >
+          {item.nombre}
+        </Text>
         <Spacer />
         <Menu>
           <MenuButton
@@ -28,7 +35,7 @@ export function HeaderCardDivision({}) {
             borderRadius={25}
             size={"md"}
             bg={"white"}
-            icon={<HiEllipsisVertical size={24} />}
+            icon={<BsGear size={24} />}
           />
           <MenuList>
             <MenuItem command="⌘T">New Tab</MenuItem>

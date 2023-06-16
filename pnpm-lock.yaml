@@ -40,6 +40,9 @@ dependencies:
   '@tanstack/react-table':
     specifier: ^8.9.1
     version: 8.9.1(react-dom@18.2.0)(react@18.2.0)
+  '@types/lodash':
+    specifier: ^4.14.195
+    version: 4.14.195
   axios:
     specifier: ^1.4.0
     version: 1.4.0
@@ -49,6 +52,9 @@ dependencies:
   chakra-react-select:
     specifier: ^4.6.0
     version: 4.6.0(@chakra-ui/form-control@2.0.18)(@chakra-ui/icon@3.0.16)(@chakra-ui/layout@2.1.19)(@chakra-ui/media-query@3.2.12)(@chakra-ui/menu@2.1.14)(@chakra-ui/spinner@2.0.13)(@chakra-ui/system@2.5.7)(@emotion/react@11.11.0)(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0)
+  class-transformer:
+    specifier: ^0.5.1
+    version: 0.5.1
   date-fns:
     specifier: ^2.30.0
     version: 2.30.0
@@ -115,6 +121,9 @@ dependencies:
   react-select:
     specifier: ^5.7.3
     version: 5.7.3(@types/react@18.0.28)(react-dom@18.2.0)(react@18.2.0)
+  remove-undefined-objects:
+    specifier: ^3.0.0
+    version: 3.0.0
   styled-components:
     specifier: 6.0.0-rc.1
     version: 6.0.0-rc.1(react-dom@18.2.0)(react@18.2.0)
@@ -4215,11 +4224,11 @@ packages:
   /@types/lodash.mergewith@4.6.7:
     resolution: {integrity: sha512-3m+lkO5CLRRYU0fhGRp7zbsGi6+BZj0uTVSwvcKU+nSlhjA9/QRNfuSGnD2mX6hQA7ZbmcCkzk5h4ZYGOtk14A==}
     dependencies:
-      '@types/lodash': 4.14.194
+      '@types/lodash': 4.14.195
     dev: false
 
-  /@types/lodash@4.14.194:
-    resolution: {integrity: sha512-r22s9tAS7imvBt2lyHC9B8AGwWnXaYb1tY09oyLkXDs4vArpYJzw09nj8MLx5VfciBPGIb+ZwG0ssYnEPJxn/g==}
+  /@types/lodash@4.14.195:
+    resolution: {integrity: sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==}
     dev: false
 
   /@types/long@4.0.2:
@@ -4898,6 +4907,10 @@ packages:
   /cjs-module-lexer@1.2.2:
     resolution: {integrity: sha512-cOU9usZw8/dXIXKtwa8pM0OTJQuJkxMN6w30csNRUerHfeQ5R6U3kkU/FtJeIf3M202OHfY2U8ccInBG7/xogA==}
     dev: true
+
+  /class-transformer@0.5.1:
+    resolution: {integrity: sha512-SQa1Ws6hUbfC98vKGxZH3KFY0Y1lm5Zm0SY8XX9zbK7FJCyVEac3ATW0RIpwzW+oOfmHE5PMPufDG9hCfoEOMw==}
+    dev: false
 
   /classnames@2.3.2:
     resolution: {integrity: sha512-CSbhY4cFEJRe6/GQzIk5qXZ4Jeg5pcsP7b5peFSDpffpe1cqjASH/n9UTjBwOp6XpMSTwQ8Za2K5V02ueA7Tmw==}
@@ -7569,6 +7582,11 @@ packages:
     hasBin: true
     dependencies:
       jsesc: 0.5.0
+    dev: false
+
+  /remove-undefined-objects@3.0.0:
+    resolution: {integrity: sha512-nxG1yYfc/Jxi+bNCBiqKhxVJPE+QvziIOKbD+Dxc93Uisz92v/ZYpo4WR0TJuf+dk2xE8lW2WPJsA3mDFzXy8w==}
+    engines: {node: '>=16'}
     dev: false
 
   /require-directory@2.1.1:

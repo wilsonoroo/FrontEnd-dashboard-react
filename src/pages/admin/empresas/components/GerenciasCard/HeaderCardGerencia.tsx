@@ -1,42 +1,22 @@
-import {
-  Avatar,
-  Box,
-  Flex,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Spacer,
-} from "@chakra-ui/react";
-import { HiEllipsisVertical, HiOutlineBuildingOffice2 } from "react-icons/hi2";
+import { Gerencia } from "@/models/gerencia/Gerencia";
+import { Box, Flex, Spacer, Text } from "@chakra-ui/react";
 
-export function HeaderCardGerencia({}) {
+export function HeaderCardGerencia(props: { item: Gerencia }) {
+  const { item } = props;
   return (
     <Box w={"100%"}>
       <Flex minWidth="max-content" alignItems="center" gap="2">
-        <Avatar
-          bg="cyan"
-          size="xs"
-          icon={<HiOutlineBuildingOffice2 fontSize="1.0rem" />}
-        />
+        <Text
+          as="b"
+          fontSize="2xl"
+          me="14px"
+          color={"celesteVaku.500"}
+          style={{ fontFamily: "'Oswald', sans-serif;" }}
+          textStyle="secondary"
+        >
+          {item.nombre}
+        </Text>
         <Spacer />
-        <Menu>
-          <MenuButton
-            as={IconButton}
-            aria-label="Options"
-            borderRadius={25}
-            size={"md"}
-            bg={"white"}
-            icon={<HiEllipsisVertical size={24} />}
-          />
-          <MenuList>
-            <MenuItem command="⌘T">New Tab</MenuItem>
-            <MenuItem command="⌘N">New Window</MenuItem>
-            <MenuItem command="⌘⇧N">Open Closed Tab</MenuItem>
-            <MenuItem command="⌘O">Open File...</MenuItem>
-          </MenuList>
-        </Menu>
       </Flex>
     </Box>
   );

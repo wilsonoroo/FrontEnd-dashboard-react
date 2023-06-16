@@ -73,7 +73,7 @@ export default function Default(props: {
                   alt="avatar"
                 />
 
-                <Box py={5} textAlign="center">
+                {/* <Box py={5} textAlign="center">
                   <Text
                     color={textColor}
                     fontSize={{ base: "md", xl: "sm", "3xl": "md" }}
@@ -81,7 +81,7 @@ export default function Default(props: {
                   >
                     {name}
                   </Text>
-                </Box>
+                </Box> */}
               </Box>
             </Flex>
 
