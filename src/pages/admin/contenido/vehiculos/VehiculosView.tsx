@@ -16,6 +16,9 @@ import {
   ModalBody,
   ModalFooter,
   ModalCloseButton,
+  Button,
+  Badge,
+  Checkbox,
 } from "@chakra-ui/react";
 import { CellContext, createColumnHelper } from "@tanstack/react-table";
 
@@ -28,8 +31,13 @@ import { Divisiones } from "@/models/division/Disvision";
 import { DocumentoVaku } from "@/models/documento/Documento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
+import { Vehiculo } from "@/models/vehiculo/Vehiculo";
+import moment from "moment";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { AuthContext } from "@/contexts/AuthContextFb";
 
 export default function VehiculosView(props: { titulo: string }) {
   const { titulo } = props;
@@ -43,19 +51,54 @@ export default function VehiculosView(props: { titulo: string }) {
   const navigate = useNavigate();
   const newDivision = new Divisiones();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { currentUser } = useContext(AuthContext);
+  const newVehiculo = new Vehiculo();
 
-  const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
-  );
+  // console.log(idEmpresa, idGerencia, idDivision)
+  let divisionRepository: FirestoreRepository<Vehiculo>;
+  if (idEmpresa === undefined) {
+    divisionRepository= new FirestoreRepository<Vehiculo>(
+      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/vehiculos`
+    );
+  } else {
+    divisionRepository = new FirestoreRepository<Vehiculo>(
+      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/vehiculos`
+    );
+  }
+
+  let empresaVehiculoRepository: FirestoreRepository<Vehiculo>;
+  if (idEmpresa === undefined) {
+    empresaVehiculoRepository= new FirestoreRepository<Vehiculo>(
+      `empresas/${currentUser.empresaId}/vehiculos`
+    );
+  } else {
+    empresaVehiculoRepository= new FirestoreRepository<Vehiculo>(
+      `empresas/${idEmpresa}/vehiculos`
+    );
+  }
+
 
   const {
     data: division,
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll(DocumentoVaku));
+  } = useFetch(() => divisionRepository.getAll());
 
-  const columnHelper = createColumnHelper<DocumentoVaku>();
+  const {
+    data: empresaVehiculos,
+    firstLoading: loadingEmpresaVehiculos,
+    refreshData: refreshEmpresaVehiculos,
+    isLoading: empresaVehiculosLoading,
+  } = useFetch(() => empresaVehiculoRepository.getAll());
+
+  // console.log(division, empresaVehiculos)
+  
+  const divisiones = empresaVehiculos.map((vehiculo) => vehiculo.divisiones).flat();
+  // console.log(divisiones);
+
+
+  const columnHelper = createColumnHelper<Vehiculo>();
 
   const onOpenModal = () => {
     setIsModalOpen(true);
@@ -63,46 +106,117 @@ export default function VehiculosView(props: { titulo: string }) {
 
   const onCloseModal = () => {
     setIsModalOpen(false);
+    setFilasSeleccionadas([]);
   };
 
+  const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
+
+  const manejarCambioCheckbox = (fila: any) => {
+    setFilasSeleccionadas((filasSeleccionadas) => {
+      if (filasSeleccionadas.includes(fila)) {
+        // Si la fila ya está seleccionada, eliminarla del array de filas seleccionadas
+        return filasSeleccionadas.filter((f) => f !== fila);
+      } else {
+        // Si la fila no está seleccionada, agregarla al array de filas seleccionadas
+        return [...filasSeleccionadas, fila];
+      }
+    });
+  };
+  
+
+  const handleGuardar = () => {
+    console.log("Guardando datos de filas seleccionadas:");
+    console.log(filasSeleccionadas);
+  
+    filasSeleccionadas.forEach((fila) => {
+      const data = {
+        ...fila,
+      };
+  
+      // Actualizar empresaVehiculoRepository con la nueva división en divisiones
+      const nuevaDivision = {
+        id: idDivision, // Usar el id del parámetro idDivision
+        displayName: idDivision, // Usar el nombre del parámetro idDivision
+      };
+  
+      const divisionesActualizadas = [...fila.divisiones, nuevaDivision]; // Agregar la nueva división al arreglo existente
+  
+      // Actualizar empresaVehiculoRepository manteniendo los datos existentes y actualizando divisiones
+      const empresaVehiculoActualizado = {
+        ...fila,
+        divisiones: divisionesActualizadas,
+      };
+  
+      empresaVehiculoRepository
+        .update(fila.id, empresaVehiculoActualizado)
+        .then(() => {
+          toast({
+            title: `Se ha creado el vehículo con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+          onClose();
+          refreshData();
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+  
+      // Actualizar divisionRepository sin incluir el arreglo divisiones
+      const divisionActualizada = {
+        ...fila,
+        divisiones: [], // Vaciar el arreglo divisiones
+      };
+  
+      divisionRepository
+        .update(fila.id, divisionActualizada)
+        .then(() => {
+          console.log("Se ha actualizado divisionRepository sin divisiones");
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  };
+  
+  
+  
+  
+
   const columns = [
-    columnHelper.accessor("id", {
+    columnHelper.accessor("numeroInterno", {
       cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
+        <Box px={5} alignItems={"start"} alignContent={"start"}>
+          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.getValue()}
+          </Badge>
+          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.row.original.id}
+          </Badge> */}
         </Box>
       ),
-      header: "ID.",
-      size: 100,
-      minSize: 120,
+      header: "numero Interno",
     }),
-    columnHelper.accessor("correlativo", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "Correlativo",
-      size: 100,
-      minSize: 120,
+    columnHelper.accessor("fechaVencimiento", {
+      cell: (info) => {
+        let fecha = moment(info.getValue())
+          .tz("America/Santiago")
+          .format("DD/MM/YYYY");
+        fecha === "Invalid date" ? (fecha = info.getValue().toString()) : fecha;
+
+        return (
+          <span>
+            <Text fontSize="sm">{fecha}</Text>
+          </span>
+        );
+      },
+      header: "Fecha revisión técnica",
     }),
-    columnHelper.accessor("fechaValidacion", {
+    columnHelper.accessor("tipoVehiculo", {
       cell: (info) => {
         return (
           <span>
@@ -110,31 +224,9 @@ export default function VehiculosView(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Validacion",
-      size: 300,
-      minSize: 250,
+      header: "Tipo vehiculo",
     }),
-
-    columnHelper.accessor("emisor", {
-      cell: (info) => {
-        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
-        const data = info.getValue() as UsuarioVaku | undefined;
-
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
-        return (
-          <span>
-            <Text fontSize="sm">{`${data}`}</Text>
-          </span>
-        );
-      },
-      header: "emisor",
-      size: 300,
-      minSize: 250,
-    }),
-
-    columnHelper.accessor("estado", {
+    columnHelper.accessor("marca", {
       cell: (info) => {
         return (
           <span>
@@ -142,11 +234,9 @@ export default function VehiculosView(props: { titulo: string }) {
           </span>
         );
       },
-      header: "estado",
-      size: 300,
-      minSize: 250,
+      header: "marca",
     }),
-    columnHelper.accessor("fechaCreacion", {
+    columnHelper.accessor("modelo", {
       cell: (info) => {
         return (
           <span>
@@ -154,11 +244,9 @@ export default function VehiculosView(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Creacion",
-      size: 300,
-      minSize: 250,
+      header: "modelo",
     }),
-    columnHelper.accessor("fechaSubida", {
+    columnHelper.accessor("patente", {
       cell: (info) => {
         return (
           <span>
@@ -166,67 +254,111 @@ export default function VehiculosView(props: { titulo: string }) {
           </span>
         );
       },
-      header: "fecha Subida",
-      size: 300,
-      minSize: 250,
+      header: "patente",
+      // size: 300,
+      // minSize: 250,
     }),
-    columnHelper.accessor("validadoPor", {
+    columnHelper.accessor("kilometraje", {
       cell: (info) => {
-        const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
-        const data = info.getValue() as UsuarioVaku | undefined;
-
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
         return (
           <span>
-            <Text fontSize="sm">{`${data}`}</Text>
+            <Text fontSize="sm">{info.getValue()}</Text>
           </span>
         );
       },
-      header: "validadoPor",
-      size: 300,
-      minSize: 250,
+      header: "kilometraje",
     }),
+    // columnHelper.accessor("numeroInterno", {
+    //   cell: (info) => {
+    //     let color = info.row.original.isEliminado
+    //       ? "red"
+    //       : info.row.original.isServicio
+    //       ? "green"
+    //       : "yellow";
+    //     let texto = info.row.original.isEliminado
+    //       ? "dado de baja"
+    //       : info.row.original.isServicio
+    //       ? "en servicio"
+    //       : "en mantenimiento";
+    //     return (
+    //       <Box px={5} alignItems={"start"} alignContent={"start"}>
+    //         <Badge variant="solid" bg={color} fontSize="0.7em">
+    //           {texto}
+    //         </Badge>
+    //       </Box>
+    //     );
+    //   },
+    //   header: "marca",
+    // }),
   ];
   const columns1 = [
-    columnHelper.accessor("id", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "ID.",
-      size: 100,
-      minSize: 120,
+    columnHelper.accessor("numeroInterno", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Numero Interno",
     }),
-    columnHelper.accessor("correlativo", {
+    columnHelper.accessor("patente", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "patente",
+      // size: 300,
+      // minSize: 250,
+    }),
+    columnHelper.accessor("tipoVehiculo", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Tipo vehiculo",
+    }),
+    
+    columnHelper.accessor("divisiones", {
       cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
+        <Box  alignItems="center" alignContent="center" >
+          {Array.isArray(info.getValue()) && info.getValue().length > 0 ? (
+            info.getValue().map((division, index) => (
+              <Badge key={index} variant="solid" bg={"#3498DB"} fontSize="0.7em" mr={1} mb={1}>
+                {division.displayName}
+              </Badge>
+            ))
+          ) : (
+            ""
+          )}
         </Box>
       ),
-      header: "Correlativo",
-      size: 100,
-      minSize: 120,
+      header: "Divisiones",
     }),
 
+    {
+      id: "asignarDesasignar",
+      header: (
+        <span>
+          <text /> Asignar/Desasignar
+        </span>
+      ),
+      cell: (info: any) => (
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Checkbox
+            onChange={() => manejarCambioCheckbox(info.row.original)}
+            isChecked={filasSeleccionadas.some((f) => f === info.row.original)}
+          />
+        </Box>
+      ),
+    },
+     
   ];
 
   return (
@@ -262,37 +394,45 @@ export default function VehiculosView(props: { titulo: string }) {
       )}
     </>
 
-    <Flex>
-      <Modal isOpen={isModalOpen} onClose={onCloseModal} size="md">
+    <Flex >
+      <Modal isOpen={isModalOpen} onClose={onCloseModal}  >
         <ModalOverlay />
         <ModalContent
           display="flex"
-          justifyContent="center"
-          alignItems="center"
+          // justifyContent="center"
+          // alignItems="center"
+          maxW="900px" // Ancho máximo de 800px
+          maxH="950px"
+          borderRadius={16}
+          mx="auto" // Centrar horizontalmente
+          my="auto" // Centrar verticalmente
         >
           <ModalHeader>Asignar Vehiculo</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* Agrega aquí el contenido del modal */}
-            {!loadingData ? (
-              <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+            {!loadingEmpresaVehiculos ? (
+              < >
                 <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-                  <TableLayout
-                    titulo={"Vehiculos"}
-                    textButtonAdd={"Asignar Vehiculo"}
+                  <TableLayoutModal
+                    titulo={""}
+                    textButtonAdd={""}
                     onOpen={onOpenModal}
                     onReload={refreshData}
                   >
-                    <DataTable columns={columns} data={division} />
-                  </TableLayout>
+                    <DataTable hiddenEmptyRow={true} columns={columns1} data={empresaVehiculos} />
+                  </TableLayoutModal>
                 </Grid>
-              </Box>
+              </>
             ) : (
               <>Cargando..</>
             )}
           </ModalBody>
           <ModalFooter>
-            {/* Agrega aquí el contenido del footer del modal */}
+            <Flex justifyContent="flex-end">
+              <Button mr={3} onClick={onCloseModal}>Cancelar</Button>
+              <Button onClick={handleGuardar} colorScheme="blue">Guardar</Button>
+            </Flex>
           </ModalFooter>
         </ModalContent>
       </Modal>
