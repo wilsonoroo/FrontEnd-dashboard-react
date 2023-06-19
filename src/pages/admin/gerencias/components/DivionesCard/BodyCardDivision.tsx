@@ -46,6 +46,7 @@ export function BodyCardDivision(props: { item: Divisiones }) {
               <Avatar
                 size="sm"
                 name="Dan Abrahmov"
+                bg="azulVaku"
                 src={(item?.responsable as UsuarioVaku)?.fotografia?.url}
               />
             </WrapItem>

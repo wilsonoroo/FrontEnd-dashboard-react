@@ -1,15 +1,8 @@
 import {
   Box,
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
   Button,
   Container,
-  Flex,
   Grid,
-  HStack,
-  IconButton,
-  Spacer,
   Text,
   useDisclosure,
   useToast,
@@ -24,15 +17,13 @@ import Loading from "@/components/Loading";
 import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { useContext, useEffect, useState } from "react";
-import { BsFillGrid3X3GapFill, BsListStars } from "react-icons/bs";
-import { IoIosRefresh } from "react-icons/io";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 // import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
+import Headers from "@/components/header/header";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import { ChevronRightIcon } from "@chakra-ui/icons";
 import DivisionCard from "./components/DivionesCard/DivisionCard";
 
 const container = {
@@ -66,6 +57,7 @@ export default function DetalleGerencia(props: { titulo: string }) {
 
   const { idEmpresa } = useParams(); // Obtener el valor de idEmpresa de la ruta
   const location = useLocation();
+
   const pathname = location.pathname;
 
   // Obtener el valor de id y idGerencia de la ruta
@@ -98,11 +90,7 @@ export default function DetalleGerencia(props: { titulo: string }) {
     const getUsuarios = async () => {
       const db = new FirestoreRepository<UsuarioVaku>("auth");
       const result = await db.getAllObject(UsuarioVaku);
-      console.log(
-        "🚀 ~ file: DetalleEmpresa.tsx:76 ~ getUsuarios ~ result:",
-        (result[0] as UsuarioVaku).label,
-        result[0] as UsuarioVaku
-      );
+
       setOptions({
         responsable: result as UsuarioVaku[],
         tipoDivision: [
@@ -170,109 +158,30 @@ export default function DetalleGerencia(props: { titulo: string }) {
 
   return (
     <>
-      <VStack align={"start"} pl={"20px"}>
-        <Breadcrumb
-          spacing="8px"
-          separator={<ChevronRightIcon color="gray.500" />}
-        >
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Configuración</BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <BreadcrumbLink href="#">Gerencias</BreadcrumbLink>
-          </BreadcrumbItem>
-
-          <BreadcrumbItem isCurrentPage>
-            <BreadcrumbLink
-              href="#"
-              color={"celesteVaku.500"}
-              fontWeight={"bold"}
-            >
-              Division
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <Text
-          as="b"
-          fontSize="5xl"
-          color={"vaku.700"}
-          style={{ fontFamily: "'Oswald', sans-serif;" }}
-          textStyle="secondary"
-        >
-          {titulo}
-        </Text>
-
-        <Flex width={"100%"} alignItems={"end"}>
-          <Box>
-            <Text
-              fontSize="md"
-              color={"secondaryGray.600"}
-              mt={0}
-              marginTop={"0px"}
-            >
-              {
-                "En Esta seccion encontraras todas las gerencias configuradas en VAKU"
-              }
-            </Text>
-          </Box>
-          <Spacer />
-          <HStack>
-            <HStack>
-              {isList ? (
-                <Box>
-                  <IconButton
-                    aria-label="Search database"
-                    isActive={!isList}
-                    bg="transparent"
-                    onClick={() => {
-                      setIsList(false);
-                    }}
-                    borderRadius={25}
-                    icon={<BsFillGrid3X3GapFill />}
-                  />
-                </Box>
-              ) : (
-                <Box>
-                  <IconButton
-                    aria-label="Search database"
-                    isActive={isList}
-                    bg="transparent"
-                    onClick={() => {
-                      setIsList(true);
-                    }}
-                    borderRadius={25}
-                    icon={<BsListStars />}
-                  />
-                </Box>
-              )}
-
-              <Box>
-                <IconButton
-                  aria-label="recargar"
-                  isActive={isList}
-                  bg="transparent"
-                  onClick={() => {
-                    refreshData();
-                  }}
-                  borderRadius={25}
-                  icon={<IoIosRefresh />}
-                />
-              </Box>
-            </HStack>
-            <Button
-              rightIcon={<HiPlus />}
-              colorScheme="vaku.700"
-              bg={"vaku.700"}
-              variant="solid"
-              size="md"
-              borderRadius={25}
-              onClick={onOpen}
-            >
-              Agregar Division
-            </Button>
-          </HStack>
-        </Flex>
-      </VStack>
+      <Headers
+        titulo={"División"}
+        subtitulo={
+          "En esta sección se especifica los detalles de cada gerencia"
+        }
+        onOpen={onOpen}
+        rutas={[
+          { nombre: "Home", url: "/admin" },
+          { nombre: "Empresas", url: "/admin/empresas" },
+          {
+            nombre: `${location.state.empresa.nombre}`,
+            url: `/admin/empresas/${location.state.empresa.id}`,
+            state: {
+              empresa: {
+                id: location.state.empresa.id,
+                nombre: location.state.empresa.nombre,
+              },
+            },
+          },
+          { nombre: `${location.state.gerencia.nombre}`, url: "/admin/di" },
+        ]}
+        showButtonAdd={true}
+        textButton="Agregar División"
+      />
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
@@ -290,8 +199,8 @@ export default function DetalleGerencia(props: { titulo: string }) {
                 sm: "repeat(1, 1fr)",
                 md: "repeat(2, 1fr)",
                 lg: "repeat(2, 1fr)",
-                xl: "repeat(5, 2fr)",
-                "2xl": "repeat(5, 2fr)",
+                xl: "repeat(3, 2fr)",
+                "2xl": "repeat(4, 2fr)",
               }}
               templateRows={{
                 base: "1fr",

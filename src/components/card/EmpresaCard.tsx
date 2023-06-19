@@ -37,38 +37,54 @@ export default function Default(props: {
   return (
     <>
       <LinkBox
+        id="box"
         as="article"
         maxW="sm"
-        p="5"
+        p="1"
         borderWidth="0px"
         rounded="md"
         key={"item"}
         onClick={() => {
           onClick(empresa);
         }}
+        width={250}
+        height={130}
       >
         <Card
-          boxShadow={shadow}
+          variant={"outline"}
           py="px"
           bg={bg}
           {...rest}
+          width={250}
+          height={130}
+          minWidth={250}
           _hover={{ shadow: "lg" }}
+          alignContent={"center"}
+          justifyContent={"center"}
         >
           <LinkOverlay>
-            <Flex p={0} w="full" alignItems="center" justifyContent="center">
+            <Flex
+              p={0}
+              w="full"
+              h={"full"}
+              alignItems="center"
+              justifyContent="center"
+            >
               <Box
                 w="xl"
                 bg="white"
                 rounded="lg"
                 overflow="hidden"
                 mx="auto"
-                py={2}
+                py={6}
+                alignContent={"center"}
               >
                 <Image
                   w="full"
-                  h={50}
                   px={5}
                   fit="scale-down"
+                  align={"center"}
+                  alignContent={"center"}
                   src={avatar}
                   alt="avatar"
                 />
@@ -136,7 +152,7 @@ export function EmpresaAdd(props: {
       <LinkBox
         as="article"
         maxW="sm"
-        p="5"
+        p="2"
         borderWidth="0px"
         rounded="md"
         key={"item"}
@@ -153,6 +169,8 @@ export function EmpresaAdd(props: {
               borderWidth={2}
               borderColor={textColor}
               mx="auto"
+              width={250}
+              height={130}
               py={2}
             >
               <Center h={50}>

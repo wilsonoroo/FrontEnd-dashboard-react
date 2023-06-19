@@ -1,3 +1,7 @@
+import UpLoadField from "@/components/fileUpload/uploadField";
+import useFetch from "@/hooks/useFetch";
+import { Empresa } from "@/models/empresa/Empresa";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import {
   Box,
   Button,
@@ -22,15 +26,9 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { storage } from "@services/config";
-import { addEmpresas } from "@services/database/empresaServices";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
-import { v4 as uuid } from "uuid";
-import UpLoadField from "./uploadField";
-import { Empresa } from "@/models/empresa/Empresa";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import useFetch from "@/hooks/useFetch";
 
 export default function AgregarUsuario(props: {
   isOpen: boolean;
@@ -49,20 +47,18 @@ export default function AgregarUsuario(props: {
   // let divisionRepository: FirestoreRepository<Empresa>;
   const toast = useToast();
 
-  const divisionRepository = new FirestoreRepository<Empresa>(
-    `empresas`
-  );
+  const divisionRepository = new FirestoreRepository<Empresa>(`empresas`);
   const {
     data: empresas,
     firstLoading: loadingData,
     refreshData,
     isLoading,
   } = useFetch(() => divisionRepository.getAll());
-// 
+  //
 
   const uploadImage = (data: any) => {
     if (!file) return;
-  
+
     const storageRef = ref(storage, `files/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
     setLoading(true);
@@ -81,14 +77,15 @@ export default function AgregarUsuario(props: {
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
             console.log(downloadURL);
-            setValues({
-              id: values.id,
-              nombre: values.nombre,
-              url: downloadURL,
-            });            
-  
+            // setValues({
+            //   id: values.id,
+            //   nombre: values.nombre,
+            //   url: downloadURL,
+            // });
+
+            console.log({ ...data, url: downloadURL });
             divisionRepository
-              .add(null, data)
+              .add(data.id, { ...data, url: downloadURL })
               .then(() => {
                 toast({
                   title: `Se ha creado  `,
@@ -112,7 +109,6 @@ export default function AgregarUsuario(props: {
       }
     );
   };
-  
 
   return (
     <>
@@ -165,7 +161,7 @@ export default function AgregarUsuario(props: {
                   <form onSubmit={handleSubmit}>
                     <VStack spacing={4} align="flex-start">
                       <FormControl>
-                        <FormLabel >Id de Plataforma</FormLabel>
+                        <FormLabel>Id de Plataforma</FormLabel>
                         <Field
                           as={Input}
                           id="id"
@@ -175,7 +171,7 @@ export default function AgregarUsuario(props: {
                         />
                       </FormControl>
                       <FormControl>
-                        <FormLabel >Nombre</FormLabel>
+                        <FormLabel>Nombre</FormLabel>
                         <Field
                           as={Input}
                           id="nombre"

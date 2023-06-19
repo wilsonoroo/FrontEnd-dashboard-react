@@ -21,14 +21,14 @@ import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
 import FormVaku from "@/components/forms/FormVaku";
+import Headers from "@/components/header/header";
 import useFetch from "@/hooks/useFetch";
 import { Divisiones } from "@/models/division/Disvision";
 import { TipoDivision } from "@/models/tiposDivision/TipoDivision";
-import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { useEffect, useState } from "react";
 import { HiEllipsisVertical } from "react-icons/hi2";
-import { useNavigate, useParams } from "react-router-dom";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 export default function DivisionPage(props: { titulo: string }) {
   const { titulo } = props;
@@ -40,6 +40,7 @@ export default function DivisionPage(props: { titulo: string }) {
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
   const newDivision = new Divisiones();
 
   const divisionRepository = new FirestoreRepository<Divisiones>(
@@ -214,6 +215,7 @@ export default function DivisionPage(props: { titulo: string }) {
           {/* encabezado */}
         </Flex>
       </VStack>
+      <Headers titulo={titulo} subtitulo={""} onOpen={onOpen} rutas={[]} />
       <>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>

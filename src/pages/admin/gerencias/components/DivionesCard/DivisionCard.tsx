@@ -1,4 +1,5 @@
 import {
+  Badge,
   Box,
   Flex,
   FormLabel,
@@ -9,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 
 import { Divisiones } from "@/models/division/Disvision";
+import { TipoDivision } from "@/models/tiposDivision/TipoDivision";
 import CustomCard from "@components/card/Card";
 import { HSeparator } from "@components/separator/Separator";
 import { motion } from "framer-motion";
@@ -38,6 +40,18 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
     "none"
   );
 
+  const getColorFromStatus = (status: string) => {
+    switch (status) {
+      case "contrato":
+        return "purple";
+      case "proyecto":
+        return "amarilloVaku";
+      case "area":
+        return "azulVaku";
+      default:
+        return "gray";
+    }
+  };
   return (
     <motion.div
       className="box"
@@ -97,6 +111,15 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
               xl: "flex",
             }}
           >
+            <Badge
+              variant="subtle"
+              fontSize="0.6em"
+              colorScheme={getColorFromStatus(
+                (division.tipoDivision as TipoDivision).value
+              )}
+            >
+              {(division.tipoDivision as TipoDivision).label}
+            </Badge>
             <Spacer />
             <FormLabel htmlFor="isChecked">
               <Text

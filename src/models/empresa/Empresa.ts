@@ -7,6 +7,10 @@ import VakuModel, {
 } from "../Vaku";
 
 import * as yup from "yup";
+import { Divisiones } from "../division/Disvision";
+import { DocumentoVaku } from "../documento/Documento";
+import { Equipo } from "../equipo/Equipo";
+import { Gerencia } from "../gerencia/Gerencia";
 import { UsuarioVaku } from "../usuario/Usuario";
 
 export class Empresa
@@ -18,6 +22,21 @@ export class Empresa
     IVakuModel,
     IValidationSchema
 {
+  encargado: unknown | UsuarioVaku;
+  cantUsuarios: number;
+  cantDivisiones: number;
+  cantDocumentos: number;
+  usuarios: UsuarioVaku[] | null;
+  url: string | null;
+  configContenido: string;
+  isActive: boolean;
+  repositorioVersion: number;
+
+  // colleciones
+  divisiones: Divisiones[];
+  documentosGlobales: DocumentoVaku[];
+  gerencias: Gerencia[];
+  equipos: Equipo[];
   getValidationSchema() {
     return yup.object().shape({
       // id: yup.string().required(),
@@ -69,13 +88,6 @@ export class Empresa
       // },
     };
   }
-
-  encargado: unknown | UsuarioVaku;
-  cantUsuarios: number;
-  cantDivisiones: number;
-  cantDocumentos: number;
-  usuarios: UsuarioVaku[] | null;
-  url: string | null;
 
   get value(): string {
     return this.id;

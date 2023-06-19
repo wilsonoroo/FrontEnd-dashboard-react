@@ -2,11 +2,10 @@ import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
 import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import Empresas from "@/pages/admin/empresas";
-import DetalleEmpresa from "@/pages/admin/empresas/DetalleEmpresa";
-import DivisionPage from "@/pages/admin/gerencias/Division";
+import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerencia";
+import DetalleEmpresa from "@/pages/admin/gerencias/Gerencias";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
-import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerencia";
 
 export const routesAdmin: RouterJson[] = [
   {
@@ -27,22 +26,17 @@ export const routesAdmin: RouterJson[] = [
   },
   {
     path: "empresas/:id",
-    element: <DetalleEmpresa titulo={"Gerencias"} />,//todas las gerencias
+    element: <DetalleEmpresa titulo={"Gerencias"} />, //todas las gerencias
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
   {
     path: "empresas/:idEmpresa/:idGerencia",
-    element: <DetalleGerencia titulo={"Divisiones"} />,//todas las divisiones de la gerencia
+    element: <DetalleGerencia titulo={"Divisiones"} />, //todas las divisiones de la gerencia
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
-  // {
-  //   path: "gerencias/:idEmpresa/:idGerencia",
-  //   element: <DivisionPage titulo={"Detalle Gerencia"} />,
-  //   name: "Detalle Empresas ",
-  //   isSubMenu: true,
-  // },
+
   {
     path: "empresas/:idEmpresa/:idGerencia/:idDivision",
     element: <ContenidoDetalle titulo={"Division"} />,

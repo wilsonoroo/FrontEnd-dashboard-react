@@ -77,6 +77,7 @@ export function SidebarPro(props: {
                             disabled={categoria?.disabled}
                             icon={categoria?.icon}
                             active={isActive}
+                            component={"div"}
                           >
                             <Text fontSize="md">{categoria?.titulo}</Text>
                           </MenuItem>

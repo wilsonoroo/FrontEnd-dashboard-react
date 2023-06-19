@@ -31,13 +31,9 @@ export const PrivateRouteDos: React.FC<PrivateRouteProps> = ({ children }) => {
 
   let location = useLocation();
 
-  useEffect(() => {
-    console.log(currentUser);
-    console.log("🚀 ~ file: PrivateRoute.tsx:33 ~ location:", location);
-  }, [currentUser]);
+  useEffect(() => {}, [currentUser]);
 
   if (!currentUser) {
-    console.log("🚀 ~ file: PrivateRoute.tsx:42 ~ currentUser:", currentUser);
     // Redirect the user to the home page.
     // Please! Close the mustache {{}}
 
