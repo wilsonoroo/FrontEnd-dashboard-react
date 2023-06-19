@@ -113,107 +113,6 @@ export default function VehiculosView(props: { titulo: string }) {
 
   
  
-  const manejarCambioCheckbox = (fila: any) => {
-    setFilasSeleccionadas((filasSeleccionadas) => {
-      if (filasSeleccionadas.includes(fila)) {
-        const updatedFilasSeleccionadas = filasSeleccionadas.filter((f) => f !== fila);
-  
-        const updatedFila = {
-          ...fila,
-          divisiones: Array.isArray(fila.divisiones)
-            ? fila.divisiones.filter((division: any) => division.id !== idDivision)
-            : [],
-        };
-        
-  
-        // Desasignar la división del vehículo en empresaVehiculoRepository
-        empresaVehiculoRepository
-          .update(fila.id, updatedFila)
-          .then(() => {
-            toast({
-              title: "Se ha desasignado la división del vehículo",
-              position: "top",
-              status: "success",
-              isClosable: true,
-            });
-            // refreshEmpresaVehiculos();
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-  
-        // Eliminar la división del divisionRepository
-        divisionRepository
-          .delete(fila.id)
-          .then(() => {
-            toast({
-              title: "Se ha eliminado la vehiculo de la división",
-              position: "top",
-              status: "success",
-              isClosable: true,
-            });
-            // refreshData();
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-  
-        return updatedFilasSeleccionadas;
-      } else {
-        const updatedFilasSeleccionadas = [...filasSeleccionadas, fila];
-  
-        const updatedFila = {
-          ...fila,
-          divisiones: [
-            ...fila.divisiones,
-            {
-              id: idDivision,
-              displayName: idDivision,
-            },
-          ],
-        };
-        const divisionActualizada = {
-          ...fila,
-          divisiones: [], // Vaciar el arreglo divisiones
-        };
-  
-        // Asignar la división al vehículo en empresaVehiculoRepository
-        empresaVehiculoRepository
-          .update(fila.id, updatedFila)
-          .then(() => {
-            toast({
-              title: "Se ha asignado una división al vehiculo",
-              position: "top",
-              status: "success",
-              isClosable: true,
-            });
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-  
-        // Agregar la división en divisionRepository
-        divisionRepository
-          .add(fila.id, divisionActualizada)
-          .then(() => {
-            toast({
-              title: "Se ha agregado un vehiculo a la división",
-              position: "top",
-              status: "success",
-              isClosable: true,
-            });
-            // refreshData();
-          })
-          .catch((error) => {
-            console.error(error);
-          });
-  
-        return updatedFilasSeleccionadas;
-      }
-    });
-  };
-  
-  
 
   const handleGuardar = () => {
     // console.log("Guardando datos de filas seleccionadas:");
@@ -224,13 +123,9 @@ export default function VehiculosView(props: { titulo: string }) {
       status: "success",
       duration: 3000,
       isClosable: true,
-    });
-  
+    });  
     // Cierra el modal
-    onCloseModal();
-    
-  
-   
+    onCloseModal();   
   };
   
   
@@ -378,15 +273,100 @@ export default function VehiculosView(props: { titulo: string }) {
           <text /> Asignar/Desasignar
         </span>
       ),
-      cell: (info: any) => (
-        <Box display="flex" justifyContent="center" alignItems="center">
-          <Checkbox
-            onChange={() => manejarCambioCheckbox(info.row.original)}
-            isChecked={filasSeleccionadas.some((f) => f === info.row.original)}
-          />
-        </Box>
-      ),
-    },
+      cell: (info: any) => {
+        const fila = info.row.original;
+        const isChecked = fila.divisiones.some((division: any) => division.id === idDivision);
+    
+        const manejarCambioCheckbox = () => {
+          if (isChecked) {
+            // Remove the division from the divisiones array
+            const updatedFila = {
+              ...fila,
+              divisiones: fila.divisiones.filter((division: any) => division.id !== idDivision),
+            };
+    
+            empresaVehiculoRepository
+              .update(fila.id, updatedFila)
+              .then(() => {
+                toast({
+                  title: "Se ha desasignado la división del vehículo",
+                  position: "top",
+                  status: "success",
+                  isClosable: true,
+                });
+                refreshEmpresaVehiculos();
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+    
+            divisionRepository
+              .delete(fila.id)
+              .then(() => {
+                toast({
+                  title: "Se ha eliminado el vehículo de la división",
+                  position: "top",
+                  status: "success",
+                  isClosable: true,
+                });
+                refreshData();
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          } else {
+            // Add the division to the divisiones array
+            const updatedFila = {
+              ...fila,
+              divisiones: [
+                ...fila.divisiones,
+                {
+                  id: idDivision,
+                  displayName: idDivision,
+                },
+              ],
+            };
+    
+            empresaVehiculoRepository
+              .update(fila.id, updatedFila)
+              .then(() => {
+                toast({
+                  title: "Se ha asignado una división al vehículo",
+                  position: "top",
+                  status: "success",
+                  isClosable: true,
+                });
+                refreshEmpresaVehiculos();
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+    
+            divisionRepository
+              .add(fila.id, updatedFila) // Use the updatedFila object to add the division
+              .then(() => {
+                toast({
+                  title: "Se ha agregado un vehículo a la división",
+                  position: "top",
+                  status: "success",
+                  isClosable: true,
+                });
+                refreshData();
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        };
+    
+        return (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Checkbox onChange={manejarCambioCheckbox} isChecked={isChecked} />
+          </Box>
+        );
+      },
+    }
+    
     
      
   ];
