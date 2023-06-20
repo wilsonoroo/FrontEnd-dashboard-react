@@ -241,14 +241,17 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   ];
   const columns1 = [
     columnHelper.accessor("numeroInterno", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "Numero Interno",
+      cell: (info) => (
+        <Box px={5} alignItems={"start"} alignContent={"start"}>
+          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.getValue()}
+          </Badge>
+          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.row.original.id}
+          </Badge> */}
+        </Box>
+      ),
+      header: "numero Interno",
     }),
     columnHelper.accessor("patente", {
       cell: (info) => {
@@ -272,6 +275,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       },
       header: "Tipo vehiculo",
     }),
+    
     
     columnHelper.accessor("divisiones", {
       cell: (info) => (

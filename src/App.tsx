@@ -12,6 +12,7 @@ import AuthLayout from "@/layouts/auth";
 import { PrivateRouteDos } from "@navigation/PrivateRoute";
 import { AnimatePresence } from "framer-motion";
 import Loading from "./components/Loading";
+import SuperAdminLayout from "./layouts/superAdmin";
 
 export default function App() {
   return (
@@ -24,6 +25,14 @@ export default function App() {
             element={
               <PrivateRouteDos>
                 <AdminLayout />
+              </PrivateRouteDos>
+            }
+          />
+          <Route
+            path={`/admin/*`}
+            element={
+              <PrivateRouteDos>
+                <SuperAdminLayout />
               </PrivateRouteDos>
             }
           />

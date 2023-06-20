@@ -142,8 +142,8 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         </Box>
       ),
       header: "ID.",
-      size: 100,
-      minSize: 120,
+      // size: 100,
+      // minSize: 120,
     }),
 
     columnHelper.accessor("marca", {
@@ -187,6 +187,24 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   
   ];
   const columns1 = [
+    columnHelper.accessor("id", {
+      cell: (info) => (
+        <Box px={5}>
+          <Tag
+            bg={"#fb8500"}
+            color="#fff"
+            alignItems={"center"}
+            alignContent={"center"}
+            size={"sm"}
+          >
+            <TagLabel>{info.getValue()}</TagLabel>
+          </Tag>
+        </Box>
+      ),
+      header: "ID.",
+      // size: 100,
+      // minSize: 120,
+    }),
   
     columnHelper.accessor("marca", {
       cell: (info) => {
@@ -211,17 +229,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       header: "modelo",
     
     }),
-    columnHelper.accessor("tipo", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "tipo",
- 
-    }),
+
     
     columnHelper.accessor("divisiones", {
       cell: (info) => (

@@ -455,6 +455,7 @@ export function getItemForm<T extends VakuModel>(
         );
       }
       case CampoFormKey.PERMISOS: {
+        let permisos = ["Documeto", "Planes de accion"];
         return (
           <>
             <TableContainer>
@@ -470,6 +471,23 @@ export function getItemForm<T extends VakuModel>(
                   </Tr>
                 </Thead>
                 <Tbody>
+                  {permisos.map((permiso) => (
+                    <Tr key={permiso}>
+                      <Td>{permiso}</Td>
+                      <Td>
+                        {" "}
+                        <Field
+                          as={Checkbox}
+                          id={item.field}
+                          name={item.field}
+                          colorScheme="orange"
+                        >
+                          {item.display}
+                        </Field>
+                      </Td>
+                      <Td isNumeric>25.4</Td>
+                    </Tr>
+                  ))}
                   <Tr>
                     <Td>inches</Td>
                     <Td>millimetres (mm)</Td>

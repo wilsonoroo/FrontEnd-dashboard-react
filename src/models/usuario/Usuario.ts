@@ -34,9 +34,7 @@ export class UsuarioVaku extends VakuModel {
   sexo: string;
   turno: string;
   enrolamiento: Enrolamiento;
-  divisiones: [
-    { id: number, displayName: string },
-  ];
+  divisiones: [{ id: number; displayName: string }];
 
   constructor() {
     super();
@@ -191,7 +189,7 @@ export class UsuarioVaku extends VakuModel {
       },
       permisos: {
         display: "Permisos",
-        tipo: CampoFormKey.DROPDOWN_V2,
+        tipo: CampoFormKey.PERMISOS,
         field: "permisos",
         required: true,
         options: options.permisos,

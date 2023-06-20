@@ -27,6 +27,7 @@ import TableLayout from "@/components/dataTable/TableLayout";
 import useFetch from "@/hooks/useFetch";
 
 import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
+import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
@@ -272,6 +273,38 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     // }),
   ];
   const columns1 = [
+    columnHelper.accessor("displayName", {
+      cell: (info) => (
+        <VStack alignItems={"flex-start"}>
+          <Box px={5}>
+            <Tag
+              bg={"#0B79F4"}
+              color="#fff"
+              alignItems={"center"}
+              alignContent={"center"}
+              size={"sm"}
+              py={1}
+            >
+              <TagLabel>{info.getValue()}</TagLabel>
+            </Tag>
+          </Box>
+        </VStack>
+      ),
+      header: "Nombre de Usuario",
+      size: 210,
+      minSize: 100,
+    }),
+    columnHelper.accessor("email", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Correo Electrónico",
+    }),
+
     columnHelper.accessor("divisiones", {
       cell: (info) => (
         <Box alignItems="center" alignContent="center">
@@ -418,6 +451,9 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       <>
         {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+            <Button onClick={onOpen} colorScheme="purple">
+              open add
+            </Button>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Usuarios"}
@@ -484,6 +520,22 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
             </ModalFooter>
           </ModalContent>
         </Modal>
+      </Flex>
+      <Flex>
+        <FormVaku<UsuarioVaku>
+          titulo={"Agregar Usuario"}
+          isOpen={isOpen}
+          onClose={onClose}
+          refreshData={refreshData}
+          fieldsToExclude={["id"]}
+          model={newUser}
+          initialValues={newUser}
+          onSubmit={() => {}}
+          loading={false}
+          options={[]}
+          size="xl"
+          grid={{ base: 1, md: 2 }}
+        />
       </Flex>
     </>
   );
