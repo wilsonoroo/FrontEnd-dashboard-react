@@ -12,8 +12,11 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Tag,
+  TagLabel,
   Text,
   VStack,
+  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -30,12 +33,20 @@ import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
 
+type EstadoLoading = {
+  [key: string]: boolean;
+};
+
 export default function UsuariosViewDivision(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const toast = useToast();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const userNew = new UsuarioVaku();
+  const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
 
   // console.log(idEmpresa, idGerencia, idDivision)
   let divisionRepository: FirestoreRepository<UsuarioVaku>;
@@ -106,16 +117,24 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   const columns = [
     columnHelper.accessor("displayName", {
       cell: (info) => (
-        <Box px={5} alignItems={"start"} alignContent={"start"}>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
-            {info.getValue()}
-          </Badge>
-          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
-            {info.row.original.id}
-          </Badge> */}
-        </Box>
+        <VStack alignItems={"flex-start"}>
+          <Box px={5}>
+            <Tag
+              bg={"#0B79F4"}
+              color="#fff"
+              alignItems={"center"}
+              alignContent={"center"}
+              size={"sm"}
+              py={1}
+            >
+              <TagLabel>{info.getValue()}</TagLabel>
+            </Tag>
+          </Box>
+        </VStack>
       ),
-      header: "Nombre",
+      header: "Nombre de Usuario",
+      // size: 200,
+      // minSize: 120,
     }),
     columnHelper.accessor("email", {
       cell: (info) => {
@@ -125,7 +144,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           </span>
         );
       },
-      header: "E-EMAIL",
+      header: "Correo Electrónico",
     }),
     columnHelper.accessor("cargo", {
       cell: (info) => {
@@ -136,27 +155,42 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         );
       },
       header: "Cargo",
+      size: 100,
+      minSize: 100,
     }),
     columnHelper.accessor("isActive", {
-      cell: (info) => (
-        <Box px={5} alignItems={"start"} alignContent={"start"}>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
-            {info.getValue()}
-          </Badge>
-        </Box>
-      ),
+      cell: (info) => {
+        const bgColor = info.getValue() ? "#89ff00" : "#ff4a2f";
+        const textColor = info.getValue() ? "black" : "white";
+        return (
+          <>
+            <Badge
+              variant="outline"
+              colorScheme={bgColor}
+              fontSize="0.7em"
+              style={{ backgroundColor: bgColor, color: textColor }}
+            >
+              {info.getValue() ? "Si" : "No"}
+            </Badge>
+          </>
+        );
+      },
       header: "Usuario Activo",
+      size: 100,
+      minSize: 100,
     }),
-    // columnHelper.accessor("rol", {
-    //   cell: (info) => {
-    //     return (
-    //       <span>
-    //         <Text fontSize="sm">{info.getValue()}</Text>
-    //       </span>
-    //     );
-    //   },
-    //   header: "Rol",
-    // }),
+    columnHelper.accessor("rol", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()?.nombre}</Text>
+          </span>
+        );
+      },
+      header: "Rol",
+      size: 100,
+      minSize: 100,
+    }),
     columnHelper.accessor("turno", {
       cell: (info) => {
         return (
@@ -165,18 +199,34 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           </span>
         );
       },
-      header: "turno",
+      header: "Turno",
+      size: 100,
+      minSize: 100,
     }),
-    // columnHelper.accessor("enrolamiento", {
-    //   cell: (info) => {
-    //     return (
-    //       <span>
-    //         <Text fontSize="sm">{info.getValue()}</Text>
-    //       </span>
-    //     );
-    //   },
-    //   header: "Enrolamiento Completado",
-    // }),
+
+    columnHelper.accessor("enrolamiento", {
+      cell: (info) => {
+        const isCompletado = info.getValue()?.isCompletado;
+        const bgColor = isCompletado ? "#89ff00" : "#ff4a2f";
+        const textColor = isCompletado ? "black" : "white";
+
+        return (
+          <>
+            <Badge
+              variant="outline"
+              colorScheme={bgColor}
+              fontSize="0.7em"
+              style={{ backgroundColor: bgColor, color: textColor }}
+            >
+              {isCompletado ? "Si" : "No"}
+            </Badge>
+          </>
+        );
+      },
+      header: "Enrolamiento Completado",
+      size: 100,
+      minSize: 100,
+    }),
     columnHelper.accessor("empresa", {
       cell: (info) => {
         return (
@@ -186,7 +236,40 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         );
       },
       header: "Empresa",
+      size: 100,
+      minSize: 100,
     }),
+    // columnHelper.accessor("id", {
+    //   cell: (info) => {
+    //     return (
+    //       <Stack spacing={2}>
+    //         <Box>
+    //           <IconButton
+    //             aria-label="Search database"
+    //             isLoading={iconLoading[info.row.original.id]}
+    //             onClick={() => {
+    //               const select = info.row.original;
+    //               let loadingIc = iconLoading;
+
+    //               loadingIc[info.row.original.id] = true;
+    //               setIconLoading({ ...loadingIc });
+
+    //               setTimeout(() => {
+    //                 // setNewVehiculo(select);
+    //                 setNewUser(select);
+    //                 onOpen();
+    //                 loadingIc[info.row.original.id] = false;
+    //                 setIconLoading(loadingIc);
+    //               }, 1000);
+    //             }}
+    //             icon={<EditIcon />}
+    //           />
+    //         </Box>
+    //       </Stack>
+    //     );
+    //   },
+    //   header: "Editar",
+    // }),
   ];
   const columns1 = [
     columnHelper.accessor("divisiones", {
@@ -216,6 +299,11 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       header: "Asignar/Desasignar",
       cell: (info: any) => {
         const fila = info.row.original;
+
+        if (!Array.isArray(fila.divisiones)) {
+          fila.divisiones = []; // Agrega un arreglo vacío si no es un array
+        }
+
         const isChecked = fila.divisiones.some(
           (division: any) => division.id === idDivision
         );
@@ -333,7 +421,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Usuarios"}
-                textButtonAdd={"Asignar Vehiculo"}
+                textButtonAdd={"Asignar Usuarios"}
                 onOpen={onOpenModal}
                 onReload={refreshData}
               >
@@ -359,7 +447,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
             mx="auto" // Centrar horizontalmente
             my="auto" // Centrar verticalmente
           >
-            <ModalHeader>Asignar Vehiculo</ModalHeader>
+            <ModalHeader>Asignar Usuario</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
               {/* Agrega aquí el contenido del modal */}

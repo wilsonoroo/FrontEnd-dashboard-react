@@ -20,6 +20,7 @@ import UsuariosView from "./usuarios/UsuariosViewDivision";
 import VehiculosViewDivision from "./vehiculos/VehiculosViewDivision";
 import EquiposViewDivision from "./equipos/EquiposViewDivision";
 import UsuariosViewDivision from "./usuarios/UsuariosViewDivision";
+import HerramientasViewDivision from "./herramientas/HerramientasViewDivision";
 
 export default function ContenidoDetalle(props: { titulo: string }) {
   const { titulo } = props;
@@ -84,7 +85,7 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               <EquiposViewDivision titulo="" />
             </TabPanel>
             <TabPanel>
-              {/* <EquiposViewDivision titulo="Herramientas" /> */}
+              <HerramientasViewDivision titulo="" />
             </TabPanel>
             <TabPanel>
               <UsuariosViewDivision titulo="" />

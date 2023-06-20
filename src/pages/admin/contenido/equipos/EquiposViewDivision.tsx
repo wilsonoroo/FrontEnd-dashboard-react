@@ -127,6 +127,24 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   
 
   const columns = [
+    columnHelper.accessor("id", {
+      cell: (info) => (
+        <Box px={5}>
+          <Tag
+            bg={"#fb8500"}
+            color="#fff"
+            alignItems={"center"}
+            alignContent={"center"}
+            size={"sm"}
+          >
+            <TagLabel>{info.getValue()}</TagLabel>
+          </Tag>
+        </Box>
+      ),
+      header: "ID.",
+      size: 100,
+      minSize: 120,
+    }),
 
     columnHelper.accessor("marca", {
       cell: (info) => {
@@ -137,8 +155,8 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "marca",
-      size: 300,
-      minSize: 250,
+      // size: 300,
+      // minSize: 250,
     }),
 
     columnHelper.accessor("modelo", {
@@ -150,8 +168,8 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "modelo",
-      size: 300,
-      minSize: 250,
+      // size: 300,
+      // minSize: 250,
     }),
     columnHelper.accessor("tipo", {
       cell: (info) => {
@@ -162,8 +180,8 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "tipo",
-      size: 300,
-      minSize: 250,
+      // size: 300,
+      // minSize: 250,
     }),
   
   
@@ -231,6 +249,11 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       ),
       cell: (info: any) => {
         const fila = info.row.original;
+
+        if (!Array.isArray(fila.divisiones)) {
+          fila.divisiones = []; // Agrega un arreglo vacío si no es un array
+        }
+
         const isChecked = fila.divisiones.some((division: any) => division.id === idDivision);
     
         const manejarCambioCheckbox = () => {
@@ -346,7 +369,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
           <Grid templateColumns="repeat(1, 1fr)" gap={6}>
             <TableLayout
               titulo={"Equipos"}
-              textButtonAdd={"Asignar Vehiculo"}
+              textButtonAdd={"Asignar Equipos"}
               onOpen={onOpenModal}
               onReload={refreshData}
             >
@@ -372,7 +395,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
           mx="auto" // Centrar horizontalmente
           my="auto" // Centrar verticalmente
         >
-          <ModalHeader>Asignar Vehiculo</ModalHeader>
+          <ModalHeader>Asignar Equipos</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             {/* Agrega aquí el contenido del modal */}
