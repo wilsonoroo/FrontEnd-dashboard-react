@@ -210,6 +210,33 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       },
       header: "kilometraje",
     }),
+    columnHelper.accessor("isServicio", {
+      cell: (info) => {
+        const isServicio = info.getValue();
+    
+        const bgColor = isServicio ? "green" : "yellow";
+        // const textColor = isServicio ? "white" : "black";
+        const text = isServicio ? "En servicio" : "En mantenimiento";
+    
+        return (
+          <>
+            <Badge
+              // variant="outline"
+              colorScheme={bgColor}
+              fontSize="0.7em"
+              textColor="#00355f"
+              style={{ backgroundColor: bgColor }}
+            >
+              {text}
+            </Badge>
+          </>
+        );
+      },
+      header: "Estado",
+    }),
+    
+    
+    
   
   ];
   const columns1 = [
@@ -272,6 +299,11 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       ),
       cell: (info: any) => {
         const fila = info.row.original;
+
+        if (!Array.isArray(fila.divisiones)) {
+          fila.divisiones = []; // Agrega un arreglo vacío si no es un array
+        }
+
         const isChecked = fila.divisiones.some((division: any) => division.id === idDivision);
     
         const manejarCambioCheckbox = () => {
@@ -387,7 +419,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
           <Grid templateColumns="repeat(1, 1fr)" gap={6}>
             <TableLayout
               titulo={"Vehiculos"}
-              textButtonAdd={"Asignar Vehiculo"}
+              textButtonAdd={"Asignar Vehiculos"}
               onOpen={onOpenModal}
               onReload={refreshData}
             >
