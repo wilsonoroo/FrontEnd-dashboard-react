@@ -142,8 +142,8 @@ import {
           </Box>
         ),
         header: "ID.",
-        size: 100,
-        minSize: 120,
+        // size: 100,
+        // minSize: 120,
       }),
   
       columnHelper.accessor("marca", {
@@ -187,6 +187,24 @@ import {
     
     ];
     const columns1 = [
+      columnHelper.accessor("id", {
+        cell: (info) => (
+          <Box px={5}>
+            <Tag
+              bg={"#fb8500"}
+              color="#fff"
+              alignItems={"center"}
+              alignContent={"center"}
+              size={"sm"}
+            >
+              <TagLabel>{info.getValue()}</TagLabel>
+            </Tag>
+          </Box>
+        ),
+        header: "ID.",
+        // size: 100,
+        // minSize: 120,
+      }),
     
       columnHelper.accessor("marca", {
         cell: (info) => {
@@ -211,18 +229,7 @@ import {
         header: "modelo",
       
       }),
-      columnHelper.accessor("tipo", {
-        cell: (info) => {
-          return (
-            <span>
-              <Text fontSize="sm">{info.getValue()}</Text>
-            </span>
-          );
-        },
-        header: "tipo",
-   
-      }),
-      
+        
       columnHelper.accessor("divisiones", {
         cell: (info) => (
           <Box  alignItems="center" alignContent="center" >
@@ -370,7 +377,7 @@ import {
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
-                titulo={"Equipos"}
+                titulo={"Herramientas"}
                 textButtonAdd={"Asignar Herramientas"}
                 onOpen={onOpenModal}
                 onReload={refreshData}

@@ -290,8 +290,39 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   
   ];
   const columns1 = [
-    
-    
+    columnHelper.accessor("displayName", {
+      cell: (info) => (
+        <VStack alignItems={"flex-start"}>
+          <Box px={5}>
+            <Tag
+              bg={"#0B79F4"}
+              color="#fff"
+              alignItems={"center"}
+              alignContent={"center"}
+              size={"sm"}
+              py={1}
+            >
+              <TagLabel>{info.getValue()}</TagLabel>
+            </Tag>
+          </Box>
+      
+        </VStack>
+      ),
+      header: "Nombre de Usuario",
+      size: 210,
+      minSize: 100,
+    }),
+    columnHelper.accessor("email", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Correo Electrónico",
+    }),
+      
     columnHelper.accessor("divisiones", {
       cell: (info) => (
         <Box  alignItems="center" alignContent="center" >
