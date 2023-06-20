@@ -236,7 +236,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         <Box  alignItems="center" alignContent="center" >
           {Array.isArray(info.getValue()) && info.getValue().length > 0 ? (
             info.getValue().map((division, index) => (
-              <Badge key={index} variant="solid" bg={"#3498DB"} fontSize="0.7em" mr={1} mb={1}>
+              <Badge key={index} variant="solid" bg={"#0B79F4"} fontSize="0.7em" mr={1} mb={1}>
                 {division.displayName}
               </Badge>
             ))

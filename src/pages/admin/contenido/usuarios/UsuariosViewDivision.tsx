@@ -161,8 +161,8 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     }),
     columnHelper.accessor("isActive", {
       cell: (info) => {
-        const bgColor = info.getValue() ? "#89ff00" : "#ff4a2f";
-        const textColor = info.getValue() ? "black" : "white";
+        const bgColor = info.getValue() ? "#89FF00" : "#FF2200";
+        const textColor = info.getValue() ? "#003560" : "#F0F2F4";
         return (
           <>
             <Badge
@@ -208,8 +208,8 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     columnHelper.accessor("enrolamiento", {
       cell: (info) => {
         const isCompletado = info.getValue()?.isCompletado;
-        const bgColor = isCompletado ? "#89ff00" : "#ff4a2f";
-        const textColor = isCompletado ? "black" : "white";
+        const bgColor = isCompletado ? "#89FF00" : "#FF2200";
+        const textColor = isCompletado ? "#003560" : "#F0F2F4";
 
         return (
           <>
@@ -313,7 +313,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                 <Badge
                   key={index}
                   variant="solid"
-                  bg={"#3498DB"}
+                  bg={"#0B79F4"}
                   fontSize="0.7em"
                   mr={1}
                   mb={1}

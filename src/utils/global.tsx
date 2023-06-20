@@ -455,67 +455,49 @@ export function getItemForm<T extends VakuModel>(
         );
       }
       case CampoFormKey.PERMISOS: {
-        let permisos = ["Documeto", "Planes de accion"];
+        let permisos = ["Documento", "Planes de acción"];
         return (
           <>
-            <TableContainer>
-              <Table variant="simple">
-                <TableCaption>
-                  Imperial to metric conversion factors
-                </TableCaption>
-                <Thead>
-                  <Tr>
-                    <Th>To convert</Th>
-                    <Th>into</Th>
-                    <Th isNumeric>multiply by</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {permisos.map((permiso) => (
-                    <Tr key={permiso}>
-                      <Td>{permiso}</Td>
-                      <Td>
-                        {" "}
-                        <Field
-                          as={Checkbox}
-                          id={item.field}
-                          name={item.field}
-                          colorScheme="orange"
-                        >
-                          {item.display}
-                        </Field>
-                      </Td>
-                      <Td isNumeric>25.4</Td>
+            <FormLabel htmlFor={item.field}>Privilegios Plataforma WEB</FormLabel>
+            <div style={{ borderWidth: "1px", borderColor: "", padding: "1px", borderRadius: "8px" }}>
+              <TableContainer>
+                <Table variant="simple">
+                  <TableCaption>Vaku</TableCaption>
+                  <Thead>
+                    <Tr>
+                      <Th style={{ width: "40%" }}></Th>
+                      <Th style={{ fontSize: "10px", width: "25%" }}>Administración</Th>
+                      <Th style={{ fontSize: "10px", width: "25%" }}>Visualización</Th>
                     </Tr>
-                  ))}
-                  <Tr>
-                    <Td>inches</Td>
-                    <Td>millimetres (mm)</Td>
-                    <Td isNumeric>25.4</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>feet</Td>
-                    <Td>centimetres (cm)</Td>
-                    <Td isNumeric>30.48</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>yards</Td>
-                    <Td>metres (m)</Td>
-                    <Td isNumeric>0.91444</Td>
-                  </Tr>
-                </Tbody>
-                <Tfoot>
-                  <Tr>
-                    <Th>To convert</Th>
-                    <Th>into</Th>
-                    <Th isNumeric>multiply by</Th>
-                  </Tr>
-                </Tfoot>
-              </Table>
-            </TableContainer>
+                  </Thead>
+                  <Tbody>
+                    {permisos.map((permiso) => (
+                      <Tr key={permiso}>
+                        <Td style={{ width: "50%", fontSize: "12px" }}>{permiso}</Td>
+                        <Td style={{ width: "25%", textAlign: "center" }}>
+                          <Checkbox
+                            id={item.field}
+                            name={item.field}
+                            // colorScheme="orange"
+                          />
+                        </Td>
+                        <Td style={{ width: "25%", textAlign: "center" }}>
+                          <Checkbox
+                            id={item.field}
+                            name={item.field}
+                            // colorScheme="orange"
+                          />
+                        </Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                </Table>
+              </TableContainer>
+            </div>
           </>
         );
       }
+      
     }
   }
 }

@@ -133,7 +133,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     columnHelper.accessor("numeroInterno", {
       cell: (info) => (
         <Box px={5} alignItems={"start"} alignContent={"start"}>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+          <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
             {info.getValue()}
           </Badge>
           {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
@@ -214,7 +214,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       cell: (info) => {
         const isServicio = info.getValue();
     
-        const bgColor = isServicio ? "green" : "yellow";
+        const bgColor = isServicio ? "#89FF00" : "#FFD600";
         // const textColor = isServicio ? "white" : "black";
         const text = isServicio ? "En servicio" : "En mantenimiento";
     
@@ -224,7 +224,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
               // variant="outline"
               colorScheme={bgColor}
               fontSize="0.7em"
-              textColor="#00355f"
+              textColor="#003560"
               style={{ backgroundColor: bgColor }}
             >
               {text}
@@ -243,7 +243,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     columnHelper.accessor("numeroInterno", {
       cell: (info) => (
         <Box px={5} alignItems={"start"} alignContent={"start"}>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+          <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
             {info.getValue()}
           </Badge>
           {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
@@ -282,7 +282,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
         <Box  alignItems="center" alignContent="center" >
           {Array.isArray(info.getValue()) && info.getValue().length > 0 ? (
             info.getValue().map((division, index) => (
-              <Badge key={index} variant="solid" bg={"#3498DB"} fontSize="0.7em" mr={1} mb={1}>
+              <Badge key={index} variant="solid" bg={"#0B79F4"} fontSize="0.7em" mr={1} mb={1}>
                 {division.displayName}
               </Badge>
             ))
