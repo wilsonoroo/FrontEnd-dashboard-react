@@ -13,10 +13,13 @@ import {
 
 import { useState } from "react";
 import DocumentosView from "./documentos/DocumentosView";
-import EquiposView from "./equipos/EquiposView";
+import EquiposView from "./equipos/EquiposViewDivision";
 import PlanDeAccionView from "./planDeAccion/PlanDeAccionView";
-import UsuariosView from "./usuarios/UsuariosView";
-import VehiculosView from "./vehiculos/VehiculosView";
+import UsuariosView from "./usuarios/UsuariosViewDivision";
+// import VehiculosView from "./vehiculos/VehiculosViewDivision";
+import VehiculosViewDivision from "./vehiculos/VehiculosViewDivision";
+import EquiposViewDivision from "./equipos/EquiposViewDivision";
+import UsuariosViewDivision from "./usuarios/UsuariosViewDivision";
 
 export default function ContenidoDetalle(props: { titulo: string }) {
   const { titulo } = props;
@@ -60,10 +63,11 @@ export default function ContenidoDetalle(props: { titulo: string }) {
       <>
         <Tabs index={tabIndex} onChange={handleTabsChange}>
           <TabList>
-            <Tab>Documuentos</Tab>
+            <Tab>Documentos</Tab>
             <Tab isDisabled>Plan de Accion</Tab>
             <Tab>Vehículo</Tab>
-            <Tab isDisabled>Equipos</Tab>
+            <Tab >Equipos</Tab>
+            <Tab >Herramientas</Tab>
             <Tab>Usuarios</Tab>
           </TabList>
           <TabPanels>
@@ -74,13 +78,16 @@ export default function ContenidoDetalle(props: { titulo: string }) {
               <PlanDeAccionView titulo="Plan de accion" />
             </TabPanel>
             <TabPanel>
-              <VehiculosView titulo="Vehículos" />
+              <VehiculosViewDivision titulo="" />
             </TabPanel>
             <TabPanel>
-              <EquiposView titulo="Equipos" />
+              <EquiposViewDivision titulo="" />
             </TabPanel>
             <TabPanel>
-              <UsuariosView titulo="Usuarios" />
+              {/* <EquiposViewDivision titulo="Herramientas" /> */}
+            </TabPanel>
+            <TabPanel>
+              <UsuariosViewDivision titulo="" />
             </TabPanel>
           </TabPanels>
         </Tabs>

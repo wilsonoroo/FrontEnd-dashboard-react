@@ -34,6 +34,9 @@ export class UsuarioVaku extends VakuModel {
   sexo: string;
   turno: string;
   enrolamiento: Enrolamiento;
+  divisiones: [
+    { id: number, displayName: string },
+  ];
 
   constructor() {
     super();

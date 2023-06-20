@@ -18,7 +18,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
   divisiones: [
     { id: number, displayName: string },
   ];
-  isAsignado: boolean;
+  // isAsignado: boolean;
 
   getValidationSchema() {
     return yup.object().shape({

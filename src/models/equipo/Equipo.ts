@@ -13,6 +13,9 @@ export class Equipo extends VakuModel implements IFormBuilder {
     metadata: MetaData[];
     modelo: string;
     tipo: string;
+    divisiones: [
+      { id: number, displayName: string },
+    ];
     // numeroInterno: string;
 
   getValidationSchema() {

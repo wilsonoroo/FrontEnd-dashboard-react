@@ -306,11 +306,7 @@ export default function UsuariosView1(props: { titulo: string }) {
               <TagLabel>{info.getValue()}</TagLabel>
             </Tag>
           </Box>
-          {/* <Box px={5}>
-            <Badge variant="outline" colorScheme="vaku" fontSize="0.7em">
-              id: {info.row.original.id}
-            </Badge>
-          </Box> */}
+      
         </VStack>
       ),
       header: "Nombre de Usuario",

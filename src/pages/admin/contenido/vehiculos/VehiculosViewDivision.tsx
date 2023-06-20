@@ -39,7 +39,7 @@ import moment from "moment";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { AuthContext } from "@/contexts/AuthContextFb";
 
-export default function VehiculosView(props: { titulo: string }) {
+export default function VehiculosViewDivision(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const [loading, setLoading] = useState(false);
@@ -127,9 +127,6 @@ export default function VehiculosView(props: { titulo: string }) {
     // Cierra el modal
     onCloseModal();   
   };
-  
-  
-  
   
 
   const columns = [
@@ -365,8 +362,7 @@ export default function VehiculosView(props: { titulo: string }) {
           </Box>
         );
       },
-    }
-    
+    } 
     
      
   ];

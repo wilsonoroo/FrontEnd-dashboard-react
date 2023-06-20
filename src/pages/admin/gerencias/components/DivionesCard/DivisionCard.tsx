@@ -20,18 +20,13 @@ import { HeaderCardDivision } from "./HeaderCardDivision";
 interface DivisionCardProps {
   index: number;
   item: { nombre: string; key: string; isEliminado: boolean; id: string };
-  division: Divisiones;
+  division: Divisiones | undefined;
 
   onClick: (item: Divisiones) => void;
 }
 
-// })
-
-//  export default function GerenciaCard(props: {
-
 const DivisionCard: React.FC<DivisionCardProps> = ({
   index,
-
   division,
   onClick,
 }) => {
@@ -52,6 +47,12 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
         return "gray";
     }
   };
+
+  // Verificar si division es nulo antes de renderizar el componente
+  if (!division) {
+    return null; // O puedes renderizar un mensaje de carga o un comportamiento alternativo
+  }
+
   return (
     <motion.div
       className="box"
@@ -87,8 +88,8 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
             minWidth={300}
             alignItems="start"
             gap="1"
-            justifyContent={"start"}
-            flexDirection={"column"}
+            justifyContent="start"
+            flexDirection="column"
             p={3}
           >
             {/* icono gerencia */}
@@ -96,7 +97,7 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
             {/* nombre y detalle */}
             <BodyCardDivision item={division} />
           </Flex>
-          <HSeparator bg={"gray.100"} />
+          <HSeparator bg="gray.100" />
 
           <Flex
             minWidth="max-content"
@@ -115,10 +116,10 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
               variant="subtle"
               fontSize="0.6em"
               colorScheme={getColorFromStatus(
-                (division.tipoDivision as TipoDivision).value
+                (division.tipoDivision as TipoDivision)?.value || ""
               )}
             >
-              {(division.tipoDivision as TipoDivision).label}
+              {(division.tipoDivision as TipoDivision)?.label || ""}
             </Badge>
             <Spacer />
             <FormLabel htmlFor="isChecked">
