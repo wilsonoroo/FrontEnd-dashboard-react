@@ -15,9 +15,7 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
   tipo: string;
   tipoVehiculo: string;
   ultimaMantencion: string | Date;
-  divisiones: [
-    { id: number, displayName: string },
-  ];
+  divisiones: [{ id: number; displayName: string }];
   // isAsignado: boolean;
 
   getValidationSchema() {
@@ -76,8 +74,8 @@ export class Vehiculo extends VakuModel implements IFormBuilder {
 
       kilometraje: {
         display: "Kilometraje ",
-        tipo: "number",
-        field: CampoFormKey.NUMBER,
+        tipo: CampoFormKey.NUMBER,
+        field: "kilometraje",
         required: true,
         orden: 2,
       },

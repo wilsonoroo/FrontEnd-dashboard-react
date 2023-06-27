@@ -34,31 +34,42 @@ export class Divisiones
         required: true,
       },
       nombre: {
-        display: "Nombre",
+        display: "Nombre del Proyecto/Contato/Área",
         tipo: CampoFormKey.TEXT,
         field: "nombre",
         required: true,
+        orden: 1,
+      },
+      codigo: {
+        display: "Código Proyecto/Contato/Área",
+        tipo: CampoFormKey.TEXT,
+        field: "codigo",
+        required: true,
+        orden: 2,
+      },
+      faena: {
+        display: "Faena Asociada",
+        tipo: CampoFormKey.TEXT,
+        field: "faena",
+        required: true,
+        orden: 3,
       },
       responsable: {
-        display: "Responsable",
+        display: "Asignar responsable",
         tipo: CampoFormKey.DROPDOWN_V2,
         field: "responsable",
         required: true,
         options: options.responsable,
-        orden: 2,
+        orden: 4,
       },
-      codigo: {
-        display: "Codigo",
-        tipo: CampoFormKey.TEXT,
-        field: "codigo",
-        required: true,
-      },
+
       tipoDivision: {
         display: "Tipo de Disvision",
         tipo: CampoFormKey.DROPDOWN,
         field: "tipoDivision",
         required: true,
         options: options.tipoDivision,
+        orden: 4,
       },
     };
   }
@@ -75,12 +86,14 @@ export class Divisiones
   setEmptyObject(): void {
     this.id = "";
     this.nombre = "";
+    this.faena = "";
     this.tipoDivision = "";
     this.codigo = null;
   }
   tipoDivision: TipoDivision | string;
   contenido: ContenidoDivision;
   codigo: string;
+  faena: string;
   responsable: UsuarioVaku[] | UsuarioVaku | null;
 
   readonly tipo: string;

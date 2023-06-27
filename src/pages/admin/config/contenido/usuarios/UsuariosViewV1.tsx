@@ -3,6 +3,8 @@ import {
   Box,
   Flex,
   Grid,
+  IconButton,
+  Stack,
   Tag,
   TagLabel,
   Text,
@@ -12,35 +14,36 @@ import {
 } from "@chakra-ui/react";
 import { createColumnHelper } from "@tanstack/react-table";
 
-import { DataTable } from "@/components/dataTable/DataTable";
-
 import TableLayout from "@/components/dataTable/TableLayout";
+
+import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
 
+import { DataTable } from "@/components/dataTable/DataTable";
 import FormVaku from "@/components/forms/FormVaku";
-import { AuthContext } from "@/contexts/AuthContextFb";
+import { Permiso } from "@/models/permisos/Permiso";
+import { Rol } from "@/models/rol/Rol";
 import { Enrolamiento } from "@/models/usuario/Enrolamiento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { CategoriaVehiculo } from "@/models/utils/Utils";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { createUserAuth } from "@/services/usuarioVakuApi";
+import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type EstadoLoading = {
   [key: string]: boolean;
 };
-
-export default function UsuariosViewDivision(props: { titulo: string }) {
+export default function UsuariosView1(props: { titulo: string }) {
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useContext(AuthContext);
-  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const userNew = new UsuarioVaku();
-
   const [options, setOptions] = useState({
     licencia: [
       { value: "clase_a1", label: "Clase A1" },
@@ -69,6 +72,8 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     turno: [],
   });
 
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
+
   useEffect(() => {
     setOptions({
       licencia: [
@@ -90,12 +95,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         { value: "secretaria", label: "Secretaria" },
         { value: "contador", label: "Contador" },
       ],
-      rol: [
-        { value: "administrador", label: "Nivel 1" },
-        { value: "administrador", label: "Nivel 2" },
-        { value: "administrador", label: "Nivel 3" },
-        { value: "administrador", label: "Nivel 4" },
-      ],
+      rol: [],
       sexo: [
         {
           value: "masculino",
@@ -110,40 +110,78 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       categoriaVehiculos: [],
     });
   }, []);
+  const navigate = useNavigate();
+  const userNew = new UsuarioVaku();
 
+  const newRol = new Rol();
+  const { currentUser } = useContext(AuthContext);
   const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
 
-  // console.log(idEmpresa, idGerencia, idDivision)
-  let divisionRepository: FirestoreRepository<UsuarioVaku>;
-  if (idEmpresa === undefined) {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
-    );
-  } else {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
-    );
-  }
+  let divisionRepository: FirebaseRealtimeRepository<UsuarioVaku>;
+  let usuarioGlobal: FirebaseRealtimeRepository<UsuarioVaku>;
+  let rolesRepository: FirebaseRealtimeRepository<Rol>;
+  let categoriaVehiculoRepository: FirebaseRealtimeRepository<CategoriaVehiculo>;
+  let permisosVehiculoRepository: FirebaseRealtimeRepository<Permiso>;
 
-  let empresaUsuarioRepository: FirestoreRepository<UsuarioVaku>;
   if (idEmpresa === undefined) {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/usuarios`
+    divisionRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaId}/usuarios/auth`
     );
+    rolesRepository = new FirebaseRealtimeRepository<Rol>(
+      `empresas/${currentUser.empresaId}/utils/usuarios/roles`
+    );
+    categoriaVehiculoRepository =
+      new FirebaseRealtimeRepository<CategoriaVehiculo>(
+        `empresas/${currentUser.empresaId}/utils/vehiculos/tipo`
+      );
+    permisosVehiculoRepository = new FirebaseRealtimeRepository<Permiso>(
+      `empresas/${currentUser.empresaId}/utils/usuarios/permisos`
+    );
+
+    usuarioGlobal = new FirebaseRealtimeRepository<UsuarioVaku>(`auth`);
   } else {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
+    divisionRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
       `empresas/${idEmpresa}/usuarios`
     );
   }
 
   const {
-    data: empresaUsuario,
-    firstLoading: loadingEmpresaUsuario,
-    refreshData: refreshEmpresaUsuario,
-    isLoading: empresaUsuarioLoading,
-  } = useFetch(() => empresaUsuarioRepository.getAll());
+    data: division,
+    firstLoading: loadingData,
+    refreshData,
+    isLoading,
+  } = useFetch(() => divisionRepository.getAll(UsuarioVaku));
 
-  const handleSaveUsuario = async (
+  const {
+    data: roles,
+    firstLoading: loadingRoles,
+    refreshData: refreshRoles,
+    isLoading: loadingRolesData,
+  } = useFetch(() => rolesRepository.getAll(Rol));
+  const {
+    data: categoriaVehiculos,
+    firstLoading: loadingCategoriaVehiculos,
+    refreshData: refreshCategoriaVehiculos,
+    isLoading: loadingCategoriaVehiculosData,
+  } = useFetch(() => categoriaVehiculoRepository.getAll(CategoriaVehiculo));
+
+  const {
+    data: permisos,
+    firstLoading: loadingPermisos,
+    refreshData: refreshPermisos,
+    isLoading: loadingPermisosData,
+  } = useFetch(() => permisosVehiculoRepository.getAll(Permiso));
+
+  useEffect(() => {
+    options.rol = roles;
+    options.categoriaVehiculos = categoriaVehiculos;
+    options.permisos = permisos;
+    setOptions(options);
+  }, [roles, categoriaVehiculos, permisos]);
+
+  const columnHelper = createColumnHelper<UsuarioVaku>();
+
+  const handleSaveGerencia = async (
     data: UsuarioVaku,
     resetForm: () => void
   ) => {
@@ -188,7 +226,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           setLoading(false);
           resetForm();
           onClose();
-          refreshEmpresaUsuario();
+          refreshData();
         });
     } else {
       divisionRepository
@@ -214,7 +252,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           setLoading(false);
           resetForm();
           onClose();
-          refreshEmpresaUsuario();
+          refreshData();
         });
     }
 
@@ -249,15 +287,9 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         setLoading(false);
         resetForm();
         onClose();
-        refreshEmpresaUsuario();
+        refreshData();
       });
   };
-
-  // console.log(division, empresaVehiculos)
-
-  const columnHelper = createColumnHelper<UsuarioVaku>();
-
-  const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
   const columns = [
     columnHelper.accessor("displayName", {
@@ -270,16 +302,16 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
               alignItems={"center"}
               alignContent={"center"}
               size={"sm"}
-              py={1}
             >
               <TagLabel>{info.getValue()}</TagLabel>
             </Tag>
           </Box>
+      
         </VStack>
       ),
       header: "Nombre de Usuario",
-      // size: 200,
-      // minSize: 120,
+      size: 300,
+      minSize: 120,
     }),
     columnHelper.accessor("email", {
       cell: (info) => {
@@ -305,16 +337,10 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     }),
     columnHelper.accessor("isActive", {
       cell: (info) => {
-        const bgColor = info.getValue() ? "#89FF00" : "#FF2200";
-        const textColor = info.getValue() ? "#003560" : "#F0F2F4";
+        const color = info.getValue() ? "green" : "red";
         return (
           <>
-            <Badge
-              variant="outline"
-              colorScheme={bgColor}
-              fontSize="0.7em"
-              style={{ backgroundColor: bgColor, color: textColor }}
-            >
+            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
               {info.getValue() ? "Si" : "No"}
             </Badge>
           </>
@@ -351,19 +377,11 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
 
     columnHelper.accessor("enrolamiento", {
       cell: (info) => {
-        const isCompletado = info.getValue()?.isCompletado;
-        const bgColor = isCompletado ? "#89FF00" : "#FF2200";
-        const textColor = isCompletado ? "#003560" : "#F0F2F4";
-
+        const color = info.getValue()?.isCompletado ? "green" : "red";
         return (
           <>
-            <Badge
-              variant="outline"
-              colorScheme={bgColor}
-              fontSize="0.7em"
-              style={{ backgroundColor: bgColor, color: textColor }}
-            >
-              {isCompletado ? "Si" : "No"}
+            <Badge variant="outline" colorScheme={color} fontSize="0.7em">
+              {info.getValue()?.isCompletado ? "Si" : "No"}
             </Badge>
           </>
         );
@@ -384,33 +402,53 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       size: 100,
       minSize: 100,
     }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    // setNewVehiculo(select);
+                    setNewUser(select);
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
+    }),
   ];
 
   return (
     <>
-      <VStack align={"start"} pl={"20px"}>
-        <Text
-          as="b"
-          fontSize="5xl"
-          color={"vaku.700"}
-          fontFamily="Oswald"
-          textStyle="secondary"
-        >
-          {titulo}
-        </Text>
-      </VStack>
-
+      {/* <TituloPage titulo={"Vehiculos"} subtitulo="Vehiculos" /> */}
       <>
-        {!loadingEmpresaUsuario ? (
+        {!loadingData ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Usuarios"}
-                textButtonAdd={"Agregar Usuarios"}
+                textButtonAdd={" Agregar Usuario"}
                 onOpen={onOpen}
-                onReload={refreshEmpresaUsuario}
+                onReload={refreshData}
               >
-                <DataTable columns={columns} data={empresaUsuario} />
+                <DataTable columns={columns} data={division} />
               </TableLayout>
             </Grid>
           </Box>
@@ -424,12 +462,12 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           titulo={"Agregar Usuario"}
           isOpen={isOpen}
           onClose={onClose}
-          refreshData={refreshEmpresaUsuario}
+          refreshData={refreshData}
           fieldsToExclude={["id"]}
           model={newUser}
           initialValues={newUser}
-          onSubmit={handleSaveUsuario}
-          loading={false}
+          onSubmit={handleSaveGerencia}
+          loading={loading}
           options={options}
           size="xl"
           grid={{ base: 1, md: 2 }}

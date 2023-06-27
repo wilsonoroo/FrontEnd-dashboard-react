@@ -17,7 +17,6 @@ import {
   TableContainer,
   Tbody,
   Td,
-  Tfoot,
   Th,
   Thead,
   Tr,
@@ -295,6 +294,18 @@ export function cleanObject<T>(obj: T): Partial<T> {
   ) as Partial<T>;
 }
 
+export function dateToTimeStamp(date: Date | string) {
+  let resuult;
+  if (typeof date === "string") {
+    resuult = new Date(date as string);
+    // resuult = firebaseTimeStamp.fromDate(new Date(date as string));
+  } else if (typeof date === "object") {
+    resuult = new Date(date as Date);
+    // resuult = firebaseTimeStamp.fromDate(date as Date);
+  }
+  return resuult;
+}
+
 export function getItemForm<T extends VakuModel>(
   item: CampoForm,
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void,
@@ -458,22 +469,37 @@ export function getItemForm<T extends VakuModel>(
         let permisos = ["Documento", "Planes de acción"];
         return (
           <>
-            <FormLabel htmlFor={item.field}>Privilegios Plataforma WEB</FormLabel>
-            <div style={{ borderWidth: "1px", borderColor: "", padding: "1px", borderRadius: "8px" }}>
+            <FormLabel htmlFor={item.field}>
+              Privilegios Plataforma WEB
+            </FormLabel>
+            <div
+              style={{
+                borderWidth: "1px",
+                borderColor: "",
+                padding: "1px",
+                borderRadius: "8px",
+              }}
+            >
               <TableContainer>
                 <Table variant="simple">
                   <TableCaption>Vaku</TableCaption>
                   <Thead>
                     <Tr>
                       <Th style={{ width: "40%" }}></Th>
-                      <Th style={{ fontSize: "10px", width: "25%" }}>Administración</Th>
-                      <Th style={{ fontSize: "10px", width: "25%" }}>Visualización</Th>
+                      <Th style={{ fontSize: "10px", width: "25%" }}>
+                        Administración
+                      </Th>
+                      <Th style={{ fontSize: "10px", width: "25%" }}>
+                        Visualización
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {permisos.map((permiso) => (
                       <Tr key={permiso}>
-                        <Td style={{ width: "50%", fontSize: "12px" }}>{permiso}</Td>
+                        <Td style={{ width: "50%", fontSize: "12px" }}>
+                          {permiso}
+                        </Td>
                         <Td style={{ width: "25%", textAlign: "center" }}>
                           <Checkbox
                             id={item.field}
@@ -497,7 +523,6 @@ export function getItemForm<T extends VakuModel>(
           </>
         );
       }
-      
     }
   }
 }

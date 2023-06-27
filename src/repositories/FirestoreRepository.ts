@@ -55,19 +55,13 @@ export class FirestoreRepository<T extends VakuModel>
     console.log(item);
     if (id === null) {
       const collectionRef = collection(db, this.collectionPath);
-      await addDoc(
-        collectionRef,
-        removeUndefinedObjects(instanceToPlain(item))
-      );
+      console.log(instanceToPlain(item));
+      await addDoc(collectionRef, instanceToPlain(item));
     } else {
       const docRef = doc(db, this.collectionPath, id);
-      console.log(
-        "🚀 ~ file: FirestoreRepository.ts:62 ~ add ~ docRef:",
-        docRef
-      );
 
-      console.log(removeUndefinedObjects(instanceToPlain(item)));
-      await setDoc(docRef, removeUndefinedObjects(instanceToPlain(item)));
+      console.log(instanceToPlain(item));
+      await setDoc(docRef, instanceToPlain(item));
     }
   }
 

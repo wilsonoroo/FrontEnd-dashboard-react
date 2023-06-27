@@ -1,13 +1,13 @@
-import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
+import ContenidoDetalle from "@/pages/admin/contenido/ContenidoAdmin";
 import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import Empresas from "@/pages/admin/empresas";
-import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerencia";
-import DetalleEmpresa from "@/pages/admin/gerencias/Gerencias";
+import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerenciaAdmin";
+import DetalleEmpresa from "@/pages/admin/gerencias/GerenciasAdmin";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
 
-export const routesAdmin: RouterJson[] = [
+export const routesSuperAdmin: RouterJson[] = [
   {
     path: "/",
     element: <ContenidoDetalleV1 titulo={"Administrador"} />,

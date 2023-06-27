@@ -1,9 +1,10 @@
-import ContenidoDetalle from "@/pages/admin/contenido/Contenido";
+import ContenidoDetalleAdminConfig from "@/pages/admin/config/ContenidoDetalleAdminConfig";
+import DetalleGerenciaAdminConfig from "@/pages/admin/config/DetalleGerenciaAdminConfig";
+import DetalleEmpresaAdminConfig from "@/pages/admin/config/GerenciasAdminConfig";
+import ContenidoDetalleAdmin from "@/pages/admin/contenido/ContenidoAdmin";
 import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import Empresas from "@/pages/admin/empresas";
-import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerencia";
-import DetalleEmpresa from "@/pages/admin/gerencias/Gerencias";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
 
@@ -25,21 +26,33 @@ export const routesAdmin: RouterJson[] = [
     isSubMenu: true,
   },
   {
-    path: "empresas/:id",
-    element: <DetalleEmpresa titulo={"Gerencias"} />, //todas las gerencias
+    path: "config",
+    element: <DetalleEmpresaAdminConfig titulo={"Gerencias"} />, //todas las gerencias
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
   {
-    path: "empresas/:idEmpresa/:idGerencia",
-    element: <DetalleGerencia titulo={"Divisiones"} />, //todas las divisiones de la gerencia
+    path: "home",
+    element: <ContenidoDetalleAdmin titulo={"Gerencias"} />, //todas las gerencias
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "config/:idEmpresa/:idGerencia",
+    element: <DetalleGerenciaAdminConfig titulo={"Divisiones"} />, //todas las divisiones de la gerencia
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
 
   {
-    path: "empresas/:idEmpresa/:idGerencia/:idDivision",
-    element: <ContenidoDetalle titulo={"Division"} />,
+    path: "config/:idEmpresa/:idGerencia/:idDivision",
+    element: <ContenidoDetalleAdminConfig titulo={"Division"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: ":idEmpresa/:idGerencia/:idDivision",
+    element: <ContenidoDetalleAdmin titulo={"Division"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },

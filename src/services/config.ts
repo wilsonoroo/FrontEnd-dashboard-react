@@ -1,7 +1,12 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
 import { Auth, getAuth } from "firebase/auth";
 import { Database, getDatabase } from "firebase/database";
-import { Firestore, Timestamp, getFirestore } from "firebase/firestore";
+import {
+  Firestore,
+  Timestamp,
+  getFirestore,
+  initializeFirestore,
+} from "firebase/firestore";
 import { FirebaseStorage, getStorage } from "firebase/storage";
 
 console.log(import.meta.env.VITE_FIREBASE_API_KEY);
@@ -19,6 +24,9 @@ const app: FirebaseApp = initializeApp({
 export const auth: Auth = getAuth(app);
 export const database: Database = getDatabase(app);
 export const storage: FirebaseStorage = getStorage(app);
+initializeFirestore(app, {
+  ignoreUndefinedProperties: true,
+});
 export const firestoreDB: Firestore = getFirestore(app);
 export const firebaseTimeStamp: typeof Timestamp = Timestamp;
 

@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   Grid,
-  Skeleton,
   Text,
   useDisclosure,
   useToast,
@@ -14,16 +13,19 @@ import { motion } from "framer-motion";
 import { HiPlus } from "react-icons/hi2";
 
 import FormVaku from "@/components/forms/FormVaku";
-import Headers from "@/components/header/header";
-import { AuthContext } from "@/contexts/AuthContextFb";
-import { Gerencia } from "@/models/gerencia/Gerencia";
-import { UsuarioVaku } from "@/models/usuario/Usuario";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import Loading from "@/components/Loading";
 import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import GerenciaCard from "../empresas/components/GerenciasCard/GerenciaCard";
+// import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
+import Headers from "@/components/header/header";
+import { AuthContext } from "@/contexts/AuthContextFb";
+import { Divisiones } from "@/models/division/Disvision";
+import { Empresa } from "@/models/empresa/Empresa";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import DivisionCard from "./components/DivionesCard/DivisionCard";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -31,8 +33,8 @@ const container = {
     opacity: 1,
     scale: 1,
     transition: {
-      delayChildren: 0.1,
-      staggerChildren: 0.15,
+      delayChildren: 0.3,
+      staggerChildren: 0.2,
     },
   },
 };
@@ -45,23 +47,30 @@ const itemAnim = {
   },
 };
 
-export default function DetalleEmpresa(props: { titulo: string }) {
+export default function DetalleGerenciaAdmin(props: { titulo: string }) {
   const { titulo } = props;
-  const { id } = useParams();
+  //   const { id, idGerencia } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [isList, setIsList] = useState(false);
   const [options, setOptions] = useState({});
   const { currentUser } = useContext(AuthContext);
+  const [empresa, setEmpresa] = useState<Empresa>();
+  const { idEmpresa, idGerencia } = useParams();
+  const location = useLocation();
+
+  const pathname = location.pathname;
+
+  // Obtener el valor de id y idGerencia de la ruta
 
   const toast = useToast();
 
-  const newGerencia = new Gerencia();
-  newGerencia.setEmptyObject();
+  const newDivision = new Divisiones();
+  newDivision.setEmptyObject();
 
-  let empresaRepository: FirestoreRepository<Gerencia>;
-  empresaRepository = new FirestoreRepository<Gerencia>(
-    `empresas/${id}/gerencias`
+  let empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
+  let divisonRepository = new FirestoreRepository<Divisiones>(
+    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
   );
 
   useEffect(() => {
@@ -69,37 +78,62 @@ export default function DetalleEmpresa(props: { titulo: string }) {
       const db = new FirestoreRepository<UsuarioVaku>("auth");
       const result = await db.getAllObject(UsuarioVaku);
 
-      setOptions({ responsable: result as UsuarioVaku[] });
+      setOptions({
+        responsable: result as UsuarioVaku[],
+        tipoDivision: [
+          {
+            value: "proyecto",
+            label: "Proyecto",
+          },
+          {
+            value: "contrato",
+            label: "Contrato",
+          },
+          {
+            value: "area",
+            label: "Área",
+          },
+        ],
+      });
     };
     getUsuarios();
+    empresaRepository.get(currentUser.empresaId).then((data) => {
+      setEmpresa(data);
+    });
   }, []);
 
+  useEffect(() => {}, []);
   const navigate = useNavigate();
-  const location = useLocation();
-
   const {
-    data: gerencias,
+    data: divisiones,
     firstLoading,
     refreshData,
     isLoading,
-  } = useFetch(() => empresaRepository.getAll());
+  } = useFetch(() => divisonRepository.getAll());
 
   const handleClick = (item: any) => {
-    navigate("/admin/empresas/" + id + "/" + item.id, {
+    // console.log(item.id)
+    navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
       state: {
-        empresa: { id: id, nombre: location.state.empresa.nombre },
-        gerencia: item,
+        empresa: {
+          id: location.state.empresa.id,
+          nombre: location.state.empresa.nombre,
+        },
+        gerencia: {
+          id: location.state.gerencia.id,
+          nombre: location.state.gerencia.nombre,
+        },
+        division: item,
       },
     });
   };
 
-  const handleSaveGerencia = (data: Gerencia) => {
+  const handleSaveDivision = (data: Divisiones) => {
     setLoading(true);
     data.displayName = data.nombre;
     data.createdAt = new Date();
     data.updatedAt = new Date();
-
-    empresaRepository
+    divisonRepository
       .add(null, data)
       .then(() => {
         toast({
@@ -119,56 +153,44 @@ export default function DetalleEmpresa(props: { titulo: string }) {
       });
 
     return;
+    console.log(divisonRepository);
   };
 
   return (
     <>
       <Headers
-        titulo={"Gerencias"}
+        titulo={"División"}
         subtitulo={
           "En esta sección se especifica los detalles de cada gerencia"
         }
         onOpen={onOpen}
         rutas={[
           { nombre: "Home", url: "/admin" },
-          { nombre: "Empresas", url: "/admin/empresas" },
+
           {
-            nombre: `${location.state.empresa.nombre}`,
-            url: "/admin/empresas",
+            nombre: `Configuración`,
+            url: "/admin/config",
           },
+          {
+            nombre: `Gerencias`,
+            url: `/admin/config`,
+            state: {
+              empresa: {
+                id: location.state.empresa.id,
+                nombre: location.state.empresa.nombre,
+              },
+            },
+          },
+          { nombre: `${location.state.gerencia.nombre}`, url: "/admin/di" },
         ]}
         showButtonAdd={true}
-        textButton="Crear Gerencia"
-        refreshData={refreshData}
+        textButton="Agregar División"
       />
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
-          <Grid
-            templateColumns={{
-              base: "repeat(3, 1fr)",
-              sm: "repeat(1, 1fr)",
-              md: "repeat(2, 1fr)",
-              lg: "repeat(2, 1fr)",
-              xl: "repeat(4, 1fr)",
-              "2xl": "repeat(6, 2fr)",
-            }}
-            templateRows={{
-              base: "2fr",
-              lg: "1fr",
-              sm: "1fr",
-            }}
-            gap={{ base: "2", sm: "1", xl: "2", "2xl": "4" }}
-          >
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((_item) => {
-              return (
-                <Skeleton>
-                  <Box width={250} height={130}></Box>
-                </Skeleton>
-              );
-            })}
-          </Grid>
-        ) : gerencias.length !== 0 ? (
+          <Loading />
+        ) : divisiones.length !== 0 ? (
           <motion.div
             className="container"
             variants={container}
@@ -177,12 +199,12 @@ export default function DetalleEmpresa(props: { titulo: string }) {
           >
             <Grid
               templateColumns={{
-                base: "repeat(3, 1fr)",
+                base: "repeat(4, 1fr)",
                 sm: "repeat(1, 1fr)",
                 md: "repeat(2, 1fr)",
                 lg: "repeat(2, 1fr)",
                 xl: "repeat(3, 2fr)",
-                "2xl": "repeat(5, 2fr)",
+                "2xl": "repeat(4, 2fr)",
               }}
               templateRows={{
                 base: "1fr",
@@ -191,16 +213,17 @@ export default function DetalleEmpresa(props: { titulo: string }) {
               }}
               gap={{ base: "2", sm: "1", xl: "2", "2xl": "4" }}
             >
-              {gerencias.map((item, index) => {
+              {divisiones.map((item, index) => {
                 return (
                   <motion.div key={index} className="item" variants={itemAnim}>
-                    <GerenciaCard
+                    <DivisionCard
                       key={item.id + "-" + index}
                       index={index}
                       item={item}
-                      gerencia={item}
-                      onClick={(itemEvent) => {
-                        handleClick(itemEvent);
+                      division={item}
+                      onClick={() => {
+                        console.log(item);
+                        handleClick(item);
                       }}
                     />
                   </motion.div>
@@ -210,9 +233,9 @@ export default function DetalleEmpresa(props: { titulo: string }) {
           </motion.div>
         ) : (
           <VStack pt={130}>
-            <Box>
-              <Container maxW="sm">
-                <img src={empty} />
+            <Box height={100}>
+              <Container>
+                <img src={empty} height={100} width={100} />
               </Container>
             </Box>
             <Text as="b" fontSize="2xl">
@@ -231,48 +254,24 @@ export default function DetalleEmpresa(props: { titulo: string }) {
                 borderRadius={25}
                 onClick={onOpen}
               >
-                Crear Gerencia
+                Crear Division
               </Button>
             </Box>
           </VStack>
         )}
       </Box>
-      <FormVaku<Gerencia>
+      <FormVaku<Divisiones>
         isOpen={isOpen}
         onClose={onClose}
         refreshData={refreshData}
-        initialValues={newGerencia}
-        fieldsToExclude={[
-          "id",
-          "cantDivisiones",
-          "cantUsuarios",
-          "cantDocumentos",
-        ]}
-        model={newGerencia}
-        onSubmit={handleSaveGerencia}
+        fieldsToExclude={["id", "createdAt", "updatedAt"]}
+        model={newDivision}
+        initialValues={newDivision}
+        onSubmit={handleSaveDivision}
         loading={loading}
-        options={options}
         size="xl"
+        options={options}
       />
-      {/* <AgregarGerenciaForm
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={function (): void {
-          console.log("on open ");
-        }}
-        onAddFinish={function (isFinish: boolean): void {
-          console.log("on add finish ");
-        }}
-      /> */}
     </>
   );
 }
-
-//    const users =  Object.keys(dataEmpresa.usuarios.auth).map((key) => dataEmpresa.usuarios.auth[key]);
-
-// console.log(users)
-// const listaEmpresa = dataEmpresa ? Object.keys(dataEmpresa).map((key) => dataEmpresa[key]) : [];
-// console.log(listaEmpresa)
-// const { correlativo, documentos } = dataEmpresa;
-// console.log(correlativo);
-// console.log(documentos);

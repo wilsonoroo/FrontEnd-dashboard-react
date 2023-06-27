@@ -17,7 +17,7 @@ export const menuApp: Menus[] = [
       {
         titulo: "Inicio",
         layout: "admin",
-        path: "/admin/home",
+        path: "/",
         id: "main_dash",
         icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
       },
@@ -34,7 +34,7 @@ export const menuApp: Menus[] = [
       {
         titulo: "Configuración",
         layout: "admin",
-        path: "/admin/config",
+        path: "/admin/empresas",
         id: "main_dash",
         disabled: false,
         icon: (

@@ -1,5 +1,10 @@
 import { ChevronRightIcon } from "@chakra-ui/icons";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@chakra-ui/react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  Skeleton,
+} from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 
 export interface ItemBreadcrumbProps {
@@ -27,7 +32,9 @@ const BreadcrumbVaku: React.FC<BreadcrumbProps> = ({ rutas }) => {
             replace
             state={ruta.state}
           >
-            {ruta.nombre}
+            <Skeleton isLoaded={ruta.nombre !== "undefined"}>
+              {ruta.nombre}
+            </Skeleton>
           </BreadcrumbLink>
         </BreadcrumbItem>
       ))}

@@ -1,11 +1,11 @@
 // Chakra imports
 import { menuApp } from "@/navigation/menu/menu.admin";
-import { routesAdmin } from "@/navigation/route/route.admin";
+import { routesSuperAdmin } from "@/navigation/route/route.superAdmin";
 import { Box, Flex } from "@chakra-ui/react";
 // Layout components
 
 import SidebarContainer from "@components/sidebar/Sidebar";
-import RouterAdmin from "@layouts/admin/RoutesAdmin";
+import RouterAdmin from "@layouts/superAdmin/RoutesAdmin";
 import { createBrowserRouter, useRoutes } from "react-router-dom";
 
 // Custom Chakra theme
@@ -13,8 +13,8 @@ export default function SuperAdminLayout(props: { [x: string]: any }) {
   const { toggled, ...rest } = props;
 
   // eslint-disable-next-line prefer-const
-  let rutas = createBrowserRouter(routesAdmin);
-  useRoutes(routesAdmin);
+  let rutas = createBrowserRouter(routesSuperAdmin);
+  useRoutes(routesSuperAdmin);
 
   return (
     <Box id="containerAdmin">
@@ -58,7 +58,7 @@ export default function SuperAdminLayout(props: { [x: string]: any }) {
                 minH="100vh"
                 pt="50px"
               >
-                <RouterAdmin routes={routesAdmin} />
+                <RouterAdmin routes={routesSuperAdmin} />
               </Box>
             }
           </Box>

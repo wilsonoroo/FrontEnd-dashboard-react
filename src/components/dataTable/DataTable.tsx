@@ -62,7 +62,7 @@ export function DataTable<Data extends object>({
       sorting,
     },
 
-    debugTable: true,
+    debugTable: false,
   });
 
   const createEmptyRow = () => {

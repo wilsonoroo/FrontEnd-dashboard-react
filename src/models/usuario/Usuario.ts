@@ -12,6 +12,7 @@ export class UsuarioVaku extends VakuModel {
   cargo: string;
   codigo: string;
   cuadrilla: Cuadrilla[];
+  isSuperAdmin: boolean;
 
   dispositivos: Dispositivos[];
   email: string;
@@ -39,6 +40,7 @@ export class UsuarioVaku extends VakuModel {
   constructor() {
     super();
     this.areaCargo = "";
+    this.isSuperAdmin = false;
     this.cargo = "";
     this.codigo = "";
     this.cuadrilla = [];
@@ -77,6 +79,7 @@ export class UsuarioVaku extends VakuModel {
       cuadrilla: [],
       displayName: "",
       dispositivos: [],
+      isSuperAdmin: false,
       email: "",
       empresa: "",
       empresaId: "",

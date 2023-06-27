@@ -4,6 +4,7 @@ import {
   Flex,
   HStack,
   IconButton,
+  Skeleton,
   Spacer,
   Text,
   VStack,
@@ -17,36 +18,61 @@ import BreadcrumbVaku, { ItemBreadcrumbProps } from "./BreadCrumb";
 
 interface HeaderProps {
   titulo: string;
+  tituloBajo?: string | null;
   subtitulo: string;
   refreshData?: () => void;
-  onOpen: () => void;
+  onOpen?: () => void;
   showButtonAdd?: boolean;
   rutas: ItemBreadcrumbProps[];
   textButton?: string;
+  showButtonBars?: boolean;
+  showDivision?: boolean;
 }
 
 const Headers: React.FC<HeaderProps> = ({
   titulo = "",
   subtitulo = "",
+  tituloBajo = null,
   refreshData,
   onOpen,
   showButtonAdd = true,
   rutas,
   textButton = "Agregar",
+  showButtonBars = true,
+  showDivision = true,
 }) => {
   const [isList, setIsList] = useState(false);
   return (
     <VStack align={"start"} pl={"20px"}>
       <BreadcrumbVaku rutas={rutas} />
-      <Text
-        as="b"
-        fontSize="5xl"
-        color={"vaku.700"}
-        style={{ fontFamily: "'Oswald', sans-serif" }}
-        textStyle="secondary"
-      >
-        {titulo}
-      </Text>
+      <Skeleton isLoaded={titulo !== "undefined"}>
+        <Text
+          as="b"
+          fontSize="5xl"
+          color={"vaku.700"}
+          style={{ fontFamily: "'Oswald', sans-serif" }}
+          textStyle="secondary"
+        >
+          {titulo}
+        </Text>
+      </Skeleton>
+
+      {tituloBajo ? (
+        <Skeleton isLoaded={titulo !== "undefined"}>
+          <Text
+            as="b"
+            fontSize="xl"
+            color={"vaku.700"}
+            style={{ fontFamily: "'Oswald', sans-serif" }}
+            textStyle="secondary"
+            marginStart={0}
+          >
+            {tituloBajo}
+          </Text>
+        </Skeleton>
+      ) : (
+        <></>
+      )}
 
       <Flex width={"100%"} alignItems={"end"}>
         <Box>
@@ -61,48 +87,53 @@ const Headers: React.FC<HeaderProps> = ({
         </Box>
         <Spacer />
         <HStack>
-          <HStack>
-            {isList ? (
+          {showButtonBars ? (
+            <HStack>
+              {isList ? (
+                <Box>
+                  <IconButton
+                    aria-label="Search database"
+                    isActive={!isList}
+                    bg="transparent"
+                    onClick={() => {
+                      setIsList(false);
+                    }}
+                    borderRadius={25}
+                    icon={<BsFillGrid3X3GapFill />}
+                  />
+                </Box>
+              ) : (
+                <Box>
+                  <IconButton
+                    aria-label="Search database"
+                    isActive={isList}
+                    bg="transparent"
+                    onClick={() => {
+                      setIsList(true);
+                    }}
+                    borderRadius={25}
+                    icon={<BsListStars />}
+                  />
+                </Box>
+              )}
+
               <Box>
                 <IconButton
-                  aria-label="Search database"
-                  isActive={!isList}
-                  bg="transparent"
-                  onClick={() => {
-                    setIsList(false);
-                  }}
-                  borderRadius={25}
-                  icon={<BsFillGrid3X3GapFill />}
-                />
-              </Box>
-            ) : (
-              <Box>
-                <IconButton
-                  aria-label="Search database"
+                  aria-label="recargar"
                   isActive={isList}
                   bg="transparent"
                   onClick={() => {
-                    setIsList(true);
+                    refreshData();
                   }}
                   borderRadius={25}
-                  icon={<BsListStars />}
+                  icon={<IoIosRefresh />}
                 />
               </Box>
-            )}
+            </HStack>
+          ) : (
+            <></>
+          )}
 
-            <Box>
-              <IconButton
-                aria-label="recargar"
-                isActive={isList}
-                bg="transparent"
-                onClick={() => {
-                  refreshData();
-                }}
-                borderRadius={25}
-                icon={<IoIosRefresh />}
-              />
-            </Box>
-          </HStack>
           {showButtonAdd ? (
             <Button
               rightIcon={<HiPlus />}
@@ -120,9 +151,13 @@ const Headers: React.FC<HeaderProps> = ({
           )}
         </HStack>
       </Flex>
-      <Box width={"100%"} pt={5}>
-        <HSeparator bg={"gray.400"} />
-      </Box>
+      {showDivision ? (
+        <Box width={"100%"} pt={5}>
+          <HSeparator bg={"gray.400"} />
+        </Box>
+      ) : (
+        <></>
+      )}
     </VStack>
   );
 };
