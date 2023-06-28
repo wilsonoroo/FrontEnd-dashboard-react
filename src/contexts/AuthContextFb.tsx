@@ -6,6 +6,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { auth } from "../services/config/";
 
+
 // Define el tipo para el contexto de autenticación
 interface AuthContextType {
   currentUser: UsuarioVaku | null;
@@ -51,6 +52,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           "🚀 ~ file: AuthContextFb.tsx:50 ~ unsubscribe ~ empresa:",
           empresa.url
         );
+        console.log("Usuario semi-completo:", userSemiComplete);
+        console.log("Empresa:", empresa);
 
         setTimeout(() => {
           setUser(userSemiComplete);

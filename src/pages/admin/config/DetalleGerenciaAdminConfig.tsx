@@ -120,20 +120,37 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
   } = useFetch(() => divisonRepository.getAll());
 
   const handleClick = (item: any) => {
-    // console.log(item.id)
-    navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
-      state: {
-        empresa: {
-          id: empresa.id,
-          nombre: empresa.nombre,
+    const isAdmin = currentUser?.isSuperAdmin;
+
+    if (isAdmin) {
+      navigate("/superAdmin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
+        state: {
+          empresa: {
+            id: empresa.id,
+            nombre: empresa.nombre,
+          },
+          gerencia: {
+            id: gerencia.id,
+            nombre: gerencia.nombre,
+          },
+          division: item,
         },
-        gerencia: {
-          id: gerencia.id,
-          nombre: gerencia.nombre,
+      });
+    } else {
+      navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
+        state: {
+          empresa: {
+            id: empresa.id,
+            nombre: empresa.nombre,
+          },
+          gerencia: {
+            id: gerencia.id,
+            nombre: gerencia.nombre,
+          },
+          division: item,
         },
-        division: item,
-      },
-    });
+      });
+    } 
   };
 
   const handleSaveDivision = (data: Divisiones) => {
@@ -168,20 +185,35 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
       <Headers
         titulo={"División"}
         tituloBajo={`${gerencia?.nombre}`}
-        subtitulo={
-          "En esta sección se especifica los detalles de cada gerencia"
-        }
+        subtitulo={"En esta sección se especifica los detalles de cada gerencia"}
         onOpen={onOpen}
         rutas={[
-          { nombre: "Home", url: "/admin" },
-
+          { nombre: "Home", 
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/` 
+              : `/admin/`,
+          },
           {
             nombre: `Configuración`,
-            url: "/admin/config",
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
+              : `/admin/config/${idEmpresa}/${idGerencia}`,
+            state: {
+              empresa: {
+                id: empresa?.id,
+                nombre: empresa?.nombre,
+              },
+              gerencia: {
+                id: gerencia?.id,
+                nombre: gerencia?.nombre,
+              },
+            },
           },
           {
             nombre: `Gerencias`,
-            url: `/admin/config`,
+            url: currentUser?.isSuperAdmin
+            ? `/superAdmin/config`
+            : `/admin/config`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -189,11 +221,23 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
               },
             },
           },
-          { nombre: `${gerencia?.nombre}`, url: "/admin/di" },
+          { 
+            nombre: `${gerencia?.nombre}`, 
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
+              : `/admin/config/${idEmpresa}/${idGerencia}`,
+            state: {
+              empresa: {
+                id: empresa?.id,
+                nombre: empresa?.nombre,
+              },
+            },
+          },
         ]}
         showButtonAdd={true}
         textButton="Agregar División"
       />
+
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (

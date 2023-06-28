@@ -6,6 +6,10 @@ import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerenciaAdmin";
 import DetalleEmpresa from "@/pages/admin/gerencias/GerenciasAdmin";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
+import ContenidoDetalleAdminConfig from "@/pages/admin/config/ContenidoDetalleAdminConfig";
+import DetalleEmpresaAdminConfig from "@/pages/admin/config/GerenciasAdminConfig";
+import DetalleGerenciaAdminConfig from "@/pages/admin/config/DetalleGerenciaAdminConfig";
+import ContenidoDetalleAdmin from "@/pages/admin/contenido/ContenidoAdmin";
 
 export const routesSuperAdmin: RouterJson[] = [
   {
@@ -14,13 +18,32 @@ export const routesSuperAdmin: RouterJson[] = [
     name: "Empresas",
   },
   {
-    path: "/admin",
+    path: "/superAdmin",
     element: <ContenidoDetalleV1 titulo={"Administrador"} />,
     name: "Admin",
   },
   {
     path: "empresas",
     element: <Empresas titulo={"Empresas"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "config",
+    element: <DetalleEmpresaAdminConfig titulo={"Gerencias"} />, //todas las gerencias
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+  {
+    path: "config/:idEmpresa/:idGerencia",
+    element: <DetalleGerenciaAdminConfig titulo={"Divisiones"} />, //todas las divisiones de la gerencia
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+
+  {
+    path: "config/:idEmpresa/:idGerencia/:idDivision",
+    element: <ContenidoDetalleAdminConfig titulo={"Division"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
@@ -61,4 +84,16 @@ export const routesSuperAdmin: RouterJson[] = [
     element: <LogOutview titulo={"Administrador"} />,
     name: "Admin",
   },
+
+  {
+    path: "home",
+    element: <ContenidoDetalleAdminConfig titulo={"Gerencias"} />, //todas las gerencias
+    // element: <ContenidoDetalleAdmin titulo={"Gerencias"} />,
+    name: "Detalle Empresas ",
+    isSubMenu: true,
+  },
+
+
+  
+
 ];

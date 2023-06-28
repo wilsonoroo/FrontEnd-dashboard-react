@@ -89,12 +89,24 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
   } = useFetch(() => empresasRepository.getAll());
 
   const handleClick = (item: any) => {
-    navigate("/admin/config/" + currentUser.empresaId + "/" + item.id, {
-      state: {
-        empresa: { id: empresa.id, nombre: empresa.nombre },
-        gerencia: item,
-      },
-    });
+    const isAdmin = currentUser?.isSuperAdmin;
+
+    if (isAdmin) {
+      navigate("/superAdmin/config/" + currentUser.empresaId + "/" + item.id, {
+        state: {
+          empresa: { id: empresa.id, nombre: empresa.nombre },
+          gerencia: item,
+        },
+      });
+    } else {
+      navigate("/admin/config/" + currentUser.empresaId + "/" + item.id, {
+        state: {
+          empresa: { id: empresa.id, nombre: empresa.nombre },
+          gerencia: item,
+        },
+      });
+
+    }
   };
 
   const handleSaveGerencia = (data: Gerencia) => {
@@ -129,26 +141,32 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
     <>
       <Headers
         titulo={"Gerencias"}
-        subtitulo={
-          "En esta sección se especifica los detalles de cada gerencia"
-        }
+        subtitulo={"En esta sección se especifica los detalles de cada gerencia"}
         onOpen={onOpen}
         rutas={[
-          { nombre: "Home", url: "/admin" },
-
+          { nombre: "Home", 
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/` 
+              : `/admin/`,
+          },
           {
             nombre: `Configuración`,
-            url: "/admin/config",
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config/`
+              : `/admin/config/`,
           },
           {
             nombre: `Gerencias`,
-            url: "/admin/config",
+            url: currentUser?.isSuperAdmin
+            ? `/superAdmin/config/`
+            : `/admin/config/`,
           },
         ]}
         showButtonAdd={true}
         textButton="Crear Gerencia"
         refreshData={refreshData}
       />
+
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (

@@ -62,22 +62,17 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
           "En esta sección se especifica los detalles de cada gerencia"
         }
         rutas={[
-          { nombre: "Home", url: "/admin" },
+          { nombre: "Home", 
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/` 
+              : `/admin/`,
+          },
 
           {
             nombre: `Configuración`,
-            url: "/admin/config",
-          },
-          {
-            nombre: `Gerencias`,
-            url: `/admin/config`,
-            state: {
-              empresa: {},
-            },
-          },
-          {
-            nombre: `${gerencia?.nombre}`,
-            url: `/admin/config/${empresa?.id}/${idGerencia}`,
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
+              : `/admin/config/${idEmpresa}/${idGerencia}`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -89,7 +84,50 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
               },
             },
           },
-          { nombre: `${division?.nombre}`, url: "/admin/di" },
+          {
+            nombre: `Gerencias`,
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config`
+              : `/admin/config`,
+            state: {
+              empresa: {
+                id: empresa?.id,
+                nombre: empresa?.nombre,
+              },
+            },
+          },
+          {
+            nombre: `${gerencia?.nombre}`,
+            url: currentUser?.isSuperAdmin
+              ? `/superAdmin/config/${empresa?.id}/${idGerencia}`
+              : `/admin/config/${empresa?.id}/${idGerencia}`,
+            state: {
+              empresa: {
+                id: empresa?.id,
+                nombre: empresa?.nombre,
+              },
+              gerencia: {
+                id: gerencia?.id,
+                nombre: gerencia?.nombre,
+              },
+            },
+          },
+          { nombre: `${division?.nombre}`, 
+            url: currentUser?.isSuperAdmin
+                ? `/superAdmin/config/${empresa?.id}/${idGerencia}/${idDivision}`
+                : `/admin/config/${empresa?.id}/${idGerencia}/${idDivision}`,
+            state: {
+              empresa: {
+                id: empresa?.id,
+                nombre: empresa?.nombre,
+              },
+              gerencia: {
+                id: gerencia?.id,
+                nombre: gerencia?.nombre,
+              },
+            },           
+          
+          },
         ]}
         showButtonAdd={false}
         showButtonBars={false}
