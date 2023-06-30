@@ -1,5 +1,5 @@
 // Chakra imports
-import { menuApp } from "@/navigation/menu/menu.admin";
+import { menuApp } from "@/navigation/menu/menu.superAdmin";
 import { routesSuperAdmin } from "@/navigation/route/route.superAdmin";
 import { Box, Flex } from "@chakra-ui/react";
 // Layout components

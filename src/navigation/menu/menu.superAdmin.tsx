@@ -16,15 +16,15 @@ export const menuApp: Menus[] = [
     menu: [
       {
         titulo: "Inicio",
-        layout: "admin",
-        path: "/",
+        layout: "superAdmin",
+        path: "/superAdmin/home",
         id: "main_dash",
         icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
       },
       {
         titulo: "Perfil",
-        layout: "admin",
-        path: "/admin/perfil",
+        layout: "superAdmin",
+        path: "/superAdmin/perfil",
         id: "main_dash",
         disabled: true,
         icon: (
@@ -33,8 +33,8 @@ export const menuApp: Menus[] = [
       },
       {
         titulo: "Configuración",
-        layout: "admin",
-        path: "/admin/empresas",
+        layout: "superAdmin",
+        path: "/superAdmin/config",
         id: "main_dash",
         disabled: false,
         icon: (
@@ -49,7 +49,7 @@ export const menuApp: Menus[] = [
 
       {
         titulo: "Dashboard",
-        layout: "admin",
+        layout: "superAdmin",
         path: "/usuarios",
         id: "main_dash",
         disabled: true,
@@ -60,7 +60,7 @@ export const menuApp: Menus[] = [
 
       {
         titulo: "Cerrar Sesión",
-        layout: "admin",
+        layout: "superAdmin",
         path: "logout",
         id: "logout",
 

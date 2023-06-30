@@ -89,7 +89,7 @@ export default function DetalleEmpresaAdmin(props: { titulo: string }) {
   } = useFetch(() => empresasRepository.getAll());
 
   const handleClick = (item: any) => {
-    navigate("/admin/config/" + currentUser.empresaId + "/" + item.id, {
+    navigate("/superAdmin/config/" + currentUser.empresaId + "/" + item.id, {
       state: {
         empresa: { id: empresa.id, nombre: empresa.nombre },
         gerencia: item,
@@ -138,7 +138,7 @@ export default function DetalleEmpresaAdmin(props: { titulo: string }) {
 
           {
             nombre: `Configuración`,
-            url: "/admin/config",
+            url: "/superAdmin/config",
           },
           {
             nombre: `Gerencias`,

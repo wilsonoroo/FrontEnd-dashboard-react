@@ -36,6 +36,7 @@ export class UsuarioVaku extends VakuModel {
   turno: string;
   enrolamiento: Enrolamiento;
   divisiones: [{ id: number; displayName: string }];
+  // isSuperAdmin: boolean;
 
   constructor() {
     super();

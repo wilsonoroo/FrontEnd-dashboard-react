@@ -7,10 +7,11 @@ import { Empresa } from "@/models/empresa/Empresa";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
 import { motion } from "framer-motion";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import AgregarUsuario from "./agregarEmpresa";
+import { AuthContext } from "@/contexts/AuthContextFb";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -33,9 +34,10 @@ const itemAnim = {
 };
 
 // TODO aliminar clase
-export default function Empresas(props: { titulo: string }) {
+export default function  Empresas(props: { titulo: string }) {
   const { titulo } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { currentUser } = useContext(AuthContext);
 
   const navigate = useNavigate();
 
@@ -53,7 +55,13 @@ export default function Empresas(props: { titulo: string }) {
   }, [empresas]);
 
   const handlePresEmpresa = (e: any) => {
-    navigate("/admin/empresas/" + e.id, { state: { empresa: e } });
+    const isSuperAdmin = currentUser?.isSuperAdmin;
+  
+    if (isSuperAdmin) {
+      navigate("/superAdmin/empresas/" + e.id, { state: { empresa: e } });
+    } else {
+      navigate("/admin/empresas/" + e.id, { state: { empresa: e } });
+    }
   };
 
   return (
