@@ -2,6 +2,12 @@ import Loading from "@/components/Loading";
 import { Empresa } from "@/models/empresa/Empresa";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { getLogoEmpresa } from "@/services/database/empresaServices";
+import {
+  getUsuario,
+  getUsuarioByUid,
+  getUsuarioV1,
+} from "@/services/database/usuariosServices";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { auth } from "../services/config/";
@@ -43,18 +49,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           user.uid
         );
         setLoading(true);
-        const userSemiComplete = await usuarioRepository.get(user?.uid);
-        const empresa = await empresaRepository.get(
-          userSemiComplete?.empresaId
-        );
-        console.log(
-          "🚀 ~ file: AuthContextFb.tsx:50 ~ unsubscribe ~ empresa:",
-          empresa.url
-        );
+        let userSemiComplete: any;
+        if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
+          userSemiComplete = await getUsuarioByUid(user?.uid);
+          const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
+
+          const { divisionId, empresaId, gerenciaId, id } = userSemiComplete;
+          let userComplete;
+          if (typeof divisionId === "undefined") {
+            userComplete = await getUsuarioV1(id, empresaId);
+          } else {
+            userComplete = await getUsuario(
+              user?.uid,
+              empresaId,
+              gerenciaId,
+              divisionId
+            );
+          }
+
+          setUser(userComplete);
+          setLogoEmpresa(empresa);
+          setTimeout(() => {
+            setLoading(false);
+          }, 15000);
+        } else {
+          userSemiComplete = await usuarioRepository.get(user?.uid);
+          const empresa = await empresaRepository.get(
+            userSemiComplete?.empresaId
+          );
+          console.log(
+            "🚀 ~ file: AuthContextFb.tsx:50 ~ unsubscribe ~ empresa:",
+            empresa.url
+          );
+        }
 
         setTimeout(() => {
           setUser(userSemiComplete);
-          setLogoEmpresa(empresa.url);
+          // setLogoEmpresa(empresa.url);
           setUserLogger(true);
           setLoading(false);
         }, 1500);

@@ -11,11 +11,10 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
+import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import useFetch from "@/hooks/useFetch";
-import { Divisiones } from "@/models/division/Disvision";
 import { Equipo } from "@/models/equipo/Equipo";
-import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { IRepository } from "@/repositories/IRepository";
@@ -32,18 +31,23 @@ export default function EquiposViewV1(props: { titulo: string }) {
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
-  const newDivision = new Divisiones();
+
+  const newEquipo = new Equipo();
   const { currentUser } = useContext(AuthContext);
 
-  let divisionRepository: IRepository<Vehiculo>;
-  if (idEmpresa === undefined) {
+  let divisionRepository: IRepository<Equipo>;
+
+  if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
     divisionRepository = new FirebaseRealtimeRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/equipos/maquinasEquipos`
+      `empresas/${currentUser.empresaId}/equipos/maquinasEquipo`
     );
   } else {
-    divisionRepository = new FirestoreRepository<Vehiculo>(
+    divisionRepository = new FirestoreRepository<Equipo>(
       `empresas/${idEmpresa}/vehiculos`
     );
+  }
+  if (idEmpresa === undefined) {
+  } else {
   }
 
   const {
@@ -95,6 +99,13 @@ export default function EquiposViewV1(props: { titulo: string }) {
     }),
   ];
 
+  const handleSaveEquipo = (data: Equipo, resetForm: () => void) => {
+    if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
+      data.categoria = "equipo";
+      divisionRepository.add(null, data);
+    }
+  };
+
   return (
     <>
       <>
@@ -106,7 +117,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
                 textButtonAdd={" Agregar Equipo"}
                 onOpen={onOpen}
                 onReload={refreshData}
-                hiddenButtonAdd
+                hiddenButtonAdd={false}
               >
                 <DataTable columns={columns} data={division} />
               </TableLayout>
@@ -117,7 +128,24 @@ export default function EquiposViewV1(props: { titulo: string }) {
         )}
       </>
 
-      <Flex></Flex>
+      <Flex>
+        <Flex>
+          <FormVaku<Equipo>
+            titulo={"Agregar Equipo"}
+            isOpen={isOpen}
+            onClose={onClose}
+            refreshData={refreshData}
+            fieldsToExclude={["id"]}
+            model={newEquipo}
+            initialValues={newEquipo}
+            onSubmit={handleSaveEquipo}
+            loading={loading}
+            options={options}
+            size="xl"
+            grid={{ base: 1, md: 2 }}
+          />
+        </Flex>
+      </Flex>
     </>
   );
 }
