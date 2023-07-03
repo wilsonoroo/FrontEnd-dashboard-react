@@ -1,47 +1,38 @@
 import {
+  Badge,
   Box,
+  Checkbox,
   Flex,
   Grid,
-  Spacer,
   Tag,
   TagLabel,
   Text,
+  VStack,
   useDisclosure,
   useToast,
-  VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-  Button,
-  Badge,
-  Checkbox,
 } from "@chakra-ui/react";
-import { CellContext, createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
 import useFetch from "@/hooks/useFetch";
 
+import FormVaku from "@/components/forms/FormVaku";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
-import { DocumentoVaku } from "@/models/documento/Documento";
-import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { Equipo } from "@/models/equipo/Equipo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { dateToTimeStamp } from "@/utils/global";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
-import { Vehiculo } from "@/models/vehiculo/Vehiculo";
-import moment from "moment";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import { AuthContext } from "@/contexts/AuthContextFb";
-import { Equipo } from "@/models/equipo/Equipo";
 
 export default function EquiposViewDivision(props: { titulo: string }) {
   const { titulo } = props;
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
@@ -58,7 +49,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   // console.log(idEmpresa, idGerencia, idDivision)
   let divisionRepository: FirestoreRepository<Equipo>;
   if (idEmpresa === undefined) {
-    divisionRepository= new FirestoreRepository<Equipo>(
+    divisionRepository = new FirestoreRepository<Equipo>(
       `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/equipos`
     );
   } else {
@@ -67,24 +58,22 @@ export default function EquiposViewDivision(props: { titulo: string }) {
     );
   }
 
-  let empresaEquipoRepository: FirestoreRepository<Equipo>;
-  if (idEmpresa === undefined) {
-    empresaEquipoRepository= new FirestoreRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/equipos`
+  let empresaEquipoRepository: any;
+
+  if (isVersionRealtime) {
+    empresaEquipoRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaIdGlobal}/equipos/maquinasEquipos`
     );
   } else {
-    empresaEquipoRepository= new FirestoreRepository<Equipo>(
-      `empresas/${idEmpresa}/equipos`
-    );
+    console.log(`empresas/${currentUser.empresaIdGlobal}/equipos`);
   }
-
 
   const {
     data: division,
     firstLoading: loadingData,
     refreshData,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll());
+  } = useFetch(() => empresaEquipoRepository.getAll(Equipo));
 
   const {
     data: empresaVehiculos,
@@ -95,36 +84,39 @@ export default function EquiposViewDivision(props: { titulo: string }) {
 
   // console.log(division, empresaVehiculos)
 
-
-
   const columnHelper = createColumnHelper<Equipo>();
 
-  const onOpenModal = () => {
-    setIsModalOpen(true);
+  const handleSaveEquipo = (data: Equipo) => {
+    console.log(data);
+    setLoading(true);
+
+    data.createdAt = dateToTimeStamp(new Date());
+    data.updatedAt = dateToTimeStamp(new Date());
+    data.isEliminado = false;
+    data.isServicio = true;
+
+    empresaEquipoRepository
+      .add(null, data)
+      .then(() => {
+        toast({
+          title: `Se ha creado el equipo con éxito `,
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        onClose();
+        refreshEmpresaVehiculos();
+      })
+      .catch((error: any) => {
+        console.error(error);
+      })
+      .finally(() => {
+        refreshData();
+        setLoading(false);
+      });
+
+    return;
   };
-
-  const onCloseModal = () => {
-    setIsModalOpen(false);
-    setFilasSeleccionadas([]);
-  };
-
-  const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
-
-
-  const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
-
-    toast({
-      title: "Vehículos asignados correctamente",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });  
-    // Cierra el modal
-    onCloseModal();   
-  };
-  
 
   const columns = [
     columnHelper.accessor("id", {
@@ -183,8 +175,6 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       // size: 300,
       // minSize: 250,
     }),
-  
-  
   ];
   const columns1 = [
     columnHelper.accessor("id", {
@@ -205,7 +195,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       // size: 100,
       // minSize: 120,
     }),
-  
+
     columnHelper.accessor("marca", {
       cell: (info) => {
         return (
@@ -215,7 +205,6 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "marca",
-
     }),
 
     columnHelper.accessor("modelo", {
@@ -227,34 +216,33 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "modelo",
-    
     }),
 
-    
     columnHelper.accessor("divisiones", {
       cell: (info) => (
-        <Box  alignItems="center" alignContent="center" >
-          {Array.isArray(info.getValue()) && info.getValue().length > 0 ? (
-            info.getValue().map((division, index) => (
-              <Badge key={index} variant="solid" bg={"#0B79F4"} fontSize="0.7em" mr={1} mb={1}>
-                {division.displayName}
-              </Badge>
-            ))
-          ) : (
-            ""
-          )}
+        <Box alignItems="center" alignContent="center">
+          {Array.isArray(info.getValue()) && info.getValue().length > 0
+            ? info.getValue().map((division, index) => (
+                <Badge
+                  key={index}
+                  variant="solid"
+                  bg={"#0B79F4"}
+                  fontSize="0.7em"
+                  mr={1}
+                  mb={1}
+                >
+                  {division.displayName}
+                </Badge>
+              ))
+            : ""}
         </Box>
       ),
       header: "Divisiones",
     }),
 
-    {
+    columnHelper.accessor("divisiones", {
       id: "asignarDesasignar",
-      header: (
-        <span>
-          <text /> Asignar/Desasignar
-        </span>
-      ),
+      header: "Asignar/Desasignar",
       cell: (info: any) => {
         const fila = info.row.original;
 
@@ -262,16 +250,20 @@ export default function EquiposViewDivision(props: { titulo: string }) {
           fila.divisiones = []; // Agrega un arreglo vacío si no es un array
         }
 
-        const isChecked = fila.divisiones.some((division: any) => division.id === idDivision);
-    
+        const isChecked = fila.divisiones.some(
+          (division: any) => division.id === idDivision
+        );
+
         const manejarCambioCheckbox = () => {
           if (isChecked) {
             // Remove the division from the divisiones array
             const updatedFila = {
               ...fila,
-              divisiones: fila.divisiones.filter((division: any) => division.id !== idDivision),
+              divisiones: fila.divisiones.filter(
+                (division: any) => division.id !== idDivision
+              ),
             };
-    
+
             empresaEquipoRepository
               .update(fila.id, updatedFila)
               .then(() => {
@@ -283,10 +275,10 @@ export default function EquiposViewDivision(props: { titulo: string }) {
                 });
                 refreshEmpresaVehiculos();
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
-    
+
             divisionRepository
               .delete(fila.id)
               .then(() => {
@@ -313,7 +305,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
                 },
               ],
             };
-    
+
             empresaEquipoRepository
               .update(fila.id, updatedFila)
               .then(() => {
@@ -325,10 +317,10 @@ export default function EquiposViewDivision(props: { titulo: string }) {
                 });
                 refreshEmpresaVehiculos();
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
-    
+
             divisionRepository
               .add(fila.id, updatedFila) // Use the updatedFila object to add the division
               .then(() => {
@@ -345,94 +337,64 @@ export default function EquiposViewDivision(props: { titulo: string }) {
               });
           }
         };
-    
+
         return (
           <Box display="flex" justifyContent="center" alignItems="center">
             <Checkbox onChange={manejarCambioCheckbox} isChecked={isChecked} />
           </Box>
         );
       },
-    } 
-    
-     
+    }),
   ];
 
   return (
     <>
-    <VStack align={"start"} pl={"20px"}>
-      <Text
-        as="b"
-        fontSize="5xl"
-        color={"vaku.700"}
-        fontFamily="Oswald"
-        textStyle="secondary"
-      >
-        {titulo}
-      </Text>
-    </VStack>
-
-    <>
-      {!loadingData ? (
-        <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
-          <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-            <TableLayout
-              titulo={"Equipos"}
-              textButtonAdd={"Asignar Equipos"}
-              onOpen={onOpenModal}
-              onReload={refreshData}
-            >
-              <DataTable columns={columns} data={division} />
-            </TableLayout>
-          </Grid>
-        </Box>
-      ) : (
-        <>Cargando..</>
-      )}
-    </>
-
-    <Flex >
-      <Modal isOpen={isModalOpen} onClose={onCloseModal}  >
-        <ModalOverlay />
-        <ModalContent
-          display="flex"
-          // justifyContent="center"
-          // alignItems="center"
-          maxW="900px" // Ancho máximo de 800px
-          maxH="950px"
-          borderRadius={16}
-          mx="auto" // Centrar horizontalmente
-          my="auto" // Centrar verticalmente
+      <VStack align={"start"} pl={"20px"}>
+        <Text
+          as="b"
+          fontSize="5xl"
+          color={"vaku.700"}
+          fontFamily="Oswald"
+          textStyle="secondary"
         >
-          <ModalHeader>Asignar Equipos</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* Agrega aquí el contenido del modal */}
-            {!loadingEmpresaVehiculos ? (
-              < >
-                <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-                  <TableLayoutModal
-                    titulo={""}
-                    textButtonAdd={""}
-                    onOpen={onOpenModal}
-                    onReload={refreshData}
-                  >
-                    <DataTable hiddenEmptyRow={true} columns={columns1} data={empresaVehiculos} />
-                  </TableLayoutModal>
-                </Grid>
-              </>
-            ) : (
-              <>Cargando..</>
-            )}
-          </ModalBody>
-          <ModalFooter>
-            <Flex justifyContent="flex-end">
-              <Button mr={3} onClick={onCloseModal}>Cancelar</Button>
-              <Button onClick={handleGuardar} colorScheme="blue">Guardar</Button>
-            </Flex>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </Flex>
-  </>
+          {titulo}
+        </Text>
+      </VStack>
+
+      <>
+        {!loadingData ? (
+          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+            <Grid templateColumns="repeat(1, 1fr)" gap={6}>
+              <TableLayout
+                titulo={"Equipos"}
+                textButtonAdd={"Agregar Equipos"}
+                onOpen={onOpen}
+                onReload={refreshData}
+              >
+                <DataTable columns={columns} data={division} />
+              </TableLayout>
+            </Grid>
+          </Box>
+        ) : (
+          <>Cargando..</>
+        )}
+      </>
+
+      <Flex>
+        <FormVaku<Equipo>
+          isOpen={isOpen}
+          onClose={onClose}
+          refreshData={refreshEmpresaVehiculos}
+          fieldsToExclude={["id"]}
+          model={newVehiculo}
+          onSubmit={handleSaveEquipo}
+          loading={loading}
+          options={options}
+          initialValues={newVehiculo}
+          size="xl"
+          grid={{ base: 1, md: 2 }}
+        />
+      </Flex>
+    </>
   );
 }

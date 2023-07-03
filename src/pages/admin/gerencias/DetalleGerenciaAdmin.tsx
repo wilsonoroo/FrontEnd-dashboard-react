@@ -239,10 +239,10 @@ export default function DetalleGerenciaAdmin(props: { titulo: string }) {
               </Container>
             </Box>
             <Text as="b" fontSize="2xl">
-              No Existen Gerencias
+              No Existen division
             </Text>
             <Text fontSize="xl">
-              Empieza con VAKU ingresa la primera gerencia
+              Empieza con VAKU ingresa la primera division
             </Text>
 
             <Box py={5}>

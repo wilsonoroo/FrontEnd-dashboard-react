@@ -1,7 +1,7 @@
 import VakuModel from "@/models/Vaku";
 import { database } from "@/services/config";
 import { cleanObject } from "@/utils/global";
-import { DataSnapshot, get, Query, ref, set } from "firebase/database";
+import { DataSnapshot, get, Query, ref, set, update } from "firebase/database";
 import { v4 as uuid } from "uuid";
 import { IRepository } from "./IRepository";
 
@@ -52,10 +52,29 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
   }
 
   async update(id: string, item: T): Promise<void> {
-    await set(this.getDataReference(id), item);
+    let cleanObj = cleanObject({ ...item });
+    await set(this.getDataReference(id), cleanObj);
+  }
+
+  async updateObj(id: string, item: any): Promise<void> {
+    let cleanObj = cleanObject({ ...item });
+    await update(this.getDataReference(id), cleanObj);
   }
 
   async delete(id: string): Promise<void> {
     await set(this.getDataReference(id), null);
+  }
+
+  async getQuery(factory: new () => T, _query: any): Promise<T[]> {
+    const snapshot = await get(this.query);
+    const values: T[] = [];
+
+    snapshot.forEach((child: DataSnapshot) => {
+      const value = new factory();
+
+      Object.assign(value, child.val());
+      values.push(value);
+    });
+    return values;
   }
 }

@@ -46,15 +46,15 @@ export default function UsuariosView1(props: { titulo: string }) {
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({
     licencia: [
-      { value: "clase_a1", label: "Clase A1" },
-      { value: "clase_a2", label: "Clase A2" },
-      { value: "clase_a3", label: "Clase A3" },
-      { value: "clase_a4", label: "Clase A4" },
-      { value: "clase_b", label: "Clase B" },
-      { value: "clase_c", label: "Clase C" },
-      { value: "clase_d", label: "Clase D" },
-      { value: "clase_e", label: "Clase E" },
-      { value: "clase_F", label: "Clase F" },
+      { value: "clase_a1", displayName: "Clase A1" },
+      { value: "clase_a2", displayName: "Clase A2" },
+      { value: "clase_a3", displayName: "Clase A3" },
+      { value: "clase_a4", displayName: "Clase A4" },
+      { value: "clase_b", displayName: "Clase B" },
+      { value: "clase_c", displayName: "Clase C" },
+      { value: "clase_d", displayName: "Clase D" },
+      { value: "clase_e", displayName: "Clase E" },
+      { value: "clase_F", displayName: "Clase F" },
     ],
     categoriaVehiculos: [],
     permisos: [],
@@ -77,15 +77,15 @@ export default function UsuariosView1(props: { titulo: string }) {
   useEffect(() => {
     setOptions({
       licencia: [
-        { value: "clase_a1", label: "Clase A1" },
-        { value: "clase_a2", label: "Clase A2" },
-        { value: "clase_a3", label: "Clase A3" },
-        { value: "clase_a4", label: "Clase A4" },
-        { value: "clase_b", label: "Clase B" },
-        { value: "clase_c", label: "Clase C" },
-        { value: "clase_d", label: "Clase D" },
-        { value: "clase_e", label: "Clase E" },
-        { value: "clase_F", label: "Clase F" },
+        { value: "clase_a1", displayName: "Clase A1" },
+        { value: "clase_a2", displayName: "Clase A2" },
+        { value: "clase_a3", displayName: "Clase A3" },
+        { value: "clase_a4", displayName: "Clase A4" },
+        { value: "clase_b", displayName: "Clase B" },
+        { value: "clase_c", displayName: "Clase C" },
+        { value: "clase_d", displayName: "Clase D" },
+        { value: "clase_e", displayName: "Clase E" },
+        { value: "clase_F", displayName: "Clase F" },
       ],
       permisos: [
         { value: "administrador", label: "Administrador" },
@@ -284,7 +284,6 @@ export default function UsuariosView1(props: { titulo: string }) {
         });
       })
       .finally(() => {
-        setLoading(false);
         resetForm();
         onClose();
         refreshData();
@@ -306,7 +305,6 @@ export default function UsuariosView1(props: { titulo: string }) {
               <TagLabel>{info.getValue()}</TagLabel>
             </Tag>
           </Box>
-      
         </VStack>
       ),
       header: "Nombre de Usuario",

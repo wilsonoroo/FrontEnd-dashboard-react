@@ -13,11 +13,14 @@ export class UsuarioVaku extends VakuModel {
   codigo: string;
   cuadrilla: Cuadrilla[];
   isSuperAdmin: boolean;
+  isAdmin: boolean;
 
   dispositivos: Dispositivos[];
   email: string;
   empresa: string;
   empresaId: string;
+  empresaIdGlobal: string;
+  empresaIdV1: string;
   fechaVencimientoLicencia: string | Date;
   fotografia: Fotografia;
   isActive: boolean;
@@ -29,6 +32,7 @@ export class UsuarioVaku extends VakuModel {
   notificacionMisSeguimientosDePlanes: number;
   notificacionSeguimientosDePlanes: number;
   permisos: any;
+  permisosWeb: any;
   newPermisos: any;
   rol: Rol;
   rut: string;
@@ -36,6 +40,7 @@ export class UsuarioVaku extends VakuModel {
   turno: string;
   enrolamiento: Enrolamiento;
   divisiones: [{ id: number; displayName: string }];
+  tipo: string;
   // isSuperAdmin: boolean;
 
   constructor() {
@@ -63,6 +68,9 @@ export class UsuarioVaku extends VakuModel {
     this.sexo = "";
     this.turno = "";
     this.newPermisos = [];
+    this.isSuperAdmin = false;
+    this.permisosWeb = [];
+    this.tipo = "";
   }
 
   getValidationSchema() {
@@ -100,6 +108,8 @@ export class UsuarioVaku extends VakuModel {
       turno: "",
       enrolamiento: {},
       newPermisos: [],
+      permisosWeb: [],
+      tipo: "",
     };
   }
 
@@ -135,39 +145,22 @@ export class UsuarioVaku extends VakuModel {
         required: true,
         orden: 4,
       },
-
-      areaCargo: {
-        display: "Área Cargo",
-        tipo: CampoFormKey.TEXT,
-        field: "areaCargo",
-        required: true,
-        orden: 5,
-      },
       cargo: {
         display: "Cargo",
         tipo: CampoFormKey.TEXT,
         field: "cargo",
         required: true,
-        orden: 6,
+        orden: 5,
       },
-      fechaVencimientoLicencia: {
-        display: "Fecha de Vencimiento de Licencia de Conducir",
-        tipo: CampoFormKey.FECHA_CUSTOM,
-        field: "fechaVencimientoLicencia",
-        required: true,
-        orden: 7,
-      },
-
       turno: {
         display: "Turno",
         tipo: CampoFormKey.CREATE_SELECT,
         field: "turno",
         required: true,
         options: options.turno,
-        orden: 8,
+        orden: 6,
         single: true,
       },
-
       licencias: {
         display: "Licencias",
         tipo: CampoFormKey.DROPDOWN_V2,
@@ -175,45 +168,115 @@ export class UsuarioVaku extends VakuModel {
         required: true,
         isMulti: true,
         options: options.licencia,
-        orden: 9,
+        orden: 7,
         typeField: TypeField.Object,
         transform: (value: any) => {
-          let permisos = transformedObject(value, "value");
+          console.log(
+            "🚀 ~ file: Usuario.ts:179 ~ UsuarioVaku ~ getFormBuilder ~ value:",
+            value
+          );
+          let permisos = transformedObject(value, "nombre");
+          console.log(
+            "🚀 ~ file: Usuario.ts:175 ~ UsuarioVaku ~ getFormBuilder ~ permisos:",
+            permisos
+          );
           return permisos;
         },
-        seccion: "Licencias",
       },
+
+      fechaVencimientoLicencia: {
+        display: "Fecha de Vencimiento de Licencia de Conducir",
+        tipo: CampoFormKey.FECHA_CUSTOM,
+        field: "fechaVencimientoLicencia",
+        required: true,
+        orden: 8,
+      },
+
       rol: {
         display: "Rol",
         tipo: CampoFormKey.DROPDOWN_V2,
         field: "rol",
         required: true,
         options: options.rol,
-        orden: 10,
-      },
-      permisos: {
-        display: "Permisos",
-        tipo: CampoFormKey.PERMISOS,
-        field: "permisos",
-        required: true,
-        options: options.permisos,
-        orden: 11,
-        isMulti: true,
-        typeField: TypeField.Object,
+        isMulti: false,
+        orden: 9,
         transform: (value: any) => {
           console.log(
-            "🚀 ~ file: Usuario.ts:172 ~ UsuarioVaku ~ getFormBuilder ~ any:",
+            "🚀 ~ file: Usuario.ts:179 ~ UsuarioVaku ~ getFormBuilder ~ value:",
             value
           );
-          let permisos = transformedObject(value, "value");
+          let permisos = transformedObject(value, "nombre");
           console.log(
-            "🚀 ~ file: Usuario.ts:174 ~ UsuarioVaku ~ permisos ~ permisos:",
+            "🚀 ~ file: Usuario.ts:175 ~ UsuarioVaku ~ getFormBuilder ~ permisos:",
             permisos
           );
           return permisos;
         },
+      },
+      isActive: {
+        display: "Usuario activo",
+        tipo: CampoFormKey.SWITCH,
+        field: "isActive",
+        required: true,
+
+        orden: 10,
+      },
+      permisosWeb: {
+        display: "Permisos web",
+        tipo: CampoFormKey.PERMISOS,
+        field: "permisosWeb",
+        required: true,
+        options: options.permisos,
+        orden: 11,
+        isMulti: false,
+
+        single: true,
+      },
+      permisos: {
+        display: "Permisos",
+        tipo: CampoFormKey.PERMISOS_MOVIL,
+        field: "permisos",
+        required: true,
+        options: options.permisos,
+        orden: 12,
+        isMulti: false,
+        typeField: TypeField.Object,
+        transform: (value: any) => {
+          console.log(
+            "🚀 ~ file: Usuario.ts:234 ~ UsuarioVaku ~ getFormBuilder ~ value:",
+            value
+          );
+          let result: any[] = [];
+          let validador: boolean[] = [];
+          let mapping = value.map((permiso: any) => {
+            if (permiso.permisos["crear"]) {
+              result.push(permiso);
+            }
+            if (permiso.permisos["validar"]) {
+              validador.push(permiso);
+            }
+          });
+          console.log(
+            "🚀 ~ file: Usuario.ts:240 ~ UsuarioVaku ~ mapping ~ mapping:",
+            validador.some((permiso: any) => permiso)
+          );
+          if (validador.some((permiso: any) => permiso)) {
+            result.push({
+              codigo: "validador",
+              displayName: "Validador",
+              id: "validador",
+            });
+          }
+
+          var obj = result.reduce(function (acc, cur) {
+            acc[cur.id] = cur;
+            return acc;
+          }, {});
+          return obj;
+        },
         single: false,
       },
+
       // newPermisos: {
       //   display: "Permisos",
       //   tipo: CampoFormKey.PERMISOS,
@@ -230,15 +293,6 @@ export class UsuarioVaku extends VakuModel {
       //   },
       //   single: false,
       // },
-
-      isActive: {
-        display: "Usuario activo",
-        tipo: CampoFormKey.SWITCH,
-        field: "isActive",
-        required: true,
-
-        orden: 12,
-      },
     };
   }
 }

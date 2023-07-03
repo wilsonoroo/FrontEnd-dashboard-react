@@ -1,3 +1,6 @@
+import ContenidoDetalleAdminConfig from "@/pages/admin/config/ContenidoDetalleAdminConfig";
+import DetalleGerenciaAdminConfig from "@/pages/admin/config/DetalleGerenciaAdminConfig";
+import DetalleEmpresaAdminConfig from "@/pages/admin/config/GerenciasAdminConfig";
 import ContenidoDetalle from "@/pages/admin/contenido/ContenidoAdmin";
 import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
@@ -6,10 +9,6 @@ import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerenciaAdmin";
 import DetalleEmpresa from "@/pages/admin/gerencias/GerenciasAdmin";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
 import { RouterJson } from "../model";
-import ContenidoDetalleAdminConfig from "@/pages/admin/config/ContenidoDetalleAdminConfig";
-import DetalleEmpresaAdminConfig from "@/pages/admin/config/GerenciasAdminConfig";
-import DetalleGerenciaAdminConfig from "@/pages/admin/config/DetalleGerenciaAdminConfig";
-import ContenidoDetalleAdmin from "@/pages/admin/contenido/ContenidoAdmin";
 
 export const routesSuperAdmin: RouterJson[] = [
   {
@@ -92,8 +91,4 @@ export const routesSuperAdmin: RouterJson[] = [
     name: "Detalle Empresas ",
     isSubMenu: true,
   },
-
-
-  
-
 ];

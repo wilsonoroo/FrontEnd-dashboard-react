@@ -16,7 +16,7 @@ export default function DocumentosView(props: { titulo: string }) {
   const { idEmpresa, idGerencia, idDivision } = useParams();
 
   const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
+    `empresas/${idDivision}/documentos`
   );
 
   const {

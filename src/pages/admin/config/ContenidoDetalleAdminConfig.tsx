@@ -8,6 +8,8 @@ import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { Empresa } from "@/models/empresa/Empresa";
 import { Gerencia } from "@/models/gerencia/Gerencia";
+import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import { useParams } from "react-router-dom";
 import EquiposViewDivision from "./contenido/equipos/EquiposViewDivision";
@@ -18,6 +20,10 @@ import VehiculosViewDivision from "./contenido/vehiculos/VehiculosViewDivision";
 export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
   const { titulo } = props;
 
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
+
   const [tabIndex, setTabIndex] = useState(0);
   const [empresa, setEmpresa] = useState<Empresa>();
   const [gerencia, setGerencia] = useState<Gerencia>();
@@ -25,26 +31,53 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const { currentUser } = useContext(AuthContext);
 
-  let empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
-  let gerenciaRepository = new FirestoreRepository<Gerencia>(
-    `empresas/${idEmpresa}/gerencias`
-  );
-  let divisonRepository = new FirestoreRepository<Divisiones>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
-  );
+  let empresaRepository: any;
+  let gerenciaRepository: any;
+  let divisonRepository: any;
+  let usuariosRepository: any;
+  let divisionEmpresa: any;
+
+  if (isVersionRealtime) {
+    empresaRepository = new FirebaseRealtimeRepository<Empresa>(
+      `empresaCompact`
+    );
+    gerenciaRepository = new FirebaseRealtimeRepository<Gerencia>(
+      `empresaCompact/${idEmpresa}/gerencias`
+    );
+    divisonRepository = new FirebaseRealtimeRepository<Divisiones>(
+      `empresaCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+    );
+
+    divisionEmpresa = new FirebaseRealtimeRepository<Divisiones>(`empresas`);
+    usuariosRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaId}/usuarios/auth`
+    );
+  } else {
+    let empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
+    let gerenciaRepository = new FirestoreRepository<Gerencia>(
+      `empresas/${idEmpresa}/gerencias`
+    );
+    let divisonRepository = new FirestoreRepository<Divisiones>(
+      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+    );
+  }
 
   useEffect(() => {
-    empresaRepository.get(currentUser.empresaId).then((data) => {
+    empresaRepository.get(currentUser.empresaId).then((data: Empresa) => {
       setEmpresa(data);
-      gerenciaRepository.get(idGerencia).then((data) => {
+      gerenciaRepository.get(idGerencia).then((data: Gerencia) => {
         console.log(
           "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:40 ~ gerenciaRepository.get ~ data:",
           data
         );
         setGerencia(data);
-        divisonRepository.get(idDivision).then((data) => {
+        divisonRepository.get(idDivision).then((data: Divisiones) => {
           setDivision(data);
         });
+        console.log(
+          "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:77 ~ divisonRepository.get ~ data:",
+          data
+        );
       });
     });
   }, []);
@@ -58,14 +91,11 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
       <Headers
         titulo={`${division?.nombre}`}
         tituloBajo={`${division?.codigo}`}
-        subtitulo={
-          "En esta sección se especifica los detalles de cada gerencia"
-        }
+        subtitulo={"En esta sección se especifica los detalles de cada empresa"}
         rutas={[
-          { nombre: "Home", 
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/` 
-              : `/admin/`,
+          {
+            nombre: "Home",
+            url: currentUser?.isSuperAdmin ? `/superAdmin/` : `/admin/`,
           },
 
           {
@@ -112,10 +142,11 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
               },
             },
           },
-          { nombre: `${division?.nombre}`, 
+          {
+            nombre: `${division?.nombre}`,
             url: currentUser?.isSuperAdmin
-                ? `/superAdmin/config/${empresa?.id}/${idGerencia}/${idDivision}`
-                : `/admin/config/${empresa?.id}/${idGerencia}/${idDivision}`,
+              ? `/superAdmin/config/${empresa?.id}/${idGerencia}/${idDivision}`
+              : `/admin/config/${empresa?.id}/${idGerencia}/${idDivision}`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -125,8 +156,7 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
                 id: gerencia?.id,
                 nombre: gerencia?.nombre,
               },
-            },           
-          
+            },
           },
         ]}
         showButtonAdd={false}

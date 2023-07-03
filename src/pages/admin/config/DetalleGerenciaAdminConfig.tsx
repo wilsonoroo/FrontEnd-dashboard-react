@@ -25,7 +25,9 @@ import { Divisiones } from "@/models/division/Disvision";
 import { Empresa } from "@/models/empresa/Empresa";
 import { Gerencia } from "@/models/gerencia/Gerencia";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { v4 as uuid } from "uuid";
 import DivisionCard from "./components/DivionesCard/DivisionCard";
 
 const container = {
@@ -50,6 +52,9 @@ const itemAnim = {
 
 export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
   const { titulo } = props;
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   //   const { id, idGerencia } = useParams();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
@@ -70,18 +75,40 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
   const newDivision = new Divisiones();
   newDivision.setEmptyObject();
 
-  let empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
-  let gerenciaRepository = new FirestoreRepository<Gerencia>(
-    `empresas/${idEmpresa}/gerencias`
-  );
-  let divisonRepository = new FirestoreRepository<Divisiones>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
-  );
+  let empresaRepository: any;
+  let gerenciaRepository: any;
+  let divisonRepository: any;
+  let usuariosRepository: any;
+  let divisionEmpresa: any;
+
+  if (isVersionRealtime) {
+    empresaRepository = new FirebaseRealtimeRepository<Empresa>(
+      `empresaCompact`
+    );
+    gerenciaRepository = new FirebaseRealtimeRepository<Gerencia>(
+      `empresaCompact/${idEmpresa}/gerencias`
+    );
+    divisonRepository = new FirebaseRealtimeRepository<Divisiones>(
+      `empresaCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+    );
+
+    divisionEmpresa = new FirebaseRealtimeRepository<Divisiones>(`empresas`);
+    usuariosRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaId}/usuarios/auth`
+    );
+  } else {
+    empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
+    gerenciaRepository = new FirestoreRepository<Gerencia>(
+      `empresas/${idEmpresa}/gerencias`
+    );
+    divisonRepository = new FirestoreRepository<Divisiones>(
+      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+    );
+  }
 
   useEffect(() => {
     const getUsuarios = async () => {
-      const db = new FirestoreRepository<UsuarioVaku>("auth");
-      const result = await db.getAllObject(UsuarioVaku);
+      const result = await usuariosRepository.getAll(UsuarioVaku);
 
       setOptions({
         responsable: result as UsuarioVaku[],
@@ -100,11 +127,18 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           },
         ],
       });
+      const empresa = await divisionEmpresa.get(idEmpresa);
+      console.log(
+        "🚀 ~ file: DetalleGerenciaAdminConfig.tsx:130 ~ getUsuarios ~ empresa:",
+        idEmpresa,
+        empresa
+      );
     };
     getUsuarios();
-    empresaRepository.get(currentUser.empresaId).then((data) => {
+
+    empresaRepository.get(currentUser.empresaId).then((data: Empresa) => {
       setEmpresa(data);
-      gerenciaRepository.get(idGerencia).then((data) => {
+      gerenciaRepository.get(idGerencia).then((data: Gerencia) => {
         setGerencia(data);
       });
     });
@@ -117,25 +151,58 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
     firstLoading,
     refreshData,
     isLoading,
-  } = useFetch(() => divisonRepository.getAll());
+  } = useFetch(() => divisonRepository.getAll(Divisiones));
 
+  const handleClickConfig = (item: any) => {
+    navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
+      state: {
+        empresa: {
+          id: empresa.id,
+          nombre: empresa.nombre,
+        },
+        gerencia: {
+          id: gerencia.id,
+          nombre: gerencia.nombre,
+        },
+        division: item,
+      },
+    });
+  };
+  const handleClickDetalle = (item: any) => {
+    navigate("/admin/" + idEmpresa + `/${idGerencia}/` + item.id, {
+      state: {
+        empresa: {
+          id: empresa.id,
+          nombre: empresa.nombre,
+        },
+        gerencia: {
+          id: gerencia.id,
+          nombre: gerencia.nombre,
+        },
+        division: item,
+      },
+    });
+  };
   const handleClick = (item: any) => {
     const isAdmin = currentUser?.isSuperAdmin;
 
     if (isAdmin) {
-      navigate("/superAdmin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
-        state: {
-          empresa: {
-            id: empresa.id,
-            nombre: empresa.nombre,
+      navigate(
+        "/superAdmin/config/" + idEmpresa + `/${idGerencia}/` + item.id,
+        {
+          state: {
+            empresa: {
+              id: empresa.id,
+              nombre: empresa.nombre,
+            },
+            gerencia: {
+              id: gerencia.id,
+              nombre: gerencia.nombre,
+            },
+            division: item,
           },
-          gerencia: {
-            id: gerencia.id,
-            nombre: gerencia.nombre,
-          },
-          division: item,
-        },
-      });
+        }
+      );
     } else {
       navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
         state: {
@@ -150,28 +217,51 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           division: item,
         },
       });
-    } 
+    }
   };
 
-  const handleSaveDivision = (data: Divisiones) => {
+  const handleSaveDivision = async (data: Divisiones) => {
     setLoading(true);
     data.displayName = data.nombre;
     data.createdAt = new Date();
     data.updatedAt = new Date();
-    divisonRepository
-      .add(null, data)
-      .then(() => {
-        toast({
-          title: `Se ha creado la gerencia con éxito `,
-          position: "top",
-          status: "success",
-          isClosable: true,
-        });
-        onClose();
-        refreshData();
+    const empresa = await divisionEmpresa.get(idEmpresa);
+    console.log(
+      "🚀 ~ file: DetalleGerenciaAdminConfig.tsx:201 ~ handleSaveDivision ~ empresa:",
+      empresa
+    );
+
+    const idNotNull = uuid();
+    data.id = `${idEmpresa}_${idNotNull}`;
+    divisionEmpresa
+      .add(`${idEmpresa}_${idNotNull}`, {
+        config: empresa.config,
+        correlativo: {
+          prefijo: data.codigo,
+          numeral: 0,
+        },
+        faenas: empresa.faenas,
+        id: `${idEmpresa}_${idNotNull}`,
+        nombre: data.nombre,
+        repositorio: empresa.repositorio,
+        utils: empresa.utils,
       })
-      .catch((error) => {
-        console.error(error);
+      .then(() => {
+        divisonRepository
+          .add(`${idEmpresa}_${idNotNull}`, data)
+          .then(() => {
+            toast({
+              title: `Se ha creado la division con éxito `,
+              position: "top",
+              status: "success",
+              isClosable: true,
+            });
+            onClose();
+            refreshData();
+          })
+          .catch((error: any) => {
+            console.error(error);
+          });
       })
       .finally(() => {
         setLoading(false);
@@ -185,13 +275,12 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
       <Headers
         titulo={"División"}
         tituloBajo={`${gerencia?.nombre}`}
-        subtitulo={"En esta sección se especifica los detalles de cada gerencia"}
+        subtitulo={"En esta sección se especifica los detalles de la gerencia"}
         onOpen={onOpen}
         rutas={[
-          { nombre: "Home", 
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/` 
-              : `/admin/`,
+          {
+            nombre: "Home",
+            url: currentUser?.isSuperAdmin ? `/superAdmin/` : `/admin/`,
           },
           {
             nombre: `Configuración`,
@@ -212,8 +301,8 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           {
             nombre: `Gerencias`,
             url: currentUser?.isSuperAdmin
-            ? `/superAdmin/config`
-            : `/admin/config`,
+              ? `/superAdmin/config`
+              : `/admin/config`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -221,8 +310,8 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
               },
             },
           },
-          { 
-            nombre: `${gerencia?.nombre}`, 
+          {
+            nombre: `${gerencia?.nombre}`,
             url: currentUser?.isSuperAdmin
               ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
               : `/admin/config/${idEmpresa}/${idGerencia}`,
@@ -237,7 +326,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
         showButtonAdd={true}
         textButton="Agregar División"
       />
-
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
@@ -296,9 +384,11 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
                       index={index}
                       item={item}
                       division={item}
+                      onClickConfig={handleClickConfig}
+                      onClickDetalle={handleClickDetalle}
                       onClick={() => {
                         console.log(item);
-                        handleClick(item);
+                        // handleClick(item);
                       }}
                     />
                   </motion.div>
@@ -314,10 +404,10 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
               </Container>
             </Box>
             <Text as="b" fontSize="2xl">
-              No Existen Gerencias
+              No Existen divisiones
             </Text>
             <Text fontSize="xl">
-              Empieza con VAKU ingresa la primera gerencia
+              Empieza con VAKU ingresa la primera divisiones
             </Text>
 
             <Box py={5}>

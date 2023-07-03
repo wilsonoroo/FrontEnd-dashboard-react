@@ -17,7 +17,7 @@ import useFetch from "@/hooks/useFetch";
 import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { dateToTimeStamp } from "@/utils/global";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
@@ -25,6 +25,9 @@ import { useParams } from "react-router-dom";
 
 export default function VehiculosViewDivision(props: { titulo: string }) {
   const { titulo } = props;
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
@@ -36,15 +39,23 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const newVehiculo = new Vehiculo();
   newVehiculo.setEmptyObject();
 
-  let empresaVehiculoRepository: FirestoreRepository<Vehiculo>;
-  if (idEmpresa === undefined) {
-    empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
-      `empresas/${currentUser.empresaId}/vehiculos`
+  let empresaVehiculoRepository: any;
+
+  if (isVersionRealtime) {
+    empresaVehiculoRepository = new FirebaseRealtimeRepository<Vehiculo>(
+      `empresas/${currentUser.empresaIdGlobal}/vehiculos`
     );
   } else {
-    empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
-      `empresas/${idEmpresa}/vehiculos`
-    );
+    // if (idEmpresa === undefined) {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${currentUser.empresaId}/vehiculos`
+    //   );
+    // } else {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${idEmpresa}/vehiculos`
+    //   );
+    // }
+    console.log(`empresas/${currentUser.empresaIdGlobal}/vehiculos`);
   }
 
   const {
@@ -52,23 +63,42 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     firstLoading: loadingEmpresaVehiculos,
     refreshData: refreshEmpresaVehiculos,
     isLoading: empresaVehiculosLoading,
-  } = useFetch(() => empresaVehiculoRepository.getAll());
+  } = useFetch(() => empresaVehiculoRepository.getAll(Vehiculo));
 
   useEffect(() => {
     setOptions({
       tipoVehiculo: [
         {
-          value: "semiremolque",
-          label: "Semiremolque",
+          nombre: "Camioneta",
+          displayName: "Camioneta",
         },
         {
-          value: "vehiculo_de_carga",
-          label: "Vehículo de Carga",
+          nombre: "furgon",
+          displayName: "Furgón",
         },
         {
-          value: "vehiculo_liviano",
-          label: "Vehículo Liviano",
+          nombre: "sprinter",
+          displayName: "Sprinter",
         },
+        {
+          nombre: "volare",
+          displayName: "Volare",
+        },
+      ],
+      tipo: [
+        {
+          nombre: "Vehículo Liviano",
+          displayName: "Vehículo Liviano",
+        },
+        {
+          nombre: "semiremolque",
+          displayName: "Semiremolque",
+        },
+        {
+          nombre: "vehiculo_de_carga",
+          displayName: "Vehículo de Carga",
+        },
+        ,
       ],
     });
   }, []);
@@ -85,17 +115,21 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     data.id = id;
     data.createdAt = new Date();
     data.updatedAt = new Date();
-    console.log(typeof data.proximaMantencion);
-
-    data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
-
-    data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
-
-    data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
-    console.log(
-      "🚀 ~ file: VehiculosViewDivision.tsx:95 ~ handleSaveGerencia ~ data:",
-      data
-    );
+    if (isVersionRealtime) {
+      data.proximaMantencion = moment(data.proximaMantencion).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      data.fechaVencimiento = moment(data.fechaVencimiento).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      data.ultimaMantencion = moment(data.ultimaMantencion).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+    } else {
+      data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
+      data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
+      data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
+    }
 
     empresaVehiculoRepository
       .add(id, data)
@@ -109,7 +143,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
         onClose();
         refreshEmpresaVehiculos();
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error(error);
       })
       .finally(() => {
@@ -230,7 +264,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     <>
       <>
         {!loadingEmpresaVehiculos ? (
-          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+          <Box pt={{ base: 10, md: 10, xl: 10 }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Vehiculos"}

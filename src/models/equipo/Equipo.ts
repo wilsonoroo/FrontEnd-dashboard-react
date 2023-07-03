@@ -45,7 +45,7 @@ export class Equipo extends VakuModel implements IFormBuilder {
       tipo: "",
     };
   }
-  getFormBuilder(options: any = {}) {
+  getFormBuilder(_options: any = {}) {
     return {
       identificador: {
         display: "Identificador",

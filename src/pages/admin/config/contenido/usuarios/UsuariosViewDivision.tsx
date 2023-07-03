@@ -29,9 +29,10 @@ import useFetch from "@/hooks/useFetch";
 import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
 import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
+import { Divisiones } from "@/models/division/Disvision";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import { useContext, useState } from "react";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 type EstadoLoading = {
@@ -39,6 +40,9 @@ type EstadoLoading = {
 };
 
 export default function UsuariosViewDivision(props: { titulo: string }) {
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const toast = useToast();
@@ -48,43 +52,52 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userNew = new UsuarioVaku();
   const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
+  const [division, setDivision] = useState<Divisiones>();
 
-  // console.log(idEmpresa, idGerencia, idDivision)
-  let divisionRepository: FirestoreRepository<UsuarioVaku>;
-  if (idEmpresa === undefined) {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
+  let empresaUsuarioRepository: any;
+  let divisionUsuarioRepository: any;
+  let divisonRepository: any;
+  let usuarioGlobalRepository: any;
+
+  if (isVersionRealtime) {
+    empresaUsuarioRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaIdGlobal}/usuarios/auth`
+    );
+
+    divisionUsuarioRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${idDivision}/usuarios/auth`
+    );
+    divisonRepository = new FirebaseRealtimeRepository<Divisiones>(
+      `empresaCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
+    );
+    usuarioGlobalRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `auth`
     );
   } else {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
-    );
-  }
-
-  let empresaUsuarioRepository: FirestoreRepository<UsuarioVaku>;
-  if (idEmpresa === undefined) {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/usuarios`
-    );
-  } else {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${idEmpresa}/usuarios`
-    );
+    // if (idEmpresa === undefined) {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${currentUser.empresaId}/vehiculos`
+    //   );
+    // } else {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${idEmpresa}/vehiculos`
+    //   );
+    // }
   }
 
   const {
-    data: division,
-    firstLoading: loadingData,
-    refreshData,
-    isLoading,
-  } = useFetch(() => divisionRepository.getAll());
+    data: divisionUsuario,
+    firstLoading: loadingUsuarioDivision,
+    refreshData: refreshDivisionUsuario,
+    isLoading: divisionUsuariosLoading,
+  } = useFetch(() => divisionUsuarioRepository.getAll(UsuarioVaku));
 
   const {
-    data: empresaVehiculos,
-    firstLoading: loadingEmpresaVehiculos,
-    refreshData: refreshEmpresaVehiculos,
-    isLoading: empresaVehiculosLoading,
-  } = useFetch(() => empresaUsuarioRepository.getAll());
+    data: empresaUsuario,
+    firstLoading: loadingEmpresaUsuario,
+    refreshData: refreshEmpresaUsuario,
+    isLoading: empresaUsuariosLoading,
+  } = useFetch(() => empresaUsuarioRepository.getAll(UsuarioVaku));
 
   // console.log(division, empresaVehiculos)
 
@@ -98,6 +111,12 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     setIsModalOpen(false);
     setFilasSeleccionadas([]);
   };
+
+  useEffect(() => {
+    divisonRepository.get(idDivision).then((data: Divisiones) => {
+      setDivision(data);
+    });
+  }, []);
 
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
@@ -354,30 +373,20 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
             empresaUsuarioRepository
               .update(fila.id, updatedFila)
               .then(() => {
-                toast({
-                  title: "Se ha desasignado la división del vehículo",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshEmpresaVehiculos();
+                return divisionUsuarioRepository.delete(fila.id);
               })
-              .catch((error) => {
-                console.error(error);
-              });
 
-            divisionRepository
-              .delete(fila.id)
               .then(() => {
                 toast({
-                  title: "Se ha eliminado el vehículo de la división",
+                  title: "Se ha desasignado el vehículo de la división",
                   position: "top",
                   status: "success",
                   isClosable: true,
                 });
-                refreshData();
+                refreshDivisionUsuario();
+                refreshEmpresaUsuario();
               })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
           } else {
@@ -388,13 +397,22 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                 ...fila.divisiones,
                 {
                   id: idDivision,
-                  displayName: idDivision,
+                  displayName: division.displayName,
                 },
               ],
+              empresaId: idDivision,
             };
 
             empresaUsuarioRepository
               .update(fila.id, updatedFila)
+              .then(() => {
+                return divisionUsuarioRepository.add(fila.id, updatedFila);
+              })
+              .then(() => {
+                return usuarioGlobalRepository.updateObj(fila.id, {
+                  empresaId: idDivision,
+                });
+              })
               .then(() => {
                 toast({
                   title: "Se ha asignado una división al vehículo",
@@ -402,24 +420,10 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                   status: "success",
                   isClosable: true,
                 });
-                refreshEmpresaVehiculos();
+                refreshDivisionUsuario();
+                refreshEmpresaUsuario();
               })
-              .catch((error) => {
-                console.error(error);
-              });
-
-            divisionRepository
-              .add(fila.id, updatedFila) // Use the updatedFila object to add the division
-              .then(() => {
-                toast({
-                  title: "Se ha agregado un vehículo a la división",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshData();
-              })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
           }
@@ -449,16 +453,16 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       </VStack>
 
       <>
-        {!loadingData ? (
-          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+        {!loadingUsuarioDivision ? (
+          <Box pt={{ base: "10px", md: "10px", xl: "10px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Usuarios"}
                 textButtonAdd={"Asignar Usuarios"}
                 onOpen={onOpenModal}
-                onReload={refreshData}
+                onReload={refreshDivisionUsuario}
               >
-                <DataTable columns={columns} data={division} />
+                <DataTable columns={columns} data={divisionUsuario} />
               </TableLayout>
             </Grid>
           </Box>
@@ -484,19 +488,19 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
             <ModalCloseButton />
             <ModalBody>
               {/* Agrega aquí el contenido del modal */}
-              {!loadingEmpresaVehiculos ? (
+              {!loadingEmpresaUsuario ? (
                 <>
                   <Grid templateColumns="repeat(1, 1fr)" gap={6}>
                     <TableLayoutModal
                       titulo={""}
                       textButtonAdd={""}
                       onOpen={onOpenModal}
-                      onReload={refreshData}
+                      onReload={refreshEmpresaUsuario}
                     >
                       <DataTable
                         hiddenEmptyRow={true}
                         columns={columns1}
-                        data={empresaVehiculos}
+                        data={empresaUsuario}
                       />
                     </TableLayoutModal>
                   </Grid>
@@ -520,10 +524,10 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       </Flex>
       <Flex>
         <FormVaku<UsuarioVaku>
-          titulo={"Agregar Usuario"}
+          titulo={"Agregar Usuario aa"}
           isOpen={isOpen}
           onClose={onClose}
-          refreshData={refreshData}
+          refreshData={refreshDivisionUsuario}
           fieldsToExclude={["id"]}
           model={newUser}
           initialValues={newUser}

@@ -3,12 +3,17 @@ import {
   ArrowRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  SearchIcon,
   TriangleDownIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
 import {
+  Box,
   Flex,
   IconButton,
+  Input,
+  InputGroup,
+  InputRightElement,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
@@ -25,11 +30,14 @@ import {
   Tr,
   chakra,
 } from "@chakra-ui/react";
+import { rankItem } from "@tanstack/match-sorter-utils";
 import {
   ColumnDef,
+  FilterFn,
   SortingState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
@@ -41,6 +49,20 @@ export type DataTableProps<Data extends object> = {
   columns: ColumnDef<Data, any>[];
   sortees?: SortingState;
   hiddenEmptyRow?: boolean;
+  hiddenSearchBar?: boolean;
+};
+
+const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
+  // Rank the item
+  const itemRank = rankItem(row.getValue(columnId), value);
+
+  // Store the itemRank info
+  addMeta({
+    itemRank,
+  });
+
+  // Return if the item should be filtered in/out
+  return itemRank.passed;
 };
 
 export function DataTable<Data extends object>({
@@ -48,8 +70,10 @@ export function DataTable<Data extends object>({
   columns,
   sortees,
   hiddenEmptyRow = false,
+  hiddenSearchBar = false,
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>(sortees);
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
     columns,
@@ -60,8 +84,10 @@ export function DataTable<Data extends object>({
     getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
+      globalFilter,
     },
-
+    globalFilterFn: fuzzyFilter,
+    getFilteredRowModel: getFilteredRowModel(),
     debugTable: false,
   });
 
@@ -99,6 +125,18 @@ export function DataTable<Data extends object>({
   return (
     <>
       <div style={{ overflowX: "auto" }}>
+        {hiddenSearchBar ? (
+          <></>
+        ) : (
+          <Box mx={1}>
+            <DebouncedInput
+              value={globalFilter ?? ""}
+              onChange={(value) => setGlobalFilter(String(value))}
+              placeholder="Search all columns..."
+            />
+          </Box>
+        )}
+
         <Table
           variant="striped"
           style={{ borderCollapse: "separate", borderSpacing: "0 0em" }}
@@ -122,6 +160,8 @@ export function DataTable<Data extends object>({
                       isNumeric={meta?.isNumeric}
                       width={header.column.columnDef.size + "px"}
                       minWidth={header.column.columnDef.minSize + "px"}
+                      py={2}
+                      px={2}
                     >
                       <div style={{ display: "flex", alignItems: "center" }}>
                         <Text fontSize="sm">
@@ -162,6 +202,8 @@ export function DataTable<Data extends object>({
                       isNumeric={meta?.isNumeric}
                       width={cell.column.columnDef.size + "px"}
                       minWidth={cell.column.columnDef.minSize + "px"}
+                      py={2}
+                      px={2}
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
@@ -264,5 +306,49 @@ export function DataTable<Data extends object>({
         </Flex>
       </Flex>
     </>
+  );
+}
+
+function DebouncedInput({
+  value: initialValue,
+  onChange,
+  debounce = 500,
+}: // ...props
+{
+  value: string | number;
+  onChange: (value: string | number) => void;
+  debounce?: number;
+} & Omit<React.InputHTMLAttributes<HTMLInputElement>, "onChange">) {
+  const [value, setValue] = React.useState(initialValue);
+
+  React.useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  React.useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value);
+    }, debounce);
+
+    return () => clearTimeout(timeout);
+  }, [value]);
+
+  return (
+    <>
+      <InputGroup my={1} w={"50%"}>
+        <Input
+          py={1}
+          px={1}
+          variant="outline"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="Ingresa número interno o patente"
+        />
+        <InputRightElement p={0}>
+          <SearchIcon color="vaku.500" />
+        </InputRightElement>
+      </InputGroup>
+    </>
+    // <input {...props} value={value} onChange={e => setValue(e.target.value)} />
   );
 }

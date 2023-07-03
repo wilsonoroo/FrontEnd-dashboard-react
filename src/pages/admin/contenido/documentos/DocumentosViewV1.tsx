@@ -67,7 +67,7 @@ export default function DocumentosViewV1(props: { titulo: string }) {
     );
   } else {
     divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
-      `empresas/${idEmpresa}/documentos`
+      `empresas/${idDivision}/documentos`
     );
   }
 
@@ -359,8 +359,6 @@ export default function DocumentosViewV1(props: { titulo: string }) {
   ];
 
   const getColorTipoDocs = (estado: Checklist) => {
-    console.log(estado);
-
     // #0B79F4 azul vaku
     // #9CFF00 verde
     // #FFE90D amarillo

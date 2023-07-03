@@ -8,21 +8,19 @@ import {
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import { CellContext, createColumnHelper } from "@tanstack/react-table";
+import { createColumnHelper } from "@tanstack/react-table";
 
 import { DataTable } from "@/components/dataTable/DataTable";
 
 import TableLayout from "@/components/dataTable/TableLayout";
-import useFetch from "@/hooks/useFetch";
 import { AuthContext } from "@/contexts/AuthContextFb";
+import useFetch from "@/hooks/useFetch";
 import { Divisiones } from "@/models/division/Disvision";
-import { DocumentoVaku } from "@/models/documento/Documento";
-import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { PlanDeAccion } from "@/models/planDeAccion/PlanDeAccion";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import moment from "moment";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { PlanDeAccion } from "@/models/planDeAccion/PlanDeAccion";
-import moment from "moment";
 
 export default function PlanDeAccionViewV1(props: { titulo: string }) {
   const { titulo } = props;
@@ -37,15 +35,14 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
   const newDivision = new Divisiones();
   const { currentUser } = useContext(AuthContext);
 
-
   let divisionRepository: FirebaseRealtimeRepository<PlanDeAccion>;
   if (idEmpresa === undefined) {
     divisionRepository = new FirebaseRealtimeRepository<PlanDeAccion>(
-      `empresas/${currentUser.empresaId}/planesDeSeguimiento`
+      `empresas/${idDivision}/planesDeSeguimiento`
     );
   } else {
     divisionRepository = new FirebaseRealtimeRepository<PlanDeAccion>(
-      `empresas/${idEmpresa}/planesDeSeguimiento`
+      `empresas/${idDivision}/planesDeSeguimiento`
     );
   }
 
@@ -117,7 +114,7 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
     //   size: 100,
     //   minSize: 120,
     // }),
-    
+
     columnHelper.accessor("fechaCompromiso", {
       cell: (info) => {
         let fecha = moment(info.getValue())
@@ -148,8 +145,6 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
       },
       header: "Fecha Creación",
     }),
-
-
   ];
 
   return (

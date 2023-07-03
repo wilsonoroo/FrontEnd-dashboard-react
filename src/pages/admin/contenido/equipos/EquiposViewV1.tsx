@@ -99,7 +99,7 @@ export default function EquiposViewV1(props: { titulo: string }) {
     }),
   ];
 
-  const handleSaveEquipo = (data: Equipo, resetForm: () => void) => {
+  const handleSaveEquipo = (data: Equipo, _resetForm: () => void) => {
     if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
       data.categoria = "equipo";
       divisionRepository.add(null, data);

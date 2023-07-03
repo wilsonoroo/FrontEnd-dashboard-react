@@ -12,7 +12,7 @@ interface GerenciaCardProps {
   item: Gerencia;
 }
 
-const FotterCardGerencia: React.FC<GerenciaCardProps> = ({ item }) => {
+const FotterCardGerencia: React.FC<GerenciaCardProps> = ({}) => {
   return (
     <Box alignItems={"center"}>
       <HStack direction={"column"}>
@@ -20,17 +20,17 @@ const FotterCardGerencia: React.FC<GerenciaCardProps> = ({ item }) => {
           {/* cant divisiones */}
           <Tag size={"md"} variant="subtle" colorScheme="gray">
             <TagLeftIcon boxSize="12px" as={Icons.UserPlus} />
-            <TagLabel>{item.cantUsuarios}</TagLabel>
+            <TagLabel>{0}</TagLabel>
           </Tag>
 
           <Tag size={"md"} variant="subtle" colorScheme="verdevaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineBuildingOffice2} />
-            <TagLabel>{item.cantDivisiones}</TagLabel>
+            <TagLabel>{0}</TagLabel>
           </Tag>
 
           <Tag size={"md"} variant="subtle" colorScheme="rosavaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineDocumentText} />
-            <TagLabel>{item.cantDocumentos}</TagLabel>
+            <TagLabel>{0}</TagLabel>
           </Tag>
           <Tag size={"md"} variant="subtle" colorScheme="marronvaku">
             <TagLeftIcon boxSize="12px" as={HiOutlineDocumentChartBar} />

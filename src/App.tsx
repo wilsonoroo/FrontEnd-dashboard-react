@@ -11,17 +11,22 @@ import AdminLayout from "@/layouts/admin";
 import AuthLayout from "@/layouts/auth";
 import { PrivateRouteDos } from "@navigation/PrivateRoute";
 import { AnimatePresence } from "framer-motion";
+import { useContext, useEffect } from "react";
 import Loading from "./components/Loading";
-import SuperAdminLayout from "./layouts/superAdmin";
-import { useContext } from "react";
 import { AuthContext } from "./contexts/AuthContextFb";
-
-
-
+import SuperAdminLayout from "./layouts/superAdmin";
 
 export default function App() {
   const authContext = useContext(AuthContext);
-  const { currentUser } = authContext;
+  const { currentUser, currentUserAll } = authContext;
+
+  useEffect(() => {
+    console.log(
+      "🚀 ~ file: App.tsx:22 ~ App ~ currentUserAll:",
+      currentUserAll
+    );
+    console.log(currentUser);
+  }, [currentUser]);
 
   return (
     <AnimatePresence>
@@ -46,7 +51,7 @@ export default function App() {
                 element={<Navigate replace={true} to="/superAdmin" />}
               />
             </>
-          ) : (
+          ) : currentUser?.isAdmin ? (
             <>
               <Route
                 path="/admin/*"
@@ -63,6 +68,8 @@ export default function App() {
                 element={<Navigate replace={true} to="/admin" />}
               />
             </>
+          ) : (
+            <></>
           )}
 
           <Route path="/auth/*" element={<AuthLayout />} />

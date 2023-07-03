@@ -114,7 +114,7 @@ AgregarFormProps<T>) => {
             <Stack spacing="24px">
               <Box>
                 {errors &&
-                  Object.keys(errors).map((key) => {
+                  Object.keys(errors).map((_key) => {
                     return (
                       <Alert status="error" variant="left-accent">
                         <AlertIcon />

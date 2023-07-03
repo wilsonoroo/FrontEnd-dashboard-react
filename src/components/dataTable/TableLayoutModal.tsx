@@ -1,53 +1,38 @@
-import {
-    Box,
-    Button,
-    Flex,
-    HStack,
-    IconButton,
-    Spacer,
-    Text,
-  } from "@chakra-ui/react";
-  
-  import CustomCard from "@/components/card/Card";
-  
-  import { HiPlus } from "react-icons/hi2";
-  import { IoIosRefresh } from "react-icons/io";
-  
-  interface TableLayoutProps {
-    children: React.ReactNode;
-    titulo: string;
-    textButtonAdd: string;
-    onOpen: () => void;
-    onReload: () => void;
-    hiddenButtonAdd?: boolean;
-    debug?: boolean;
-    hiddenTitulo?: boolean;
-  }
-  
-  const TableLayoutModal: React.FC<TableLayoutProps> = ({
-    titulo,
-    children,
-    textButtonAdd,
-    onOpen,
-    onReload,
-    hiddenButtonAdd = false,
-  
-    hiddenTitulo = false,
-  }) => {
-    return (
-      <CustomCard>
-        <Flex >
-          <Box p="1">
-            {!hiddenTitulo ? (
-              <Text as="b" fontSize="3xl" color={"vaku.700"} fontFamily="Oswald">
-                {titulo}
-              </Text>
-            ) : (
-              <></>
-            )}
-          </Box>
-          <Spacer />
-          {/* <Box p="4">
+import { Box, Flex, Spacer, Text } from "@chakra-ui/react";
+
+import CustomCard from "@/components/card/Card";
+
+interface TableLayoutProps {
+  children: React.ReactNode;
+  titulo: string;
+  textButtonAdd: string;
+  onOpen: () => void;
+  onReload: () => void;
+  hiddenButtonAdd?: boolean;
+  debug?: boolean;
+  hiddenTitulo?: boolean;
+}
+
+const TableLayoutModal: React.FC<TableLayoutProps> = ({
+  titulo,
+  children,
+
+  hiddenTitulo = false,
+}) => {
+  return (
+    <CustomCard>
+      <Flex>
+        <Box p="1">
+          {!hiddenTitulo ? (
+            <Text as="b" fontSize="3xl" color={"vaku.700"} fontFamily="Oswald">
+              {titulo}
+            </Text>
+          ) : (
+            <></>
+          )}
+        </Box>
+        <Spacer />
+        {/* <Box p="4">
             <HStack spacing={4}>
               <Box>
                 <IconButton
@@ -76,11 +61,10 @@ import {
               )}
             </HStack>
           </Box> */}
-        </Flex>
-        {children}
-      </CustomCard>
-    );
-  };
-  
-  export default TableLayoutModal;
-  
+      </Flex>
+      {children}
+    </CustomCard>
+  );
+};
+
+export default TableLayoutModal;

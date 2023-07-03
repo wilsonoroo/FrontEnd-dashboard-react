@@ -166,10 +166,7 @@ export const getUsuario = async (uid, empresa, gerencia, division) => {
   try {
     //empresas/shingeki_no_sushi-v2/gerencia-id_1/divisiones/division-id_1/contenido/usuarios/auth/jc7IxBgOnchtk91ftbPbcpvcsj33
     var snapshot = await get(
-      child(
-        ref(database),
-        `empresas/${empresa}/gerencias/${gerencia}/divisiones/${division}/contenido/usuarios/auth/${uid}`
-      )
+      child(ref(database), `empresas/${empresa}/auth/${uid}`)
     );
     if (snapshot.exists()) {
       return snapshot.val();

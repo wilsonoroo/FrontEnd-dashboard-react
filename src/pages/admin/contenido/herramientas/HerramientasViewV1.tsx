@@ -96,7 +96,7 @@ export default function HerramientasViewV1(props: { titulo: string }) {
     }),
   ];
 
-  const handleSaveEquipo = (data: Herramienta, resetForm: () => void) => {
+  const handleSaveEquipo = (data: Herramienta, _resetForm: () => void) => {
     if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
       data.categoria = "herramientas";
       divisionRepository.add(null, data);

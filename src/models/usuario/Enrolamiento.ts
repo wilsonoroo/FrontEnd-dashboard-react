@@ -1,8 +1,8 @@
 export class Enrolamiento {
-  fechaEnrolamiento: string;
+  fechaEnrolamiento?: string;
   isCompletado: boolean;
-  isTerminosCondicionesAceptada: boolean;
-  versionTerminosCondiciones: string;
+  isTerminosCondicionesAceptada?: boolean;
+  versionTerminosCondiciones?: string;
 
   constructor(
     isCompletado: boolean,

@@ -75,7 +75,7 @@ export default function FotterSidebar(props: {
                   noOfLines={2}
                   maxWidth={"160px"}
                 >
-                  {user.currentUser?.nombre}
+                  {user.currentUserAll?.displayName}
                 </Text>
               </Box>
               <Box maxW={"160px"} maxWidth={"160px"}>
@@ -90,7 +90,7 @@ export default function FotterSidebar(props: {
                   me="14px"
                   maxWidth={"160px"}
                 >
-                  {user.currentUser?.email}
+                  {user.currentUserAll?.email}
                 </Text>
               </Box>
             </HStack>

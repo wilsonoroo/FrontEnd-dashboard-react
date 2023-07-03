@@ -21,9 +21,8 @@ import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Enrolamiento } from "@/models/usuario/Enrolamiento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { createUserAuth } from "@/services/usuarioVakuApi";
-import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -32,38 +31,41 @@ type EstadoLoading = {
 };
 
 export default function UsuariosViewDivision(props: { titulo: string }) {
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const toast = useToast();
   const [loading, setLoading] = useState(false);
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, currentUserAll } = useContext(AuthContext);
   const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const userNew = new UsuarioVaku();
 
   const [options, setOptions] = useState({
     licencia: [
-      { value: "clase_a1", label: "Clase A1" },
-      { value: "clase_a2", label: "Clase A2" },
-      { value: "clase_a3", label: "Clase A3" },
-      { value: "clase_a4", label: "Clase A4" },
-      { value: "clase_b", label: "Clase B" },
-      { value: "clase_c", label: "Clase C" },
-      { value: "clase_d", label: "Clase D" },
-      { value: "clase_e", label: "Clase E" },
-      { value: "clase_F", label: "Clase F" },
+      { nombre: "clase_a1", displayName: "Clase A1" },
+      { nombre: "clase_a2", displayName: "Clase A2" },
+      { nombre: "clase_a3", displayName: "Clase A3" },
+      { nombre: "clase_a4", displayName: "Clase A4" },
+      { nombre: "clase_b", displayName: "Clase B" },
+      { nombre: "clase_c", displayName: "Clase C" },
+      { nombre: "clase_d", displayName: "Clase D" },
+      { nombre: "clase_e", displayName: "Clase E" },
+      { nombre: "clase_F", displayName: "Clase F" },
     ],
     categoriaVehiculos: [],
     permisos: [],
     rol: [],
     sexo: [
       {
-        value: "masculino",
-        label: "masculino",
+        nombre: "masculino",
+        displayName: "masculino",
       },
       {
-        value: "femenino",
-        label: "femenino",
+        nombre: "femenino",
+        displayName: "femenino",
       },
     ],
     turno: [],
@@ -72,38 +74,38 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   useEffect(() => {
     setOptions({
       licencia: [
-        { value: "clase_a1", label: "Clase A1" },
-        { value: "clase_a2", label: "Clase A2" },
-        { value: "clase_a3", label: "Clase A3" },
-        { value: "clase_a4", label: "Clase A4" },
-        { value: "clase_b", label: "Clase B" },
-        { value: "clase_c", label: "Clase C" },
-        { value: "clase_d", label: "Clase D" },
-        { value: "clase_e", label: "Clase E" },
-        { value: "clase_F", label: "Clase F" },
+        { nombre: "clase_a1", displayName: "Clase A1" },
+        { nombre: "clase_a2", displayName: "Clase A2" },
+        { nombre: "clase_a3", displayName: "Clase A3" },
+        { nombre: "clase_a4", displayName: "Clase A4" },
+        { nombre: "clase_b", displayName: "Clase B" },
+        { nombre: "clase_c", displayName: "Clase C" },
+        { nombre: "clase_d", displayName: "Clase D" },
+        { nombre: "clase_e", displayName: "Clase E" },
+        { nombre: "clase_F", displayName: "Clase F" },
       ],
       permisos: [
-        { value: "administrador", label: "Administrador" },
-        { value: "usuario", label: "Usuario" },
-        { value: "supervisor", label: "Supervisor" },
-        { value: "coordinador", label: "Coordinador" },
-        { value: "secretaria", label: "Secretaria" },
-        { value: "contador", label: "Contador" },
+        { nombre: "administrador", displayName: "Administrador" },
+        { nombre: "usuario", displayName: "Usuario" },
+        { nombre: "supervisor", displayName: "Supervisor" },
+        { nombre: "coordinador", displayName: "Coordinador" },
+        { nombre: "secretaria", displayName: "Secretaria" },
+        { nombre: "contador", displayName: "Contador" },
       ],
       rol: [
-        { value: "administrador", label: "Nivel 1" },
-        { value: "administrador", label: "Nivel 2" },
-        { value: "administrador", label: "Nivel 3" },
-        { value: "administrador", label: "Nivel 4" },
+        { nombre: "administrador", displayName: "Nivel 1" },
+        { nombre: "administrador", displayName: "Nivel 2" },
+        { nombre: "administrador", displayName: "Nivel 3" },
+        { nombre: "administrador", displayName: "Nivel 4" },
       ],
       sexo: [
         {
-          value: "masculino",
-          label: "Masculino",
+          nombre: "masculino",
+          displayName: "Masculino",
         },
         {
-          value: "femenino",
-          label: "Femenino",
+          nombre: "femenino",
+          displayName: "Femenino",
         },
       ],
       turno: [],
@@ -113,27 +115,16 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
 
   const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
 
-  // console.log(idEmpresa, idGerencia, idDivision)
-  let divisionRepository: FirestoreRepository<UsuarioVaku>;
-  if (idEmpresa === undefined) {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
+  let empresaUsuarioRepository: any;
+  let usuarioGlobal: any;
+  let divisionUsuarioRepository: any;
+  if (isVersionRealtime) {
+    empresaUsuarioRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaIdGlobal}/usuarios/auth`
     );
+    usuarioGlobal = new FirebaseRealtimeRepository<UsuarioVaku>(`auth`);
   } else {
-    divisionRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/usuarios`
-    );
-  }
-
-  let empresaUsuarioRepository: FirestoreRepository<UsuarioVaku>;
-  if (idEmpresa === undefined) {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/usuarios`
-    );
-  } else {
-    empresaUsuarioRepository = new FirestoreRepository<UsuarioVaku>(
-      `empresas/${idEmpresa}/usuarios`
-    );
+    console.log(`empresas/${currentUser.empresaIdGlobal}/usuarios/auth`);
   }
 
   const {
@@ -141,82 +132,17 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     firstLoading: loadingEmpresaUsuario,
     refreshData: refreshEmpresaUsuario,
     isLoading: empresaUsuarioLoading,
-  } = useFetch(() => empresaUsuarioRepository.getAll());
+  } = useFetch(() => empresaUsuarioRepository.getAll(UsuarioVaku));
 
   const handleSaveUsuario = async (
     data: UsuarioVaku,
     resetForm: () => void
   ) => {
+    console.log(
+      "🚀 ~ file: UsuariosViewDivision.tsx:148 ~ UsuariosViewDivision ~ data:",
+      data
+    );
     setLoading(true);
-    console.log(data);
-    data.fechaVencimientoLicencia = moment(
-      data.fechaVencimientoLicencia
-    ).format("YYYY-MM-DD HH:mm:ss");
-    data.rol.nombre = data.rol.id;
-    if (data.id !== "") {
-      data.empresaId = currentUser.empresaId;
-      data.empresa = currentUser.empresa;
-      data.enrolamiento = new Enrolamiento(false);
-      createUserAuth(
-        data.email,
-        data.email.split("@")[0] + "1234",
-        data.displayName
-      )
-        .then((userCredential) => {
-          data.id = userCredential.uid;
-          data.nombre = data.displayName;
-          return divisionRepository.add(userCredential.uid, data);
-        })
-        .then(() => {
-          toast({
-            title: `Se ha creado el usuario con éxito `,
-            position: "top",
-            status: "success",
-            isClosable: true,
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-          toast({
-            title: `Se ha ocurrido un problema al crear el usuario`,
-            position: "top",
-            status: "error",
-            isClosable: true,
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-          resetForm();
-          onClose();
-          refreshEmpresaUsuario();
-        });
-    } else {
-      divisionRepository
-        .add(data.id, data)
-        .then(() => {
-          toast({
-            title: `Se ha creado el usuario con éxito `,
-            position: "top",
-            status: "success",
-            isClosable: true,
-          });
-        })
-        .catch((error) => {
-          console.error(error);
-          toast({
-            title: `Se ha ocurrido un problema al crear el usuario`,
-            position: "top",
-            status: "error",
-            isClosable: true,
-          });
-        })
-        .finally(() => {
-          setLoading(false);
-          resetForm();
-          onClose();
-          refreshEmpresaUsuario();
-        });
-    }
 
     createUserAuth(
       data.email,
@@ -226,8 +152,19 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       .then((userCredential) => {
         data.id = userCredential.uid;
         data.nombre = data.displayName;
-        return divisionRepository.add(userCredential.uid, data);
+        data.empresa = currentUserAll.empresa;
+        data.empresaId = currentUserAll.empresaId;
+        data.enrolamiento = new Enrolamiento(false);
+        data.tipo = "usuario_vaku";
+        console.log(
+          "🚀 ~ file: UsuariosViewDivision.tsx:159 ~ .then ~ data:",
+          data,
+          currentUserAll
+        );
+
+        return empresaUsuarioRepository.add(userCredential.uid, data);
       })
+
       .then(() => {
         toast({
           title: `Se ha creado el usuario con éxito `,
@@ -328,7 +265,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       cell: (info) => {
         return (
           <span>
-            <Text fontSize="sm">{info.getValue()?.nombre}</Text>
+            <Text fontSize="sm">{info.getValue()?.label}</Text>
           </span>
         );
       },
@@ -429,7 +366,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           model={newUser}
           initialValues={newUser}
           onSubmit={handleSaveUsuario}
-          loading={false}
+          loading={loading}
           options={options}
           size="xl"
           grid={{ base: 1, md: 2 }}

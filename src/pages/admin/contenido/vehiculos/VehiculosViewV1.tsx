@@ -81,7 +81,7 @@ export default function VehiculosViewV1(props: { titulo: string }) {
   const columnHelper = createColumnHelper<Vehiculo>();
 
   const handleSaveGerencia = (data: Vehiculo) => {
-    console.log(data)
+    console.log(data);
     setLoading(true);
 
     data.fechaVencimiento = moment(data.fechaVencimiento).format(
@@ -126,9 +126,9 @@ export default function VehiculosViewV1(props: { titulo: string }) {
           <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
             {info.getValue()}
           </Badge>
-          <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
             {info.row.original.id}
-          </Badge>
+          </Badge> */}
         </Box>
       ),
       header: "numero Interno",

@@ -1,11 +1,9 @@
 import {
   Badge,
   Box,
+  Button,
   Flex,
-  FormLabel,
   Spacer,
-  Switch,
-  Text,
   useColorModeValue,
 } from "@chakra-ui/react";
 
@@ -22,13 +20,17 @@ interface DivisionCardProps {
   item: { nombre: string; key: string; isEliminado: boolean; id: string };
   division: Divisiones | undefined;
 
-  onClick: (item: Divisiones) => void;
+  onClick?: (item: Divisiones) => void;
+  onClickDetalle?: (item: Divisiones) => void;
+  onClickConfig?: (item: Divisiones) => void;
 }
 
 const DivisionCard: React.FC<DivisionCardProps> = ({
   index,
   division,
   onClick,
+  onClickDetalle,
+  onClickConfig,
 }) => {
   const shadow = useColorModeValue(
     "0px 18px 40px rgba(112, 144, 176, 0.12)",
@@ -122,19 +124,35 @@ const DivisionCard: React.FC<DivisionCardProps> = ({
               {(division.tipoDivision as TipoDivision)?.label || ""}
             </Badge>
             <Spacer />
-            <FormLabel htmlFor="isChecked">
-              <Text
-                color="vaku.700"
-                isTruncated
-                noOfLines={1}
-                fontSize="sm"
-                me="14px"
-                pt={2}
-              >
-                {"Activo"}
-              </Text>
-            </FormLabel>
-            <Switch id="isChecked" isChecked />
+            <Button
+              colorScheme="vaku.700"
+              bg={"vaku.700"}
+              variant="solid"
+              size="sm"
+              borderRadius={5}
+              onClick={() => {
+                if (onClickConfig) {
+                  onClickConfig(division);
+                }
+              }}
+            >
+              Configurar
+            </Button>
+            <Button
+              colorScheme="vaku.700"
+              bg={"vaku.700"}
+              variant="solid"
+              size="sm"
+              borderRadius={5}
+              onClick={() => {
+                if (onClickDetalle) {
+                  onClickDetalle(division);
+                }
+              }}
+            >
+              Ver Detalle
+            </Button>
+            {/* <Switch id="isChecked" isChecked /> */}
           </Flex>
         </Box>
       </CustomCard>

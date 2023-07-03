@@ -16,6 +16,8 @@ import {
   TagLabel,
   Text,
   VStack,
+  Wrap,
+  WrapItem,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
@@ -30,61 +32,70 @@ import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { Equipo } from "@/models/equipo/Equipo";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import { useContext, useState } from "react";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function EquiposViewDivision(props: { titulo: string }) {
   const { titulo } = props;
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { idEmpresa, idGerencia, idDivision } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [options, setOptions] = useState({});
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [ordenSelect, setOrdenSelect] = useState<Divisiones>();
+  const [division, setDivision] = useState<Divisiones>();
   const toast = useToast();
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
   const newDivision = new Divisiones();
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const { currentUser } = useContext(AuthContext);
   const newVehiculo = new Equipo();
 
+  let empresaEquipoRepository: any;
+  let divisionEquipoRepository: any;
+  let divisonRepository: any;
+
   // console.log(idEmpresa, idGerencia, idDivision)
-  let divisionRepository: FirestoreRepository<Equipo>;
-  if (idEmpresa === undefined) {
-    divisionRepository = new FirestoreRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/equipos`
+  if (isVersionRealtime) {
+    empresaEquipoRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaIdGlobal}/equipos/maquinasEquipos`
     );
-  } else {
-    divisionRepository = new FirestoreRepository<Equipo>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/equipos`
-    );
-  }
 
-  let empresaEquipoRepository: FirestoreRepository<Equipo>;
-  if (idEmpresa === undefined) {
-    empresaEquipoRepository = new FirestoreRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/equipos`
+    divisionEquipoRepository = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${idDivision}/equipos/maquinasEquipos`
+    );
+    divisonRepository = new FirebaseRealtimeRepository<Divisiones>(
+      `empresaCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
     );
   } else {
-    empresaEquipoRepository = new FirestoreRepository<Equipo>(
-      `empresas/${idEmpresa}/equipos`
-    );
+    // if (idEmpresa === undefined) {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${currentUser.empresaId}/vehiculos`
+    //   );
+    // } else {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${idEmpresa}/vehiculos`
+    //   );
+    // }
   }
 
   const {
-    data: division,
-    firstLoading: loadingData,
-    refreshData,
+    data: divisionEquipo,
+    firstLoading: loadingEquipoDivision,
+    refreshData: refreshDivisionEquipos,
     isLoading,
-  } = useFetch(() => divisionRepository.getAll());
+  } = useFetch(() => divisionEquipoRepository.getAll(Equipo));
 
   const {
-    data: empresaVehiculos,
-    firstLoading: loadingEmpresaVehiculos,
-    refreshData: refreshEmpresaVehiculos,
+    data: empresaEquipo,
+    firstLoading: loadingEmpresaEquipo,
+    refreshData: refreshEmpresaEquipos,
     isLoading: empresaVehiculosLoading,
-  } = useFetch(() => empresaEquipoRepository.getAll());
+  } = useFetch(() => empresaEquipoRepository.getAll(Equipo));
 
   // console.log(division, empresaVehiculos)
 
@@ -101,6 +112,12 @@ export default function EquiposViewDivision(props: { titulo: string }) {
 
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
+  useEffect(() => {
+    divisonRepository.get(idDivision).then((data: Divisiones) => {
+      setDivision(data);
+    });
+  }, []);
+
   const handleGuardar = () => {
     // console.log("Guardando datos de filas seleccionadas:");
     // console.log(filasSeleccionadas);
@@ -116,6 +133,19 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   };
 
   const columns = [
+    columnHelper.accessor("identificador", {
+      cell: (info) => (
+        <Box px={5} alignItems={"start"} alignContent={"start"}>
+          <Badge variant="solid" bg={"#0B79F4"} fontSize="0.7em">
+            {info.getValue()}
+          </Badge>
+          {/* <Badge variant="solid" bg={"#3498DB"} fontSize="0.7em">
+            {info.row.original.id}
+          </Badge> */}
+        </Box>
+      ),
+      header: "Identificador Interno",
+    }),
     columnHelper.accessor("marca", {
       cell: (info) => {
         return (
@@ -155,7 +185,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
     }),
   ];
   const columns1 = [
-    columnHelper.accessor("id", {
+    columnHelper.accessor("identificador", {
       cell: (info) => (
         <Box px={5}>
           <Tag
@@ -170,6 +200,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         </Box>
       ),
       header: "ID.",
+      size: 50,
       // size: 100,
       // minSize: 120,
     }),
@@ -183,6 +214,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "marca",
+      size: 100,
     }),
 
     columnHelper.accessor("modelo", {
@@ -194,28 +226,34 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         );
       },
       header: "modelo",
+      size: 100,
     }),
 
     columnHelper.accessor("divisiones", {
       cell: (info) => (
-        <Box alignItems="center" alignContent="center">
+        <Wrap>
           {Array.isArray(info.getValue()) && info.getValue().length > 0
             ? info.getValue().map((division, index) => (
-                <Badge
-                  key={index}
-                  variant="solid"
-                  bg={"#0B79F4"}
-                  fontSize="0.7em"
-                  mr={1}
-                  mb={1}
-                >
-                  {division.displayName}
-                </Badge>
+                <WrapItem>
+                  <Badge
+                    key={index}
+                    variant="solid"
+                    bg={"#0B79F4"}
+                    fontSize="0.6em"
+                    mr={1}
+                    size={"sm"}
+                    mb={1}
+                  >
+                    {division.displayName}
+                  </Badge>
+                </WrapItem>
               ))
             : ""}
-        </Box>
+        </Wrap>
       ),
       header: "Divisiones",
+      size: 400,
+      minSize: 200,
     }),
     columnHelper.accessor("id", {
       id: "asignarDesasignar",
@@ -244,30 +282,19 @@ export default function EquiposViewDivision(props: { titulo: string }) {
             empresaEquipoRepository
               .update(fila.id, updatedFila)
               .then(() => {
+                return divisionEquipoRepository.delete(fila.id);
+              })
+              .then(() => {
                 toast({
                   title: "Se ha desasignado la Equipo de la empresa",
                   position: "top",
                   status: "success",
                   isClosable: true,
                 });
-                refreshEmpresaVehiculos();
+                refreshEmpresaEquipos();
+                refreshDivisionEquipos();
               })
-              .catch((error) => {
-                console.error(error);
-              });
-
-            divisionRepository
-              .delete(fila.id)
-              .then(() => {
-                toast({
-                  title: "Se ha eliminado el Equipo de la división",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshData();
-              })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
           } else {
@@ -278,7 +305,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
                 ...fila.divisiones,
                 {
                   id: idDivision,
-                  displayName: idDivision,
+                  displayName: division.displayName,
                 },
               ],
             };
@@ -286,30 +313,19 @@ export default function EquiposViewDivision(props: { titulo: string }) {
             empresaEquipoRepository
               .update(fila.id, updatedFila)
               .then(() => {
+                return divisionEquipoRepository.add(fila.id, updatedFila);
+              })
+              .then(() => {
                 toast({
                   title: "Se ha asignado un Equipo a la empresa",
                   position: "top",
                   status: "success",
                   isClosable: true,
                 });
-                refreshEmpresaVehiculos();
+                refreshEmpresaEquipos();
+                refreshDivisionEquipos();
               })
-              .catch((error) => {
-                console.error(error);
-              });
-
-            divisionRepository
-              .add(fila.id, updatedFila) // Use the updatedFila object to add the division
-              .then(() => {
-                toast({
-                  title: "Se ha agregado un Equipo a la división",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshData();
-              })
-              .catch((error) => {
+              .catch((error: any) => {
                 console.error(error);
               });
           }
@@ -339,16 +355,16 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       </VStack>
 
       <>
-        {!loadingData ? (
-          <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
+        {!loadingEquipoDivision ? (
+          <Box pt={{ base: "10px", md: "10px", xl: "10px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Equipos"}
                 textButtonAdd={"Asignar Equipos"}
                 onOpen={onOpenModal}
-                onReload={refreshData}
+                onReload={refreshDivisionEquipos}
               >
-                <DataTable columns={columns} data={division} />
+                <DataTable columns={columns} data={divisionEquipo} />
               </TableLayout>
             </Grid>
           </Box>
@@ -374,19 +390,19 @@ export default function EquiposViewDivision(props: { titulo: string }) {
             <ModalCloseButton />
             <ModalBody>
               {/* Agrega aquí el contenido del modal */}
-              {!loadingEmpresaVehiculos ? (
+              {!loadingEmpresaEquipo ? (
                 <>
                   <Grid templateColumns="repeat(1, 1fr)" gap={6}>
                     <TableLayoutModal
                       titulo={""}
                       textButtonAdd={""}
                       onOpen={onOpenModal}
-                      onReload={refreshData}
+                      onReload={refreshDivisionEquipos}
                     >
                       <DataTable
-                        hiddenEmptyRow={true}
+                        hiddenEmptyRow={false}
                         columns={columns1}
-                        data={empresaVehiculos}
+                        data={empresaEquipo}
                       />
                     </TableLayoutModal>
                   </Grid>

@@ -1,19 +1,7 @@
 import {
-  Badge,
   Box,
-  Button,
-  Checkbox,
   Flex,
   Grid,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Tag,
-  TagLabel,
   Text,
   VStack,
   useDisclosure,
@@ -26,15 +14,20 @@ import { DataTable } from "@/components/dataTable/DataTable";
 import TableLayout from "@/components/dataTable/TableLayout";
 import useFetch from "@/hooks/useFetch";
 
-import TableLayoutModal from "@/components/dataTable/TableLayoutModal";
+import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { Equipo } from "@/models/equipo/Equipo";
-import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import { Herramienta } from "@/models/herramienta/Herramienta";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
+import { dateToTimeStamp } from "@/utils/global";
 import { useContext, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function HerramientasViewDivision(props: { titulo: string }) {
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { titulo } = props;
   const { idEmpresa, idGerencia, idDivision } = useParams();
   const [loading, setLoading] = useState(false);
@@ -47,76 +40,72 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
   const newDivision = new Divisiones();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
-  const newVehiculo = new Equipo();
+  const newHerramienta = new Herramienta();
 
   // console.log(idEmpresa, idGerencia, idDivision)
-  let divisionRepository: FirestoreRepository<Equipo>;
-  if (idEmpresa === undefined) {
-    divisionRepository = new FirestoreRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/gerencias/${idGerencia}/divisiones/${idDivision}/herramientas`
+  let herramientasRepositorio: any;
+  if (isVersionRealtime) {
+    herramientasRepositorio = new FirebaseRealtimeRepository<Equipo>(
+      `empresas/${currentUser.empresaIdGlobal}/equipos/herramientas`
     );
   } else {
-    divisionRepository = new FirestoreRepository<Equipo>(
-      `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/herramientas`
-    );
-  }
-
-  let empresaEquipoRepository: FirestoreRepository<Equipo>;
-  if (idEmpresa === undefined) {
-    empresaEquipoRepository = new FirestoreRepository<Equipo>(
-      `empresas/${currentUser.empresaId}/herramientas`
-    );
-  } else {
-    empresaEquipoRepository = new FirestoreRepository<Equipo>(
-      `empresas/${idEmpresa}/herramientas`
-    );
+    // if (idEmpresa === undefined) {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${currentUser.empresaId}/vehiculos`
+    //   );
+    // } else {
+    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
+    //     `empresas/${idEmpresa}/vehiculos`
+    //   );
+    // }
   }
 
   const {
-    data: division,
-    firstLoading: loadingData,
-    refreshData,
-    isLoading,
-  } = useFetch(() => divisionRepository.getAll());
-
-  const {
-    data: empresaVehiculos,
-    firstLoading: loadingEmpresaVehiculos,
-    refreshData: refreshEmpresaVehiculos,
+    data: empresaHerramientas,
+    firstLoading: loadingHerramientas,
+    refreshData: refresh,
     isLoading: empresaVehiculosLoading,
-  } = useFetch(() => empresaEquipoRepository.getAll());
+  } = useFetch(() => herramientasRepositorio.getAll(Herramienta));
 
   // console.log(division, empresaVehiculos)
 
   const columnHelper = createColumnHelper<Equipo>();
 
-  const onOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const onCloseModal = () => {
-    setIsModalOpen(false);
-    setFilasSeleccionadas([]);
-  };
-
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
-  const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
+  const handleGuardar = (data: Herramienta, resetForm: () => void) => {
+    console.log(data);
+    setLoading(true);
 
-    toast({
-      title: "Vehículos asignados correctamente",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-    });
-    // Cierra el modal
-    onCloseModal();
+    data.createdAt = dateToTimeStamp(new Date());
+    data.updatedAt = dateToTimeStamp(new Date());
+    data.isEliminado = false;
+    data.isServicio = true;
+
+    herramientasRepositorio
+      .add(null, data)
+      .then(() => {
+        toast({
+          title: `Se ha creado la herramienta con éxito `,
+          position: "top",
+          status: "success",
+          isClosable: true,
+        });
+        resetForm();
+        onClose();
+        refresh();
+      })
+      .catch((error: any) => {
+        console.error(error);
+      })
+      .finally(() => {
+        refresh();
+        setLoading(false);
+      });
   };
 
   const columns = [
-    columnHelper.accessor("id", {
+    /*columnHelper.accessor("id", {
       cell: (info) => (
         <Box px={5}>
           <Tag
@@ -133,8 +122,19 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
       header: "ID.",
       // size: 100,
       // minSize: 120,
+    }),*/
+    columnHelper.accessor("identificador", {
+      cell: (info) => {
+        return (
+          <span>
+            <Text fontSize="sm">{info.getValue()}</Text>
+          </span>
+        );
+      },
+      header: "Identificador",
+      // size: 300,
+      // minSize: 250,
     }),
-
     columnHelper.accessor("marca", {
       cell: (info) => {
         return (
@@ -173,177 +173,6 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
       // minSize: 250,
     }),
   ];
-  const columns1 = [
-    columnHelper.accessor("id", {
-      cell: (info) => (
-        <Box px={5}>
-          <Tag
-            bg={"#fb8500"}
-            color="#fff"
-            alignItems={"center"}
-            alignContent={"center"}
-            size={"sm"}
-          >
-            <TagLabel>{info.getValue()}</TagLabel>
-          </Tag>
-        </Box>
-      ),
-      header: "ID.",
-      // size: 100,
-      // minSize: 120,
-    }),
-
-    columnHelper.accessor("marca", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "marca",
-    }),
-
-    columnHelper.accessor("modelo", {
-      cell: (info) => {
-        return (
-          <span>
-            <Text fontSize="sm">{info.getValue()}</Text>
-          </span>
-        );
-      },
-      header: "modelo",
-    }),
-
-    columnHelper.accessor("divisiones", {
-      cell: (info) => (
-        <Box alignItems="center" alignContent="center">
-          {Array.isArray(info.getValue()) && info.getValue().length > 0
-            ? info.getValue().map((division, index) => (
-                <Badge
-                  key={index}
-                  variant="solid"
-                  bg={"#0B79F4"}
-                  fontSize="0.7em"
-                  mr={1}
-                  mb={1}
-                >
-                  {division.displayName}
-                </Badge>
-              ))
-            : ""}
-        </Box>
-      ),
-      header: "Divisiones",
-    }),
-
-    columnHelper.accessor("divisiones", {
-      id: "asignarDesasignar",
-      header: "Asignar/Desasignar",
-      cell: (info: any) => {
-        const fila = info.row.original;
-        // const isChecked = fila.divisiones.some((division: any) => division.id === idDivision);
-
-        if (!Array.isArray(fila.divisiones)) {
-          fila.divisiones = []; // Agrega un arreglo vacío si no es un array
-        }
-
-        const isChecked = fila.divisiones.some(
-          (division: any) => division.id === idDivision
-        );
-
-        const manejarCambioCheckbox = () => {
-          if (isChecked) {
-            // Remove the division from the divisiones array
-            const updatedFila = {
-              ...fila,
-              divisiones: fila.divisiones.filter(
-                (division: any) => division.id !== idDivision
-              ),
-            };
-
-            empresaEquipoRepository
-              .update(fila.id, updatedFila)
-              .then(() => {
-                toast({
-                  title: "Se ha desasignado la Equipo de la empresa",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshEmpresaVehiculos();
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-
-            divisionRepository
-              .delete(fila.id)
-              .then(() => {
-                toast({
-                  title: "Se ha eliminado el Equipo de la división",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshData();
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          } else {
-            // Add the division to the divisiones array
-            const updatedFila = {
-              ...fila,
-              divisiones: [
-                ...fila.divisiones,
-                {
-                  id: idDivision,
-                  displayName: idDivision,
-                },
-              ],
-            };
-
-            empresaEquipoRepository
-              .update(fila.id, updatedFila)
-              .then(() => {
-                toast({
-                  title: "Se ha asignado un Equipo a la empresa",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshEmpresaVehiculos();
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-
-            divisionRepository
-              .add(fila.id, updatedFila) // Use the updatedFila object to add the division
-              .then(() => {
-                toast({
-                  title: "Se ha agregado un Equipo a la división",
-                  position: "top",
-                  status: "success",
-                  isClosable: true,
-                });
-                refreshData();
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          }
-        };
-
-        return (
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Checkbox onChange={manejarCambioCheckbox} isChecked={isChecked} />
-          </Box>
-        );
-      },
-    }),
-  ];
 
   return (
     <>
@@ -360,16 +189,16 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
       </VStack>
 
       <>
-        {!loadingData ? (
+        {!loadingHerramientas ? (
           <Box pt={{ base: "30px", md: "83px", xl: "40px" }}>
             <Grid templateColumns="repeat(1, 1fr)" gap={6}>
               <TableLayout
                 titulo={"Herramientas"}
-                textButtonAdd={"Asignar Herramientas"}
-                onOpen={onOpenModal}
-                onReload={refreshData}
+                textButtonAdd={"Agregar Herramientas"}
+                onOpen={onOpen}
+                onReload={refresh}
               >
-                <DataTable columns={columns} data={division} />
+                <DataTable columns={columns} data={empresaHerramientas} />
               </TableLayout>
             </Grid>
           </Box>
@@ -377,57 +206,20 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
           <>Cargando..</>
         )}
       </>
-
       <Flex>
-        <Modal isOpen={isModalOpen} onClose={onCloseModal}>
-          <ModalOverlay />
-          <ModalContent
-            display="flex"
-            // justifyContent="center"
-            // alignItems="center"
-            maxW="900px" // Ancho máximo de 800px
-            maxH="950px"
-            borderRadius={16}
-            mx="auto" // Centrar horizontalmente
-            my="auto" // Centrar verticalmente
-          >
-            <ModalHeader>Asignar Herramientas</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody>
-              {/* Agrega aquí el contenido del modal */}
-              {!loadingEmpresaVehiculos ? (
-                <>
-                  <Grid templateColumns="repeat(1, 1fr)" gap={6}>
-                    <TableLayoutModal
-                      titulo={""}
-                      textButtonAdd={""}
-                      onOpen={onOpenModal}
-                      onReload={refreshData}
-                    >
-                      <DataTable
-                        hiddenEmptyRow={true}
-                        columns={columns1}
-                        data={empresaVehiculos}
-                      />
-                    </TableLayoutModal>
-                  </Grid>
-                </>
-              ) : (
-                <>Cargando..</>
-              )}
-            </ModalBody>
-            <ModalFooter>
-              <Flex justifyContent="flex-end">
-                <Button mr={3} onClick={onCloseModal}>
-                  Cancelar
-                </Button>
-                <Button onClick={handleGuardar} colorScheme="blue">
-                  Guardar
-                </Button>
-              </Flex>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+        <FormVaku<Herramienta>
+          isOpen={isOpen}
+          onClose={onClose}
+          refreshData={refresh}
+          fieldsToExclude={["id"]}
+          model={newHerramienta}
+          initialValues={newHerramienta}
+          onSubmit={handleGuardar}
+          loading={loading}
+          options={options}
+          size="xl"
+          grid={{ base: 1, md: 2 }}
+        />
       </Flex>
     </>
   );

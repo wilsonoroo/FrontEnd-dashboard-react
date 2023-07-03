@@ -19,6 +19,7 @@ import { AuthContext } from "@/contexts/AuthContextFb";
 import { Empresa } from "@/models/empresa/Empresa";
 import { Gerencia } from "@/models/gerencia/Gerencia";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
+import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
@@ -48,7 +49,9 @@ const itemAnim = {
 
 export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
   const { titulo } = props;
-
+  const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
+    ? true
+    : false;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
@@ -59,23 +62,26 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
   const newGerencia = new Gerencia();
   newGerencia.setEmptyObject();
 
-  let empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
-  let empresasRepository = new FirestoreRepository<Gerencia>(
-    `empresas/${currentUser.empresaId}/gerencias`
-  );
+  let gerenciasRepository: any;
+  let usuariosRepository: any;
+
+  if (isVersionRealtime) {
+    gerenciasRepository = new FirebaseRealtimeRepository<Gerencia>(
+      `empresaCompact/${currentUser.empresaId}/gerencias`
+    );
+    usuariosRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
+      `empresas/${currentUser.empresaId}/usuarios/auth`
+    );
+  } else {
+    gerenciasRepository = new FirestoreRepository<Empresa>(`empresas`);
+  }
 
   useEffect(() => {
     const getUsuarios = async () => {
-      const db = new FirestoreRepository<UsuarioVaku>("auth");
-      const result = await db.getAllObject(UsuarioVaku);
-
+      const result = await usuariosRepository.getAll(UsuarioVaku);
       setOptions({ responsable: result as UsuarioVaku[] });
     };
     getUsuarios();
-
-    empresaRepository.get(currentUser.empresaId).then((data) => {
-      setEmpresa(data);
-    });
   }, []);
 
   const navigate = useNavigate();
@@ -86,7 +92,7 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
     firstLoading,
     refreshData,
     isLoading,
-  } = useFetch(() => empresasRepository.getAll());
+  } = useFetch(() => gerenciasRepository.getAll(Gerencia));
 
   const handleClick = (item: any) => {
     const isAdmin = currentUser?.isSuperAdmin;
@@ -94,18 +100,17 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
     if (isAdmin) {
       navigate("/superAdmin/config/" + currentUser.empresaId + "/" + item.id, {
         state: {
-          empresa: { id: empresa.id, nombre: empresa.nombre },
+          empresa: { id: currentUser.empresaId, nombre: empresa?.nombre },
           gerencia: item,
         },
       });
     } else {
       navigate("/admin/config/" + currentUser.empresaId + "/" + item.id, {
         state: {
-          empresa: { id: empresa.id, nombre: empresa.nombre },
+          empresa: { id: currentUser.empresaId, nombre: empresa?.nombre },
           gerencia: item,
         },
       });
-
     }
   };
 
@@ -115,7 +120,7 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
     data.createdAt = new Date();
     data.updatedAt = new Date();
 
-    empresasRepository
+    gerenciasRepository
       .add(null, data)
       .then(() => {
         toast({
@@ -127,7 +132,7 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
         onClose();
         refreshData();
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error(error);
       })
       .finally(() => {
@@ -141,13 +146,14 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
     <>
       <Headers
         titulo={"Gerencias"}
-        subtitulo={"En esta sección se especifica los detalles de cada gerencia"}
+        subtitulo={
+          "En esta sección se especifica los detalles de cada gerencia"
+        }
         onOpen={onOpen}
         rutas={[
-          { nombre: "Home", 
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/` 
-              : `/admin/`,
+          {
+            nombre: "Home",
+            url: currentUser?.isSuperAdmin ? `/superAdmin/` : `/admin/`,
           },
           {
             nombre: `Configuración`,
@@ -158,15 +164,14 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
           {
             nombre: `Gerencias`,
             url: currentUser?.isSuperAdmin
-            ? `/superAdmin/config/`
-            : `/admin/config/`,
+              ? `/superAdmin/config/`
+              : `/admin/config/`,
           },
         ]}
         showButtonAdd={true}
         textButton="Crear Gerencia"
         refreshData={refreshData}
       />
-
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
         {isLoading ? (
@@ -238,7 +243,7 @@ export default function DetalleEmpresaAdminConfig(props: { titulo: string }) {
           <VStack pt={130}>
             <Box>
               <Container maxW="sm">
-                <img src={empty} />
+                <img src={empty} width={100} />
               </Container>
             </Box>
             <Text as="b" fontSize="2xl">

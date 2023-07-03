@@ -12,14 +12,6 @@ import {
   NumberInputStepper,
   SimpleGrid,
   Switch,
-  Table,
-  TableCaption,
-  TableContainer,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
 } from "@chakra-ui/react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 // import { DatePicker } from "chakra-ui-date-input";
@@ -29,6 +21,9 @@ import InputMask from "react-input-mask";
 
 import { CreatableSelect, Select as SelectCH } from "chakra-react-select";
 import moment from "moment";
+import PermisosComponents, {
+  PermisosComponentsMovil,
+} from "./permisosComponents";
 
 export enum TypeField {
   Object = "object",
@@ -70,6 +65,7 @@ export enum CampoFormKey {
   EMAIL = "email",
   SWITCH = "switch",
   PERMISOS = "permisos",
+  PERMISOS_MOVIL = "permisos_movil",
 }
 
 export default {};
@@ -332,11 +328,12 @@ export function getItemForm<T extends VakuModel>(
               name={item.field}
               selectedOptionStyle="check"
               onChange={(v) => {
+                console.log("🚀 ~ file: global.tsx:475 ~ v:", v);
                 if (typeof item.onChangeValue !== "undefined") {
                   if (!item.single) {
                     item.onChangeValue(v);
                   } else {
-                    item.onChangeValue(v.label);
+                    item.onChangeValue(v.nombre);
                   }
                 }
 
@@ -356,9 +353,11 @@ export function getItemForm<T extends VakuModel>(
                     }
                   }
                 } else {
-                  setFieldValue(item.field, v.label);
+                  setFieldValue(item.field, v.nombre);
                 }
               }}
+              getOptionLabel={(option) => option.displayName}
+              getOptionValue={(option) => option.nombre}
               colorScheme="green"
               options={item?.options}
               placeholder={item.placeholder}
@@ -466,61 +465,26 @@ export function getItemForm<T extends VakuModel>(
         );
       }
       case CampoFormKey.PERMISOS: {
-        let permisos = ["Documento", "Planes de acción"];
         return (
-          <>
-            <FormLabel htmlFor={item.field}>
-              Privilegios Plataforma WEB
-            </FormLabel>
-            <div
-              style={{
-                borderWidth: "1px",
-                borderColor: "",
-                padding: "1px",
-                borderRadius: "8px",
-              }}
-            >
-              <TableContainer>
-                <Table variant="simple">
-                  <TableCaption>Vaku</TableCaption>
-                  <Thead>
-                    <Tr>
-                      <Th style={{ width: "40%" }}></Th>
-                      <Th style={{ fontSize: "10px", width: "25%" }}>
-                        Administración
-                      </Th>
-                      <Th style={{ fontSize: "10px", width: "25%" }}>
-                        Visualización
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {permisos.map((permiso) => (
-                      <Tr key={permiso}>
-                        <Td style={{ width: "50%", fontSize: "12px" }}>
-                          {permiso}
-                        </Td>
-                        <Td style={{ width: "25%", textAlign: "center" }}>
-                          <Checkbox
-                            id={item.field}
-                            name={item.field}
-                            // colorScheme="orange"
-                          />
-                        </Td>
-                        <Td style={{ width: "25%", textAlign: "center" }}>
-                          <Checkbox
-                            id={item.field}
-                            name={item.field}
-                            // colorScheme="orange"
-                          />
-                        </Td>
-                      </Tr>
-                    ))}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </div>
-          </>
+          <PermisosComponents
+            item={item}
+            onChange={(permisos) => {
+              console.log("🚀 ~ file: global.tsx:472 ~ permisos:", permisos);
+              setFieldValue(item.field, permisos);
+            }}
+          />
+        );
+      }
+      case CampoFormKey.PERMISOS_MOVIL: {
+        return (
+          <PermisosComponentsMovil
+            item={item}
+            onChange={(permisos) => {
+              console.log("🚀 ~ file: global.tsx:482 ~ permisos:", permisos);
+
+              setFieldValue(item.field, permisos);
+            }}
+          />
         );
       }
     }
@@ -540,6 +504,12 @@ export function transformedObject(array: any[], key: string) {
     obj[item[key]] = item;
     return obj;
   }, {});
+
+  console.log(
+    "🚀 ~ file: global.tsx:491 ~ transformedObject ~ transformedObject:",
+    transformedObject,
+    array
+  );
   return transformedObject;
 }
 

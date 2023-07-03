@@ -37,7 +37,7 @@ export default function PlanDeAccionView(props: { titulo: string }) {
   const newDivision = new Divisiones();
 
   const divisionRepository = new FirebaseRealtimeRepository<DocumentoVaku>(
-    `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones/${idDivision}/contenido/documentos`
+    `empresas/${idDivision}/documentos`
   );
 
   const {

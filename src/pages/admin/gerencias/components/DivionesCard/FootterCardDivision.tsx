@@ -1,5 +1,4 @@
 import { Divisiones } from "@/models/division/Disvision";
-import { Gerencia } from "@/models/gerencia/Gerencia";
 import { Box, HStack, Tag, TagLabel, TagLeftIcon } from "@chakra-ui/react";
 
 import * as Icons from "react-feather";
@@ -13,7 +12,7 @@ interface DivisionCardProps {
   item: Divisiones;
 }
 
-const FootterCardDivision: React.FC<DivisionCardProps> = ({ item }) => {
+const FootterCardDivision: React.FC<DivisionCardProps> = ({}) => {
   return (
     <Box alignItems={"center"}>
       <HStack direction={"column"}>

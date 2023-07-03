@@ -22,6 +22,14 @@ export const menuApp: Menus[] = [
         icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
       },
       {
+        titulo: "Recursos",
+        layout: "admin",
+        path: "/admin/home",
+        id: "main_dash",
+        icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+      },
+
+      {
         titulo: "Perfil",
         layout: "admin",
         path: "/admin/perfil",
