@@ -480,7 +480,11 @@ export function getItemForm<T extends VakuModel>(
           <PermisosComponentsMovil
             item={item}
             onChange={(permisos) => {
-              console.log("🚀 ~ file: global.tsx:482 ~ permisos:", permisos);
+              console.log(
+                "🚀 ~ file: global.tsx:482 ~ permisos:",
+                permisos,
+                item.field
+              );
 
               setFieldValue(item.field, permisos);
             }}

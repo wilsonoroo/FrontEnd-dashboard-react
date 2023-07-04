@@ -283,9 +283,9 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
               })
               .then(() => {
                 toast({
-                  title: "Se ha desasignado la Equipo de la empresa",
+                  title: "Se ha desasignado la Herramienta con èxito",
                   position: "top",
-                  status: "success",
+                  status: "warning",
                   isClosable: true,
                 });
                 refreshDivisionHerramienta();
@@ -314,7 +314,7 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
               })
               .then(() => {
                 toast({
-                  title: "Se ha agregado un Equipo a la división",
+                  title: "Se ha agregado una herramienta con exito",
                   position: "top",
                   status: "success",
                   isClosable: true,

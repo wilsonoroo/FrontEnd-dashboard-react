@@ -3,6 +3,8 @@ import {
   Box,
   Flex,
   Grid,
+  IconButton,
+  Stack,
   Text,
   useDisclosure,
   useToast,
@@ -18,7 +20,8 @@ import FormVaku from "@/components/forms/FormVaku";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { dateToTimeStamp } from "@/utils/global";
+import { EstadoLoading, dateToTimeStamp } from "@/utils/global";
+import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -29,6 +32,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     ? true
     : false;
   const { idEmpresa, idGerencia, idDivision } = useParams();
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -36,8 +40,9 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const toast = useToast();
 
   const { currentUser } = useContext(AuthContext);
-  const newVehiculo = new Vehiculo();
-  newVehiculo.setEmptyObject();
+  const vehiculoNew = new Vehiculo();
+  vehiculoNew.setEmptyObject();
+  const [newVehiculo, setNewVehiculo] = useState<Vehiculo>(vehiculoNew);
 
   let empresaVehiculoRepository: any;
 
@@ -72,32 +77,13 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
           nombre: "Camioneta",
           displayName: "Camioneta",
         },
-        {
-          nombre: "furgon",
-          displayName: "Furgón",
-        },
-        {
-          nombre: "sprinter",
-          displayName: "Sprinter",
-        },
-        {
-          nombre: "volare",
-          displayName: "Volare",
-        },
       ],
       tipo: [
         {
           nombre: "Vehículo Liviano",
           displayName: "Vehículo Liviano",
         },
-        {
-          nombre: "semiremolque",
-          displayName: "Semiremolque",
-        },
-        {
-          nombre: "vehiculo_de_carga",
-          displayName: "Vehículo de Carga",
-        },
+
         ,
       ],
     });
@@ -257,6 +243,36 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
         );
       },
       header: "Estado",
+    }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    setNewVehiculo(select);
+
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
     }),
   ];
 

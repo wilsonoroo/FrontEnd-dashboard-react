@@ -240,12 +240,7 @@ export class UsuarioVaku extends VakuModel {
         options: options.permisos,
         orden: 12,
         isMulti: false,
-        typeField: TypeField.Object,
         transform: (value: any) => {
-          console.log(
-            "🚀 ~ file: Usuario.ts:234 ~ UsuarioVaku ~ getFormBuilder ~ value:",
-            value
-          );
           let result: any[] = [];
           let validador: boolean[] = [];
           let mapping = value.map((permiso: any) => {
@@ -256,10 +251,7 @@ export class UsuarioVaku extends VakuModel {
               validador.push(permiso);
             }
           });
-          console.log(
-            "🚀 ~ file: Usuario.ts:240 ~ UsuarioVaku ~ mapping ~ mapping:",
-            validador.some((permiso: any) => permiso)
-          );
+
           if (validador.some((permiso: any) => permiso)) {
             result.push({
               codigo: "validador",
@@ -272,9 +264,13 @@ export class UsuarioVaku extends VakuModel {
             acc[cur.id] = cur;
             return acc;
           }, {});
+          console.log(
+            "🚀 ~ file: Usuario.ts:271 ~ UsuarioVaku ~ obj ~ obj:",
+            obj
+          );
+
           return obj;
         },
-        single: false,
       },
 
       // newPermisos: {

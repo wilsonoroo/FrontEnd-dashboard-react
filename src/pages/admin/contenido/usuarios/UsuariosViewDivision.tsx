@@ -3,6 +3,8 @@ import {
   Box,
   Flex,
   Grid,
+  IconButton,
+  Stack,
   Tag,
   TagLabel,
   Text,
@@ -23,6 +25,7 @@ import { Enrolamiento } from "@/models/usuario/Enrolamiento";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { createUserAuth } from "@/services/usuarioVakuApi";
+import { EditIcon } from "@chakra-ui/icons";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
@@ -41,7 +44,8 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   const { currentUser, currentUserAll } = useContext(AuthContext);
   const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const userNew = new UsuarioVaku();
+  const newUser = new UsuarioVaku();
+  const [userNew, setUserNew] = useState<UsuarioVaku>(newUser);
 
   const [options, setOptions] = useState({
     licencia: [
@@ -113,7 +117,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     });
   }, []);
 
-  const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
+  //const [newUser, setNewUser] = useState<UsuarioVaku>(userNew);
 
   let empresaUsuarioRepository: any;
   let usuarioGlobal: any;
@@ -265,7 +269,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       cell: (info) => {
         return (
           <span>
-            <Text fontSize="sm">{info.getValue()?.label}</Text>
+            <Text fontSize="sm">{info.getValue()?.displayName}</Text>
           </span>
         );
       },
@@ -321,6 +325,37 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       size: 100,
       minSize: 100,
     }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    setUserNew(select);
+
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
+      size: 50,
+    }),
   ];
 
   return (
@@ -363,8 +398,8 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           onClose={onClose}
           refreshData={refreshEmpresaUsuario}
           fieldsToExclude={["id"]}
-          model={newUser}
-          initialValues={newUser}
+          model={userNew}
+          initialValues={userNew}
           onSubmit={handleSaveUsuario}
           loading={loading}
           options={options}

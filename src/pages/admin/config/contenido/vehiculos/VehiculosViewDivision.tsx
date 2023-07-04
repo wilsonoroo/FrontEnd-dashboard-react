@@ -5,6 +5,7 @@ import {
   Checkbox,
   Flex,
   Grid,
+  IconButton,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -12,6 +13,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Stack,
   Text,
   VStack,
   Wrap,
@@ -32,7 +34,8 @@ import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { Vehiculo } from "@/models/vehiculo/Vehiculo";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
-import { dateToTimeStamp } from "@/utils/global";
+import { EstadoLoading, dateToTimeStamp } from "@/utils/global";
+import { EditIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -48,6 +51,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const [options, setOptions] = useState({});
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [division, setDivision] = useState<Divisiones>();
+  const [iconLoading, setIconLoading] = useState<EstadoLoading>({});
 
   const toast = useToast();
 
@@ -55,8 +59,9 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { currentUser } = useContext(AuthContext);
 
-  const newVehiculo = new Vehiculo();
-  newVehiculo.setEmptyObject();
+  const vehiculoNew = new Vehiculo();
+  vehiculoNew.setEmptyObject();
+  const [newVehiculo, setNewVehiculo] = useState<Vehiculo>(vehiculoNew);
 
   let empresaVehiculoRepository: any;
   let divisionVehiculoRepository: any;
@@ -462,6 +467,36 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       },
       size: 100,
       minSize: 50,
+    }),
+    columnHelper.accessor("id", {
+      cell: (info) => {
+        return (
+          <Stack spacing={2}>
+            <Box>
+              <IconButton
+                aria-label="Search database"
+                isLoading={iconLoading[info.row.original.id]}
+                onClick={() => {
+                  const select = info.row.original;
+                  let loadingIc = iconLoading;
+                  loadingIc[info.row.original.id] = true;
+                  setIconLoading({ ...loadingIc });
+
+                  setTimeout(() => {
+                    setNewVehiculo(select);
+
+                    onOpen();
+                    loadingIc[info.row.original.id] = false;
+                    setIconLoading(loadingIc);
+                  }, 1000);
+                }}
+                icon={<EditIcon />}
+              />
+            </Box>
+          </Stack>
+        );
+      },
+      header: "Editar",
     }),
   ];
 

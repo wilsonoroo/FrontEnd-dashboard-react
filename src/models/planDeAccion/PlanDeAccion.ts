@@ -1,10 +1,12 @@
 import * as yup from "yup";
 import VakuModel, { IFormBuilder } from "../Vaku";
+import { DocumentoVaku } from "../documento/Documento";
+import { UsuarioVaku } from "../usuario/Usuario";
 
 export class PlanDeAccion extends VakuModel implements IFormBuilder {
   accionSugerida: string;
-  autor: string;
-  documento: string;
+  autor: UsuarioVaku;
+  documento: DocumentoVaku;
   estado: string;
   fechaCompromiso: string | Date;
   fechaCreacion: string | Date;
@@ -15,7 +17,7 @@ export class PlanDeAccion extends VakuModel implements IFormBuilder {
     token: string;
     url: string;
   };
-  responsable: string;
+  responsable: UsuarioVaku;
 
   getValidationSchema() {
     return yup.object().shape({});

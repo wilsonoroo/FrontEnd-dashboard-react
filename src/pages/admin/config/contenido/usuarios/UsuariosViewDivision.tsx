@@ -380,7 +380,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                 toast({
                   title: "Se ha desasignado el vehículo de la división",
                   position: "top",
-                  status: "success",
+                  status: "warning",
                   isClosable: true,
                 });
                 refreshDivisionUsuario();
@@ -415,7 +415,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
               })
               .then(() => {
                 toast({
-                  title: "Se ha asignado una división al vehículo",
+                  title: "Se ha asignado un usuario a la división",
                   position: "top",
                   status: "success",
                   isClosable: true,

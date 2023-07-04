@@ -43,8 +43,8 @@ export default function FotterSidebar(props: {
         >
           <WrapItem>
             <Avatar
-              name={user.currentUser?.nombre}
-              src={user.currentUser?.nombre}
+              name={user.currentUserAll?.nombre}
+              src={user.currentUserAll?.fotografia.url}
               borderColor={"#fff"}
             />
           </WrapItem>

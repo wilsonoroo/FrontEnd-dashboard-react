@@ -286,9 +286,9 @@ export default function EquiposViewDivision(props: { titulo: string }) {
               })
               .then(() => {
                 toast({
-                  title: "Se ha desasignado la Equipo de la empresa",
+                  title: "Se ha desasignado el Equipo con exito",
                   position: "top",
-                  status: "success",
+                  status: "warning",
                   isClosable: true,
                 });
                 refreshEmpresaEquipos();
@@ -317,7 +317,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
               })
               .then(() => {
                 toast({
-                  title: "Se ha asignado un Equipo a la empresa",
+                  title: "Se ha asignado un Equipo con éxito",
                   position: "top",
                   status: "success",
                   isClosable: true,

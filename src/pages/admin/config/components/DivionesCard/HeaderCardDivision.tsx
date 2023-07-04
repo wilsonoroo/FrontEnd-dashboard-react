@@ -1,16 +1,5 @@
 import { Divisiones } from "@/models/division/Disvision";
-import {
-  Box,
-  Flex,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
-  Spacer,
-  Text,
-} from "@chakra-ui/react";
-import { BsGear } from "react-icons/bs";
+import { Box, Flex, Spacer, Text } from "@chakra-ui/react";
 
 export function HeaderCardDivision(props: { item: Divisiones }) {
   const { item } = props;
@@ -28,7 +17,7 @@ export function HeaderCardDivision(props: { item: Divisiones }) {
           {item.nombre}
         </Text>
         <Spacer />
-        <Menu>
+        {/*<Menu>
           <MenuButton
             as={IconButton}
             aria-label="Options"
@@ -43,7 +32,7 @@ export function HeaderCardDivision(props: { item: Divisiones }) {
             <MenuItem command="⌘⇧N">Open Closed Tab</MenuItem>
             <MenuItem command="⌘O">Open File...</MenuItem>
           </MenuList>
-        </Menu>
+        </Menu>*/}
       </Flex>
     </Box>
   );

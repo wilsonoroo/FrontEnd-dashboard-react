@@ -12,11 +12,14 @@ export default function LogOutview(props: { titulo: string }) {
 
   console.log("logout");
   useEffect(() => {
+    user.signOut().then(function () {
+      console.log("Sign-out successful.");
+    });
     auth
       .signOut()
       .then(function () {
         // Sign-out successful.
-        setLogger(true);
+        setLogger(false);
       })
       .catch(function (error) {
         console.error(
@@ -36,7 +39,9 @@ export default function LogOutview(props: { titulo: string }) {
       user
     );
     if (!logger) {
-      // navigate("/auth");
+      setTimeout(() => {
+        navigate("/auth");
+      }, 1000);
     }
   }, [logger, user]);
 
