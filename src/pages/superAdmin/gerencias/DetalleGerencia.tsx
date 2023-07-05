@@ -13,19 +13,17 @@ import { motion } from "framer-motion";
 import { HiPlus } from "react-icons/hi2";
 
 import FormVaku from "@/components/forms/FormVaku";
-import Loading from "@/components/Loading";
-import empty from "@assets/empty.png";
-import useFetch from "@hooks/useFetch";
-import { useContext, useEffect, useState } from "react";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
 import Headers from "@/components/header/header";
+import Loading from "@/components/Loading";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
+import empty from "@assets/empty.png";
+import useFetch from "@hooks/useFetch";
+import { useContext, useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DivisionCard from "./components/DivionesCard/DivisionCard";
-
 const container = {
   hidden: { opacity: 1, scale: 0 },
   visible: {
@@ -74,18 +72,6 @@ export default function DetalleGerencia(props: { titulo: string }) {
     `empresas/${idEmpresa}/gerencias/${idGerencia}/divisiones`
   );
 
-  // const empresaRepository = new FirebaseRealtimeRepository<Gerencia>(
-  //   `empresas/${id}/gerencias`
-  // );
-
-  // useEffect(() => {
-  //   const getUsuarios = async () => {
-  //     const db = new FirebaseRealtimeRepository<AuthUser>("auth");
-  //     const result = await db.getAll(AuthUser);
-  //     setOptions({ responsable: result });
-  //   };
-  //   getUsuarios();
-  // }, []);
   useEffect(() => {
     const getUsuarios = async () => {
       const db = new FirestoreRepository<UsuarioVaku>("auth");

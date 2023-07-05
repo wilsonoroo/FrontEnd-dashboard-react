@@ -18,7 +18,7 @@ import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
+
 import Headers from "@/components/header/header";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Divisiones } from "@/models/division/Disvision";

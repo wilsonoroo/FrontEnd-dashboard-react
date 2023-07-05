@@ -14,6 +14,7 @@ import { motion } from "framer-motion";
 import { HiPlus } from "react-icons/hi2";
 
 import FormVaku from "@/components/forms/FormVaku";
+import GerenciaCard from "@/components/GerenciasCard/GerenciaCard";
 import Headers from "@/components/header/header";
 import { AuthContext } from "@/contexts/AuthContextFb";
 import { Gerencia } from "@/models/gerencia/Gerencia";
@@ -23,7 +24,6 @@ import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import GerenciaCard from "./components/GerenciasCard/GerenciaCard";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },

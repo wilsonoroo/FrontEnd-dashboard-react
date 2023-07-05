@@ -3,6 +3,7 @@ import { Box, Grid, Skeleton, useDisclosure } from "@chakra-ui/react";
 import useFetch from "@hooks/useFetch";
 
 import Headers from "@/components/header/header";
+import { AuthContext } from "@/contexts/AuthContextFb";
 import { Empresa } from "@/models/empresa/Empresa";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
 import EmpresaView, { EmpresaAdd } from "@components/card/EmpresaCard";
@@ -10,8 +11,7 @@ import { motion } from "framer-motion";
 import { useContext, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import AgregarUsuario from "./agregarEmpresa";
-import { AuthContext } from "@/contexts/AuthContextFb";
+import AgregarEmpresa from "./AgregarEmpresa";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -34,7 +34,7 @@ const itemAnim = {
 };
 
 // TODO aliminar clase
-export default function Empresas(props: { titulo: string }) {
+export default function EmpresasView(props: { titulo: string }) {
   const { titulo } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { currentUser } = useContext(AuthContext);
@@ -160,7 +160,7 @@ export default function Empresas(props: { titulo: string }) {
           </motion.div>
         )}
       </Box>
-      <AgregarUsuario
+      <AgregarEmpresa
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}

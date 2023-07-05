@@ -15,7 +15,9 @@ import HerramientasViewDivision from "./herramientas/HerramientasViewDivision";
 import UsuariosViewDivision from "./usuarios/UsuariosViewDivision";
 import VehiculosViewDivision from "./vehiculos/VehiculosViewDivision";
 
-export default function ContenidoDetalleAdmin(props: { titulo: string }) {
+export default function ContenidoDetalleAdminRecursos(props: {
+  titulo: string;
+}) {
   const { titulo } = props;
 
   const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL

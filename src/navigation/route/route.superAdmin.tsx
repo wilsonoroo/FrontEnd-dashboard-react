@@ -1,10 +1,10 @@
 import ContenidoDetalleAdminConfig from "@/pages/admin/config/ContenidoDetalleAdminConfig";
 import DetalleGerenciaAdminConfig from "@/pages/admin/config/DetalleGerenciaAdminConfig";
 import DetalleEmpresaAdminConfig from "@/pages/admin/config/GerenciasAdminConfig";
-import ContenidoDetalle from "@/pages/admin/contenido/ContenidoAdmin";
-import ContenidoDetalleV1 from "@/pages/admin/contenido/ContenidoV1";
+import ContenidoDetalle from "@/pages/admin/contenido/ContenidoDetalleAdminRecursos";
+
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
-import Empresas from "@/pages/admin/empresas";
+import EmpresasView from "@/pages/admin/empresas/EmpresasView";
 import DetalleGerencia from "@/pages/admin/gerencias/DetalleGerenciaAdmin";
 import DetalleEmpresa from "@/pages/admin/gerencias/GerenciasAdmin";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
@@ -13,17 +13,17 @@ import { RouterJson } from "../model";
 export const routesSuperAdmin: RouterJson[] = [
   {
     path: "/",
-    element: <ContenidoDetalleV1 titulo={"Administrador"} />,
+    element: <ContenidoDetalle titulo={"Administrador"} />,
     name: "Empresas",
   },
   {
     path: "/superAdmin",
-    element: <ContenidoDetalleV1 titulo={"Administrador"} />,
+    element: <ContenidoDetalle titulo={"Administrador"} />,
     name: "Admin",
   },
   {
     path: "empresas",
-    element: <Empresas titulo={"Empresas"} />,
+    element: <EmpresasView titulo={"Empresas"} />,
     name: "Detalle Empresas ",
     isSubMenu: true,
   },

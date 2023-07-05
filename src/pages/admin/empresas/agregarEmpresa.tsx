@@ -30,7 +30,7 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { Field, Formik } from "formik";
 import React, { useState } from "react";
 
-export default function AgregarUsuario(props: {
+export default function AgregarEmpresa(props: {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
