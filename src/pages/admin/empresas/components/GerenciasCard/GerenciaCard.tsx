@@ -42,7 +42,7 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
         variant={"outline"}
         m={3}
         onAbort={() => {}}
-        onClick={() => }
+        onClick={() => {}}
         boxShadow={shadow}
         minWidth={{
           base: "flex",

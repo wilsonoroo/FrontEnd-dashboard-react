@@ -135,7 +135,6 @@ export default function DocumentosView(props: { titulo: string }) {
         const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
         const data = info.getValue() as UsuarioVaku | undefined;
 
-        c;
         return (
           <span>
             <Text fontSize="sm">{`${data}`}</Text>

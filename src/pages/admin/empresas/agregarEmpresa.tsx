@@ -203,7 +203,7 @@ export default function AgregarUsuario(props: {
                 </Button>
                 <Button
                   colorScheme="blue"
-                  onClick={(e) => {
+                  onClick={(_e) => {
                     submitForm();
                   }}
                 >

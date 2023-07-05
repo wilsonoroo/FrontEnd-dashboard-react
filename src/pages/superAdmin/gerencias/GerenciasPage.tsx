@@ -169,7 +169,7 @@ export default function GerenciasPage({}) {
         refreshData={refreshData}
         fieldsToExclude={[]}
         model={vaku}
-        onSubmit={(data) => }
+        onSubmit={(_data) => {}}
         loading={false}
       />
 

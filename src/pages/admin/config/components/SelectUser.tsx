@@ -51,7 +51,7 @@ const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
     props.clearValue();
   };
 
-  props.innerProps.onClick = (e) => {};
+  props.innerProps.onClick = (_e) => {};
 
   return (
     <>
