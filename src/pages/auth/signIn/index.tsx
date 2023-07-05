@@ -58,7 +58,7 @@ function SignIn() {
         // await signInWithEmailAndPassword(auth, values.email, values.password);
         // navigate("/admin");
       } catch (error) {
-        console.log(error);
+        console.error(err);
         setError(true);
       }
     },

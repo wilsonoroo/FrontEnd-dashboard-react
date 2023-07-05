@@ -66,18 +66,12 @@ export default function ContenidoDetalleAdminConfig(props: { titulo: string }) {
     empresaRepository.get(currentUser.empresaId).then((data: Empresa) => {
       setEmpresa(data);
       gerenciaRepository.get(idGerencia).then((data: Gerencia) => {
-        console.log(
-          "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:40 ~ gerenciaRepository.get ~ data:",
-          data
-        );
+        
         setGerencia(data);
         divisonRepository.get(idDivision).then((data: Divisiones) => {
           setDivision(data);
         });
-        console.log(
-          "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:77 ~ divisonRepository.get ~ data:",
-          data
-        );
+       
       });
     });
   }, []);

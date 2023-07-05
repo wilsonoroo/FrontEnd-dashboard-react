@@ -41,30 +41,17 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const usuarioRepository = new FirestoreRepository<UsuarioVaku>("auth");
   const empresaRepository = new FirestoreRepository<Empresa>("empresas");
 
-  useEffect(() => {
-    console.log(
-      "🚀 ~ file: AuthContextFb.tsx:47 ~ currentUserAll:",
-      currentUserAll
-    );
-  }, [currentUserAll]);
+  useEffect(() => {}, [currentUserAll]);
 
   useEffect(() => {
     // Observador de estado de autenticación de Firebase
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
-      console.log(
-        "🚀 ~ file: AuthContextFb.tsx:47 ~ unsubscribe ~ user:",
-        user
-      );
       if (user) {
         setLoading(true);
         let userSemiComplete: any;
         let userComplete: any;
         if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
           userSemiComplete = await getUsuarioByUid(user?.uid);
-          console.log(
-            "🚀 ~ file: AuthContextFb.tsx:55 ~ unsubscribe ~ userSemiComplete:",
-            userSemiComplete
-          );
 
           const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
 
@@ -74,12 +61,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           let userComplete = await getUsuarioV1(id, empresaId);
 
           userComplete.empresaIdGlobal = empresaIdGlobal;
-          console.log(
-            "🚀 ~ file: AuthContextFb.tsx:61 ~ unsubscribe ~ userComplete:",
-            userComplete,
-            currentUser,
-            currentUserAll
-          );
 
           setLogoEmpresa(empresa);
           setUserAll(userComplete);
@@ -93,10 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             user?.uid,
             userSemiComplete?.empresaId
           );
-          console.log(
-            "🚀 ~ file: AuthContextFb.tsx:83 ~ unsubscribe ~ userComplete:",
-            userComplete
-          );
+
           const empresa = await empresaRepository.get(
             userSemiComplete?.empresaId
           );
@@ -109,11 +87,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setUserLogger(true);
           setLoading(false);
         }, 1500);
-        console.log(
-          "🚀 ~ file: AuthContextFb.tsx:112 ~ setTimeout ~ userComplete:",
-          userComplete,
-          currentUser
-        );
       } else {
         setTimeout(() => {
           setUserLogger(false);
@@ -130,7 +103,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.log("Error al iniciar sesión:", error);
+      console.error("Error al iniciar sesión:", error);
     }
   };
 
@@ -143,7 +116,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser(null);
     } catch (error) {
-      console.log("Error al cerrar sesión:", error);
+      console.error("Error al cerrar sesión:", error);
     }
   };
 

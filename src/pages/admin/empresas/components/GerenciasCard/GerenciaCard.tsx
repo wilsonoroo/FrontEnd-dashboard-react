@@ -41,10 +41,8 @@ const GerenciaCard: React.FC<GerenciaCardProps> = ({
         key={index}
         variant={"outline"}
         m={3}
-        onAbort={() => {
-          console.log("click");
-        }}
-        onClick={() => console.log("click")}
+        onAbort={() => {}}
+        onClick={() => }
         boxShadow={shadow}
         minWidth={{
           base: "flex",

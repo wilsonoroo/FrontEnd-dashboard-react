@@ -20,13 +20,7 @@ export default function App() {
   const authContext = useContext(AuthContext);
   const { currentUser, currentUserAll } = authContext;
 
-  useEffect(() => {
-    console.log(
-      "🚀 ~ file: App.tsx:22 ~ App ~ currentUserAll:",
-      currentUserAll
-    );
-    console.log(currentUser);
-  }, [currentUser]);
+  useEffect(() => {}, [currentUser]);
 
   return (
     <AnimatePresence>

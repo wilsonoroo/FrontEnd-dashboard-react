@@ -50,6 +50,7 @@ export type DataTableProps<Data extends object> = {
   sortees?: SortingState;
   hiddenEmptyRow?: boolean;
   hiddenSearchBar?: boolean;
+  placeholderSearch?: string;
 };
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
@@ -71,6 +72,7 @@ export function DataTable<Data extends object>({
   sortees,
   hiddenEmptyRow = false,
   hiddenSearchBar = false,
+  placeholderSearch = "",
 }: DataTableProps<Data>) {
   const [sorting, setSorting] = React.useState<SortingState>(sortees);
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -132,7 +134,7 @@ export function DataTable<Data extends object>({
             <DebouncedInput
               value={globalFilter ?? ""}
               onChange={(value) => setGlobalFilter(String(value))}
-              placeholder="Search all columns..."
+              placeholder={placeholderSearch}
             />
           </Box>
         )}
@@ -312,6 +314,7 @@ export function DataTable<Data extends object>({
 function DebouncedInput({
   value: initialValue,
   onChange,
+  placeholder,
   debounce = 500,
 }: // ...props
 {
@@ -342,7 +345,7 @@ function DebouncedInput({
           variant="outline"
           value={value}
           onChange={(e) => setValue(e.target.value)}
-          placeholder="Ingresa número interno o patente"
+          placeholder={placeholder}
         />
         <InputRightElement p={0}>
           <SearchIcon color="vaku.500" />

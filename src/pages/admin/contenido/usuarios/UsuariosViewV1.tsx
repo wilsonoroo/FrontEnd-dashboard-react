@@ -186,7 +186,7 @@ export default function UsuariosView1(props: { titulo: string }) {
     resetForm: () => void
   ) => {
     setLoading(true);
-    console.log(data);
+
     data.fechaVencimientoLicencia = moment(
       data.fechaVencimientoLicencia
     ).format("YYYY-MM-DD HH:mm:ss");
@@ -306,7 +306,6 @@ export default function UsuariosView1(props: { titulo: string }) {
               <TagLabel>{info.getValue()}</TagLabel>
             </Tag>
           </Box>
-      
         </VStack>
       ),
       header: "Nombre de Usuario",

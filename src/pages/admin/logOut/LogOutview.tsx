@@ -10,11 +10,8 @@ export default function LogOutview(props: { titulo: string }) {
   const [logger, setLogger] = useState(false);
   const user = useAuth();
 
-  console.log("logout");
   useEffect(() => {
-    user.signOut().then(function () {
-      console.log("Sign-out successful.");
-    });
+    user.signOut().then(function () {});
     auth
       .signOut()
       .then(function () {
@@ -22,22 +19,13 @@ export default function LogOutview(props: { titulo: string }) {
         setLogger(false);
       })
       .catch(function (error) {
-        console.error(
-          "🚀 ~ file: LogOutview.tsx:17 ~ auth.signOut ~ error:",
-          error
-        );
         // An error happened.
-
+        console.error(error);
         setLogger(false);
       });
   }, []);
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: LogOutview.tsx:32 ~ useEffect ~ logger:",
-      !logger,
-      user
-    );
     if (!logger) {
       setTimeout(() => {
         navigate("/auth");

@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 import { getStorage } from "firebase/storage";
 
-// console.log(process.env.REACT_APP_FIREBASE_API_KEY)
+
 
 const app = initializeApp({
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY, //"AIzaSyBKvNIQKpOThmINmnSROq6xiR8k0rkwTuo",

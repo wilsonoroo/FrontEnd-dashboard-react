@@ -128,11 +128,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
         ],
       });
       const empresa = await divisionEmpresa.get(idEmpresa);
-      console.log(
-        "🚀 ~ file: DetalleGerenciaAdminConfig.tsx:130 ~ getUsuarios ~ empresa:",
-        idEmpresa,
-        empresa
-      );
     };
     getUsuarios();
 
@@ -226,10 +221,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
     data.createdAt = new Date();
     data.updatedAt = new Date();
     const empresa = await divisionEmpresa.get(idEmpresa);
-    console.log(
-      "🚀 ~ file: DetalleGerenciaAdminConfig.tsx:201 ~ handleSaveDivision ~ empresa:",
-      empresa
-    );
 
     const idNotNull = uuid();
     data.id = `${idEmpresa}_${idNotNull}`;
@@ -387,7 +378,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
                       onClickConfig={handleClickConfig}
                       onClickDetalle={handleClickDetalle}
                       onClick={() => {
-                        console.log(item);
                         // handleClick(item);
                       }}
                     />

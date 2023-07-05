@@ -13,7 +13,7 @@ export const getFaenas = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -27,7 +27,7 @@ export const getFaenasArray = async (empresa) => {
       return faenasArr;
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -59,11 +59,11 @@ export const getFaena = async (id, empresa) => {
  */
 export const updateFaenaById = async (uid, data, empresa) => {
   try {
-    console.log(uid, data, empresa);
+
     const caca = await update(ref(database, `empresas/${empresa}/faenas/${uid}`), data);
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return false;
   }
 };
@@ -89,15 +89,15 @@ export async function eliminarFaena(faenaId, empresa) {
   // const db = getDatabase();
 
   try {
-      await update(ref(database, `empresas/${empresa}/faenas/${faenaId}`), {
-          isEliminado: true
-      });
-      console.log("Faena eliminada correctamente");
+    await update(ref(database, `empresas/${empresa}/faenas/${faenaId}`), {
+      isEliminado: true
+    });
 
-      return true;
+
+    return true;
 
   } catch (err) {
-      console.log(err);
-      return false;
+    console.error(err);
+    return false;
   }
 }

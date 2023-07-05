@@ -61,7 +61,6 @@ export default function AgregarGerenciaForm(props: {
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log(downloadURL);
           setValues({
             id: values.id,
             nombre: values.nombre,
@@ -157,7 +156,6 @@ export default function AgregarGerenciaForm(props: {
                         id={"url"}
                         acceptedFileTypes={"image/png, image/jpeg"}
                         onChange={(e) => {
-                          console.log(e.target.files[0]);
                           setFile(e.target.files[0]);
                           setFieldValue("url", e.target.files[0].name);
                         }}
@@ -185,7 +183,6 @@ export default function AgregarGerenciaForm(props: {
                 <Button
                   colorScheme="blue"
                   onClick={(e) => {
-                    console.log("on click", e);
                     submitForm();
                   }}
                 >

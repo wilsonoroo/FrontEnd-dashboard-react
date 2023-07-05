@@ -34,10 +34,7 @@ export default function GerenciasPage({}) {
   } = useFetch(() => getDivisionesPorGerencia(id, idGerencia));
 
   useEffect(() => {
-    console.log(
-      "🚀 ~ file: GerenciasPage.tsx:27 ~ useEffect ~ divisiones:",
-      divisiones
-    );
+   
     setListaGerencia(divisiones);
   }, [divisiones]);
 
@@ -173,7 +170,7 @@ export default function GerenciasPage({}) {
         refreshData={refreshData}
         fieldsToExclude={[]}
         model={vaku}
-        onSubmit={(data) => console.log(typeof data, data)}
+        onSubmit={(data) => }
         loading={false}
       />
 

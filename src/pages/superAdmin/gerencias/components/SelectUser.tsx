@@ -48,13 +48,10 @@ const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
   const { user } = props.selectProps;
 
   const clearValue = () => {
-    console.log("clear");
     props.clearValue();
   };
 
-  props.innerProps.onClick = (e) => {
-    console.log("click en element", e);
-  };
+  props.innerProps.onClick = (e) => {};
 
   return (
     <>
@@ -67,7 +64,6 @@ const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
           w={"100%"}
         >
           <>
-            {console.log(user, props.innerProps)}
             {!Array.isArray(user) && !props.menuIsOpen ? (
               <>
                 <ItemUser

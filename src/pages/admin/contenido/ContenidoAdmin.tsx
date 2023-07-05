@@ -28,16 +28,10 @@ export default function ContenidoDetalleAdmin(props: { titulo: string }) {
   const [division, setDivision] = useState<Divisiones>();
   const { idEmpresa, idGerencia, idDivision } = useParams();
   let location = useLocation();
-  console.log(
-    "🚀 ~ file: ContenidoAdmin.tsx:33 ~ ContenidoDetalleAdmin ~ location:",
-    location
-  );
 
   const isHome = location.pathname.includes("home");
 
   const { currentUser } = useContext(AuthContext);
-
-  console.log(idEmpresa, idGerencia, idDivision);
 
   let empresaRepository: any;
   let gerenciaRepository: any;
@@ -63,25 +57,7 @@ export default function ContenidoDetalleAdmin(props: { titulo: string }) {
   } else {
   }
 
-  useEffect(() => {
-    /*empresaRepository.get(currentUser.empresaId).then((data: Empresa) => {
-      setEmpresa(data);
-      gerenciaRepository.get(idGerencia).then((data: Gerencia) => {
-        console.log(
-          "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:40 ~ gerenciaRepository.get ~ data:",
-          data
-        );
-        setGerencia(data);
-        divisonRepository.get(idDivision).then((data: Divisiones) => {
-          setDivision(data);
-        });
-        console.log(
-          "🚀 ~ file: ContenidoDetalleAdminConfig.tsx:77 ~ divisonRepository.get ~ data:",
-          data
-        );
-      });
-    });*/
-  }, []);
+  useEffect(() => {}, []);
 
   const handleTabsChange = (index: number) => {
     setTabIndex(index);

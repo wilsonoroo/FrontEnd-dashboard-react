@@ -171,15 +171,8 @@ export class UsuarioVaku extends VakuModel {
         orden: 7,
         typeField: TypeField.Object,
         transform: (value: any) => {
-          console.log(
-            "🚀 ~ file: Usuario.ts:179 ~ UsuarioVaku ~ getFormBuilder ~ value:",
-            value
-          );
           let permisos = transformedObject(value, "nombre");
-          console.log(
-            "🚀 ~ file: Usuario.ts:175 ~ UsuarioVaku ~ getFormBuilder ~ permisos:",
-            permisos
-          );
+
           return permisos;
         },
       },
@@ -201,15 +194,8 @@ export class UsuarioVaku extends VakuModel {
         isMulti: false,
         orden: 9,
         transform: (value: any) => {
-          console.log(
-            "🚀 ~ file: Usuario.ts:179 ~ UsuarioVaku ~ getFormBuilder ~ value:",
-            value
-          );
           let permisos = transformedObject(value, "nombre");
-          console.log(
-            "🚀 ~ file: Usuario.ts:175 ~ UsuarioVaku ~ getFormBuilder ~ permisos:",
-            permisos
-          );
+
           return permisos;
         },
       },
@@ -264,10 +250,6 @@ export class UsuarioVaku extends VakuModel {
             acc[cur.id] = cur;
             return acc;
           }, {});
-          console.log(
-            "🚀 ~ file: Usuario.ts:271 ~ UsuarioVaku ~ obj ~ obj:",
-            obj
-          );
 
           return obj;
         },

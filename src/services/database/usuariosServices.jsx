@@ -18,42 +18,6 @@ export const subirImagen = (image, ruta, uuid) => {
   return uploadBytes(storageRef, image).then((snapshot) => {
     return `https://firebasestorage.googleapis.com/v0/b/vaku-dev.appspot.com/o/${snapshot.metadata.fullPath}?alt=media`;
   });
-  /* const uploadTask = uploadBytesResumable(ref2(storage, `${ruta}/${uuid}.${image.name.split(".").at(-1)}`), image);
-  // Register three observers:
-  // 1. 'state_changed' observer, called any time the state changes
-  // 2. Error observer, called on failure
-  // 3. Completion observer, called on successful completion
-  let imagen;
-  uploadTask.on('state_changed', 
-    (snapshot) => {
-      // Observe state change events such as progress, pause, and resume
-      // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log('Upload is ' + progress + '% done');
-      switch (snapshot.state) {
-        case 'paused':
-          console.log('Upload is paused');
-          break;
-        case 'running':
-          console.log('Upload is running');
-          break;
-      }
-    }, 
-    (error) => {
-      // Handle unsuccessful uploads
-    }, 
-    () => {
-      // Handle successful uploads on complete
-      // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-        console.log('File available at', downloadURL);
-        imagen = downloadURL;
-      });
-    }
-  );
-  console.log("hola");
-  console.log(imagen);
-  return imagen; */
 };
 export const getUsers = (empresa) => {
   return new Promise((resolve, reject) => {
@@ -114,7 +78,6 @@ export const getUsuarios = async (empresa) => {
       child(ref(database), `empresas/${empresa}/usuarios/auth`)
     );
     if (snapshot.exists()) {
-      // console.log('Usuarios obtenidos correctamente');
       const usuariosArr = Object.values(snapshot.val());
       return usuariosArr;
     }
@@ -190,11 +153,6 @@ export const getUsuarioV1 = async (uid, empresa) => {
     );
 
     if (snapshot.exists()) {
-      console.log(
-        "🚀 ~ file: usuariosServices.jsx:196 ~ getUsuarioV1 ~ snapshot.exists():",
-        snapshot.val()
-      );
-
       return snapshot.val();
     }
   } catch (err) {
@@ -308,21 +266,6 @@ export async function crearUsuario(data, email, password, empresa) {
 
 export async function editUsuario() {
   const uid = "Q3BYHenrVwYxFY8Y4CsR91IFGT43";
-  /* admin.auth().updateUser(uid, {
-    email: "eren@gmai.com",
-    phoneNumber: "+11234567890",
-    emailVerified: true,
-    password: "newPassword",
-    displayName: "Jane Doe",
-    photoURL: "http://www.example.com/12345678/photo.png"
-  })
-    .then(function(userRecord) {
-      // See the UserRecord reference doc for the contents of userRecord.
-      console.log("Successfully updated user", userRecord.toJSON());
-    })
-    .catch(function(error) {
-      console.log("Error updating user:", error);
-    }); */
 }
 
 export async function eliminarUsuario(uId, empresa) {
@@ -358,7 +301,7 @@ export async function editarUsuario(uId, empresa, nuevosDatos) {
 
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return false;
   }
 }

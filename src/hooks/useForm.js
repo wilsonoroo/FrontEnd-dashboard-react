@@ -1,18 +1,18 @@
-import { useState } from "react"
+import { useState } from "react";
 
-export default function useForm(initialInputValues= {}){
+export default function useForm(initialInputValues = {}) {
 
-  const [inputValues, setInputValues]= useState(initialInputValues);
-  
-  const handleInputChanges= (e)=> {
-    // console.log(e);
+  const [inputValues, setInputValues] = useState(initialInputValues);
 
-    if(e.target.type === "checkbox"){
+  const handleInputChanges = (e) => {
+
+
+    if (e.target.type === "checkbox") {
       setInputValues({
         ...inputValues,
         [e.target.name]: e.target.checked
       });
-    }else{
+    } else {
       setInputValues({
         ...inputValues,
         [e.target.name]: e.target.value
@@ -20,9 +20,9 @@ export default function useForm(initialInputValues= {}){
     }
   }
 
-  const clearInputValues= ()=> {
+  const clearInputValues = () => {
     setInputValues(initialInputValues);
   }
 
-  return({inputValues, setInputValues, handleInputChanges, clearInputValues});
+  return ({ inputValues, setInputValues, handleInputChanges, clearInputValues });
 }

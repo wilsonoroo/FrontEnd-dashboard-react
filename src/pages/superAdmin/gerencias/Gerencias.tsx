@@ -254,25 +254,6 @@ export default function DetalleEmpresa(props: { titulo: string }) {
         options={options}
         size="xl"
       />
-      {/* <AgregarGerenciaForm
-        isOpen={isOpen}
-        onClose={onClose}
-        onOpen={function (): void {
-          console.log("on open ");
-        }}
-        onAddFinish={function (isFinish: boolean): void {
-          console.log("on add finish ");
-        }}
-      /> */}
     </>
   );
 }
-
-//    const users =  Object.keys(dataEmpresa.usuarios.auth).map((key) => dataEmpresa.usuarios.auth[key]);
-
-// console.log(users)
-// const listaEmpresa = dataEmpresa ? Object.keys(dataEmpresa).map((key) => dataEmpresa[key]) : [];
-// console.log(listaEmpresa)
-// const { correlativo, documentos } = dataEmpresa;
-// console.log(correlativo);
-// console.log(documentos);

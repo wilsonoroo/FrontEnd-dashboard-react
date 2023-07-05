@@ -128,7 +128,6 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     );
     usuarioGlobal = new FirebaseRealtimeRepository<UsuarioVaku>(`auth`);
   } else {
-    console.log(`empresas/${currentUser.empresaIdGlobal}/usuarios/auth`);
   }
 
   const {
@@ -142,59 +141,82 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     data: UsuarioVaku,
     resetForm: () => void
   ) => {
-    console.log(
-      "🚀 ~ file: UsuariosViewDivision.tsx:148 ~ UsuariosViewDivision ~ data:",
-      data
-    );
     setLoading(true);
 
-    createUserAuth(
-      data.email,
-      data.email.split("@")[0] + "1234",
-      data.displayName
-    )
-      .then((userCredential) => {
-        data.id = userCredential.uid;
-        data.nombre = data.displayName;
-        data.empresa = currentUserAll.empresa;
-        data.empresaId = currentUserAll.empresaId;
-        data.enrolamiento = new Enrolamiento(false);
-        data.tipo = "usuario_vaku";
-        console.log(
-          "🚀 ~ file: UsuariosViewDivision.tsx:159 ~ .then ~ data:",
-          data,
-          currentUserAll
-        );
+    if (data.id === "") {
+      createUserAuth(
+        data.email,
+        data.email.split("@")[0] + "1234",
+        data.displayName
+      )
+        .then((userCredential) => {
+          data.id = userCredential.uid;
+          data.nombre = data.displayName;
+          data.empresa = currentUserAll.empresa;
+          data.empresaId = currentUserAll.empresaId;
+          data.enrolamiento = new Enrolamiento(false);
+          data.tipo = "usuario_vaku";
 
-        return empresaUsuarioRepository.add(userCredential.uid, data);
-      })
+          return empresaUsuarioRepository.add(userCredential.uid, data);
+        })
 
-      .then(() => {
-        toast({
-          title: `Se ha creado el usuario con éxito `,
-          position: "top",
-          status: "success",
-          isClosable: true,
+        .then(() => {
+          toast({
+            title: `Se ha creado el usuario con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+          toast({
+            title: `Se ha ocurrido un problema al crear el usuario`,
+            position: "top",
+            status: "error",
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          resetForm();
+          onClose();
+          refreshEmpresaUsuario();
         });
-      })
-      .catch((error) => {
-        console.error(error);
-        toast({
-          title: `Se ha ocurrido un problema al crear el usuario`,
-          position: "top",
-          status: "error",
-          isClosable: true,
+    } else {
+      data.nombre = data.displayName;
+      data.empresa = currentUserAll.empresa;
+      data.empresaId = currentUserAll.empresaId;
+      data.enrolamiento = new Enrolamiento(false);
+      data.tipo = "usuario_vaku";
+
+      empresaUsuarioRepository
+        .update(data.id, data)
+        .then(() => {
+          toast({
+            title: `Se ha Actualizado el usuario con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+        })
+        .catch((error: any) => {
+          console.error(error);
+          toast({
+            title: `Se ha ocurrido un problema al crear el usuario`,
+            position: "top",
+            status: "error",
+            isClosable: true,
+          });
+        })
+        .finally(() => {
+          setLoading(false);
+          resetForm();
+          onClose();
+          refreshEmpresaUsuario();
         });
-      })
-      .finally(() => {
-        setLoading(false);
-        resetForm();
-        onClose();
-        refreshEmpresaUsuario();
-      });
+    }
   };
-
-  // console.log(division, empresaVehiculos)
 
   const columnHelper = createColumnHelper<UsuarioVaku>();
 
@@ -382,7 +404,11 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                 onOpen={onOpen}
                 onReload={refreshEmpresaUsuario}
               >
-                <DataTable columns={columns} data={empresaUsuario} />
+                <DataTable
+                  placeholderSearch="Buscar..."
+                  columns={columns}
+                  data={empresaUsuario}
+                />
               </TableLayout>
             </Grid>
           </Box>

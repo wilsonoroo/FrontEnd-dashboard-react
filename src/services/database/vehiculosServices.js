@@ -8,7 +8,7 @@ export const getVehiculos = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -22,7 +22,7 @@ export const getVehiculosArray = async (empresa) => {
       return vehiculoArr;
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -40,18 +40,18 @@ export const getVehiculo = async (id, empresa) => {
 
 export const updateVehiculoById = async (uid, data, empresa) => {
   try {
-    console.log(uid, data, empresa);
+
     const caca = await update(ref(database, `empresas/${empresa}/vehiculos/${uid}`), data);
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return false;
   }
 };
 
 export async function crearVehiculo(data, empresa) {
   try {
-    console.log(data);
+    console.error(err);
     await set(ref(database, `empresas/${empresa}/vehiculos/${data.id}`), data);
 
     return true;
@@ -65,12 +65,12 @@ export async function eliminarVehiculo(vehiculoId, empresa) {
     await update(ref(database, `empresas/${empresa}/vehiculos/${vehiculoId}`), {
       isEliminado: true
     });
-    console.log("Vehiculo eliminado correctamente");
+    console.error(err);
 
     return true;
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return false;
   }
 }

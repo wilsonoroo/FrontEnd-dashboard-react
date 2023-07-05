@@ -50,10 +50,6 @@ export class Checklist implements IChecklist {
     throw new Error("Method not implemented.");
   }
   getFormBuilder(options?: any) {
-    console.log(
-      "🚀 ~ file: CheckList.ts:52 ~ Checklist ~ getFormBuilder ~ options:",
-      options
-    );
     throw new Error("Method not implemented.");
   }
   getEmptyObject() {

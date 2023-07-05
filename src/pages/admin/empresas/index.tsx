@@ -34,7 +34,7 @@ const itemAnim = {
 };
 
 // TODO aliminar clase
-export default function  Empresas(props: { titulo: string }) {
+export default function Empresas(props: { titulo: string }) {
   const { titulo } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { currentUser } = useContext(AuthContext);
@@ -50,13 +50,11 @@ export default function  Empresas(props: { titulo: string }) {
     isLoading,
   } = useFetch(() => empresasRepository.getAll());
 
-  useEffect(() => {
-    // console.log(empresas);
-  }, [empresas]);
+  useEffect(() => {}, [empresas]);
 
   const handlePresEmpresa = (e: any) => {
     const isSuperAdmin = currentUser?.isSuperAdmin;
-  
+
     if (isSuperAdmin) {
       navigate("/superAdmin/empresas/" + e.id, { state: { empresa: e } });
     } else {
@@ -167,7 +165,6 @@ export default function  Empresas(props: { titulo: string }) {
         onOpen={onOpen}
         onClose={onClose}
         onAddFinish={(finish) => {
-          console.log(finish);
           if (finish) {
             refreshData();
           }

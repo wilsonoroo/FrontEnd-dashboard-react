@@ -13,7 +13,7 @@ export const getPlanesSeguimiento = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };

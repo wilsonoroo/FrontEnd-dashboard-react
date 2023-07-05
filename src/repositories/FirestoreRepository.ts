@@ -51,16 +51,13 @@ export class FirestoreRepository<T extends VakuModel>
   }
 
   async add(id: string, item: T): Promise<void> {
-    console.log(id);
-    console.log(item);
     if (id === null) {
       const collectionRef = collection(db, this.collectionPath);
-      console.log(instanceToPlain(item));
+
       await addDoc(collectionRef, instanceToPlain(item));
     } else {
       const docRef = doc(db, this.collectionPath, id);
 
-      console.log(instanceToPlain(item));
       await setDoc(docRef, instanceToPlain(item));
     }
   }

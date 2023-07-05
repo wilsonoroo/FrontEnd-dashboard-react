@@ -99,8 +99,6 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
     isLoading: empresaUsuariosLoading,
   } = useFetch(() => empresaUsuarioRepository.getAll(UsuarioVaku));
 
-  // console.log(division, empresaVehiculos)
-
   const columnHelper = createColumnHelper<UsuarioVaku>();
 
   const onOpenModal = () => {
@@ -121,9 +119,6 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
   const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
-
     toast({
       title: "Vehículos asignados correctamente",
       status: "success",

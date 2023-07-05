@@ -42,7 +42,7 @@ declare module "node_modules/react-select/dist/declarations/src/Select" {
 //           w={"100%"}
 //         >
 //           <>
-//             {console.log(user, props.innerProps)}
+
 //             {!Array.isArray(user) && !props.menuIsOpen ? (
 //               <>
 //                 {user.nombre}

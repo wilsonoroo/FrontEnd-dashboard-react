@@ -48,7 +48,6 @@ const DrawerComponent: React.FC<DrawerComponentProps> = ({
             size="md"
             borderRadius={25}
             onClick={() => {
-              console.log("click en drawer");
               handleSubmit();
             }}
           >

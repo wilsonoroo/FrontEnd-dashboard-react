@@ -6,7 +6,6 @@ import { HStack, Text, WrapItem } from "@chakra-ui/react";
 
 export function BodyCardGerencia(props: { item: Gerencia }) {
   const { item } = props;
-  // console.log(typeof item.createdAt)
 
   return (
     <Box w={"100%"}>

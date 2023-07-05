@@ -14,7 +14,7 @@ export const getActive = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -30,7 +30,7 @@ export const getUtils = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -42,7 +42,7 @@ export const getEmpresas = async () => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return [];
   }
 };
@@ -52,11 +52,10 @@ export const addEmpresas = async (empresa) => {
     const dbRef = ref(database, `empresasCompact/${empresa.id}`);
 
     const nuevoObjetoRef = await set(dbRef, empresa);
-    console.log(nuevoObjetoRef.key);
-    console.log(nuevoObjetoRef);
+
     return empresa;
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -71,7 +70,7 @@ export const getEmpresasArray = async () => {
       return empresaArr;
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return [];
   }
 };
@@ -85,7 +84,7 @@ export const getEmpresaById = async (id) => {
       return null;
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return null;
   }
 };
@@ -101,7 +100,7 @@ export const getLogoEmpresa = async (id) => {
       return null;
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return null;
   }
 };

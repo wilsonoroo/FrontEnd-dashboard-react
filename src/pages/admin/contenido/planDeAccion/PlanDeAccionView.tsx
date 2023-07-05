@@ -104,9 +104,6 @@ export default function PlanDeAccionView(props: { titulo: string }) {
         const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
         const data = info.getValue() as UsuarioVaku | undefined;
 
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
         return (
           <span>
             <Text fontSize="sm">{`${data}`}</Text>
@@ -159,9 +156,6 @@ export default function PlanDeAccionView(props: { titulo: string }) {
         const infoCasted = info as unknown as CellContext<UsuarioVaku, object>;
         const data = info.getValue() as UsuarioVaku | undefined;
 
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
         return (
           <span>
             <Text fontSize="sm">{`${data}`}</Text>

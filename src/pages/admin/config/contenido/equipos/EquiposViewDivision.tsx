@@ -59,7 +59,6 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   let divisionEquipoRepository: any;
   let divisonRepository: any;
 
-  // console.log(idEmpresa, idGerencia, idDivision)
   if (isVersionRealtime) {
     empresaEquipoRepository = new FirebaseRealtimeRepository<Equipo>(
       `empresas/${currentUser.empresaIdGlobal}/equipos/maquinasEquipos`
@@ -97,8 +96,6 @@ export default function EquiposViewDivision(props: { titulo: string }) {
     isLoading: empresaVehiculosLoading,
   } = useFetch(() => empresaEquipoRepository.getAll(Equipo));
 
-  // console.log(division, empresaVehiculos)
-
   const columnHelper = createColumnHelper<Equipo>();
 
   const onOpenModal = () => {
@@ -119,9 +116,6 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   }, []);
 
   const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
-
     toast({
       title: "Vehículos asignados correctamente",
       status: "success",

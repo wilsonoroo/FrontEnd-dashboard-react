@@ -189,7 +189,6 @@ const generateSwitchField = (item: CampoForm, setFieldValue: any) => (
         id={item.field}
         name={item.field}
         onChange={(e) => {
-          console.log(e.target.checked);
           setFieldValue(item.field, e.target.checked);
         }}
       />
@@ -328,7 +327,6 @@ export function getItemForm<T extends VakuModel>(
               name={item.field}
               selectedOptionStyle="check"
               onChange={(v) => {
-                console.log("🚀 ~ file: global.tsx:475 ~ v:", v);
                 if (typeof item.onChangeValue !== "undefined") {
                   if (!item.single) {
                     item.onChangeValue(v);
@@ -469,7 +467,6 @@ export function getItemForm<T extends VakuModel>(
           <PermisosComponents
             item={item}
             onChange={(permisos) => {
-              console.log("🚀 ~ file: global.tsx:472 ~ permisos:", permisos);
               setFieldValue(item.field, permisos);
             }}
           />
@@ -480,12 +477,6 @@ export function getItemForm<T extends VakuModel>(
           <PermisosComponentsMovil
             item={item}
             onChange={(permisos) => {
-              console.log(
-                "🚀 ~ file: global.tsx:482 ~ permisos:",
-                permisos,
-                item.field
-              );
-
               setFieldValue(item.field, permisos);
             }}
           />
@@ -509,11 +500,6 @@ export function transformedObject(array: any[], key: string) {
     return obj;
   }, {});
 
-  console.log(
-    "🚀 ~ file: global.tsx:491 ~ transformedObject ~ transformedObject:",
-    transformedObject,
-    array
-  );
   return transformedObject;
 }
 

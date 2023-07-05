@@ -26,16 +26,10 @@ export default function ContenidoDocs(props: { titulo: string }) {
   const [division, setDivision] = useState<Divisiones>();
   const { idEmpresa, idGerencia, idDivision } = useParams();
   let location = useLocation();
-  console.log(
-    "🚀 ~ file: ContenidoAdmin.tsx:33 ~ ContenidoDocs ~ location:",
-    location
-  );
 
   const isHome = location.pathname.includes("home");
 
   const { currentUser } = useContext(AuthContext);
-
-  console.log(idEmpresa, idGerencia, idDivision);
 
   let empresaRepository: any;
   let gerenciaRepository: any;
@@ -65,18 +59,10 @@ export default function ContenidoDocs(props: { titulo: string }) {
     empresaRepository.get(currentUser.empresaId).then((data: Empresa) => {
       setEmpresa(data);
       gerenciaRepository.get(idGerencia).then((data: Gerencia) => {
-        console.log(
-          "🚀 ~ file: ContenidoDocsConfig.tsx:40 ~ gerenciaRepository.get ~ data:",
-          data
-        );
         setGerencia(data);
         divisonRepository.get(idDivision).then((data: Divisiones) => {
           setDivision(data);
         });
-        console.log(
-          "🚀 ~ file: ContenidoDocsConfig.tsx:77 ~ divisonRepository.get ~ data:",
-          data
-        );
       });
     });
   }, []);

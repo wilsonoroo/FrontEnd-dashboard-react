@@ -1,15 +1,14 @@
 // Admin Imports
 
 // Auth Imports
+import { IconCerrarSesion } from "@/assets/icon/IconCerrarSesion";
+import { IconConfig } from "@/assets/icon/IconConfig";
+import { IconDashboard } from "@/assets/icon/IconDashboard";
+import { IconHome } from "@/assets/icon/IconHome";
+import { IconPerfil } from "@/assets/icon/IconPerfil";
+import { IconRecursos } from "@/assets/icon/IconRecursos";
 import { Icon } from "@chakra-ui/react";
-import { BiUserX } from "react-icons/bi";
-import {
-  MdAutoGraph,
-  MdHome,
-  MdLock,
-  MdOutlineSettings,
-  MdPerson2,
-} from "react-icons/md";
+import { MdHome, MdLock } from "react-icons/md";
 
 export const menuApp: Menus[] = [
   {
@@ -19,14 +18,27 @@ export const menuApp: Menus[] = [
         layout: "admin",
         path: "/admin/config",
         id: "main_dash",
-        icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+        icon: (
+          <Icon
+            viewBox="0 0 78 78"
+            width="20px"
+            //height="20px"
+            color="inherit"
+          >
+            <IconHome />
+          </Icon>
+        ),
       },
       {
         titulo: "Recursos",
         layout: "admin",
         path: "/admin/recursos",
         id: "main_dash",
-        icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+        icon: (
+          <Icon viewBox="0 0 80 80" color="inherit">
+            <IconRecursos />
+          </Icon>
+        ),
       },
 
       {
@@ -36,7 +48,9 @@ export const menuApp: Menus[] = [
         id: "main_dash",
         disabled: true,
         icon: (
-          <Icon as={MdPerson2} width="20px" height="20px" color="inherit" />
+          <Icon width="20px" height="20px" color="inherit">
+            <IconPerfil />
+          </Icon>
         ),
       },
       {
@@ -46,12 +60,9 @@ export const menuApp: Menus[] = [
         id: "main_dash",
         disabled: false,
         icon: (
-          <Icon
-            as={MdOutlineSettings}
-            width="20px"
-            height="20px"
-            color="inherit"
-          />
+          <Icon width="20px" height="20px" color="inherit">
+            <IconConfig />
+          </Icon>
         ),
       },
 
@@ -62,7 +73,9 @@ export const menuApp: Menus[] = [
         id: "main_dash",
         disabled: true,
         icon: (
-          <Icon as={MdAutoGraph} width="20px" height="20px" color="inherit" />
+          <Icon width="20px" height="20px" color="inherit">
+            <IconDashboard />
+          </Icon>
         ),
       },
 
@@ -72,7 +85,11 @@ export const menuApp: Menus[] = [
         path: "logout",
         id: "logout",
 
-        icon: <Icon as={BiUserX} width="20px" height="20px" color="inherit" />,
+        icon: (
+          <Icon width="20px" height="20px" color="inherit">
+            <IconCerrarSesion />
+          </Icon>
+        ),
       },
 
       // {

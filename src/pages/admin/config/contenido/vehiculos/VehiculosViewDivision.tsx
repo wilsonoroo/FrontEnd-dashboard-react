@@ -139,9 +139,6 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
   const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
-
     toast({
       title: "Vehículos asignados correctamente",
       status: "success",
@@ -153,21 +150,18 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   };
 
   const handleSaveGerencia = (data: Vehiculo) => {
-    console.log(data);
     setLoading(true);
 
     let id = data.patente;
     data.id = id;
     data.createdAt = new Date();
     data.updatedAt = new Date();
-    console.log(typeof data.proximaMantencion);
 
     data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
 
     data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
 
     data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
-    console.log(data);
 
     empresaVehiculoRepository
       .add(id, data)

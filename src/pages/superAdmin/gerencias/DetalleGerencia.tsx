@@ -122,7 +122,6 @@ export default function DetalleGerencia(props: { titulo: string }) {
   } = useFetch(() => divisonRepository.getAll());
 
   const handleClick = (item: any) => {
-    // console.log(item.id)
     navigate("/admin/empresas/" + idEmpresa + `/${idGerencia}/` + item.id, {
       state: { item },
     });
@@ -153,7 +152,6 @@ export default function DetalleGerencia(props: { titulo: string }) {
       });
 
     return;
-    console.log(divisonRepository);
   };
 
   return (
@@ -218,7 +216,6 @@ export default function DetalleGerencia(props: { titulo: string }) {
                       item={item}
                       division={item}
                       onClick={() => {
-                        console.log(item);
                         handleClick(item);
                       }}
                     />

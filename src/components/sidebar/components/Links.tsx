@@ -81,7 +81,7 @@ export function SidebarLinks(props: { routes: Menus[] }) {
 
     //         {route?.sections ? (
     //           route.sections.map(function (section: any) {
-    //             console.log(section);
+    
     //             return (
     //               <SidebarSection
     //                 section={section.items}

@@ -14,9 +14,7 @@ export class Utils extends VakuModel implements IFormBuilder {
     });
   }
   getEmptyObject() {}
-  getFormBuilder(options: any = {}) {
-    console.log(options);
-  }
+  getFormBuilder(options: any = {}) {}
 }
 
 export class CategoriaVehiculo extends VakuModel {

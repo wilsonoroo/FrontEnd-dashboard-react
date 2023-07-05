@@ -141,9 +141,6 @@ export default function DivisionPage(props: { titulo: string }) {
         const data = info.getValue() as TipoDivision | undefined;
         const str: keyof TipoDivision = "nombre";
 
-        console.log(data);
-        console.log(infoCasted);
-        console.log(info.getValue());
         return (
           <span>
             <Text fontSize="sm">{data.label}</Text>
@@ -172,7 +169,6 @@ export default function DivisionPage(props: { titulo: string }) {
             <MenuList>
               <MenuItem
                 onClick={() => {
-                  console.log(info.row.original.id);
                   handleClickVerDetalle(info.row.original.id);
                 }}
               >

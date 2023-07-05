@@ -8,7 +8,7 @@ export const getDocumentos = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(false);
     return false;
   }
 };

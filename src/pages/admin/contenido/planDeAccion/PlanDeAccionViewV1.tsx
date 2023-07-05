@@ -27,6 +27,7 @@ import moment from "moment";
 import { useContext, useState } from "react";
 import { FaFilePdf } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
+import ModalPlanDeAccion from "./ModalPlanDeAccion";
 
 export default function PlanDeAccionViewV1(props: { titulo: string }) {
   const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
@@ -42,7 +43,8 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
   const [isList, setIsList] = useState(true);
   const navigate = useNavigate();
   const newDivision = new Divisiones();
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, currentUserAll } = useContext(AuthContext);
+  const [urlPlanDeAccion, setUrlPlanDeAccion] = useState("");
 
   let divisionRepository: any;
   let usuarioGlobal: any;
@@ -53,7 +55,6 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
     );
     usuarioGlobal = new FirebaseRealtimeRepository<PlanDeAccion>(`auth`);
   } else {
-    console.log(`empresas/${currentUser.empresaIdGlobal}/usuarios/auth`);
   }
 
   // const divisionRepository = new FirebaseRealtimeRepository<PlanDeAccion>(
@@ -68,6 +69,14 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
   } = useFetch(() => divisionRepository.getAll(PlanDeAccion));
 
   const columnHelper = createColumnHelper<PlanDeAccion>();
+  const {
+    isOpen: isOpenPlan,
+    onOpen: onOpenPlan,
+    onClose: onClosePlan,
+  } = useDisclosure();
+  function openModal(original: PlanDeAccion) {
+    const url = `https://enki-creator.vaku.cl/estandarVakuPlanDeAccion/${idDivision}/${original.id}`;
+  }
 
   const columns = [
     columnHelper.accessor("pdf", {
@@ -77,11 +86,12 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
             {info.row.original?.pdf ? (
               <IconButton
                 onClick={() => {
-                  window.open(
+                  openModal(info.row.original);
+                  /*window.open(
                     `${info.row?.original?.pdf?.url}`,
                     "_blank",
                     "noreferrer"
-                  );
+                  );*/
                 }}
                 icon={<FaFilePdf h={4} w={4} />}
                 mr={4}
@@ -317,7 +327,13 @@ export default function PlanDeAccionViewV1(props: { titulo: string }) {
         )}
       </>
 
-      <Flex></Flex>
+      <Flex>
+        <ModalPlanDeAccion
+          onClose={onClosePlan}
+          isOpen={isOpenPlan}
+          url={urlPlanDeAccion}
+        />
+      </Flex>
     </>
   );
 }

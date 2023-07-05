@@ -43,7 +43,7 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
     if (id === null) {
       const idNotNull = uuid();
       let cleanObj = cleanObject({ ...item, id: idNotNull });
-      console.log(cleanObj);
+
       await set(this.getDataReference(idNotNull), cleanObj);
     } else {
       let cleanObj = cleanObject(item);

@@ -128,7 +128,6 @@ const PermisosComponents = (props: {
     permisoType: string,
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    console.log(item.transform);
     // if(item.transform)
     const updatedPermisos = permisos.map((permiso) =>
       permiso.id === permisoId
@@ -216,8 +215,8 @@ export const PermisosComponentsMovil = (props: {
       codigo: "creador_is",
       subTitulo: "Instructivo de Seguridad",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -226,8 +225,8 @@ export const PermisosComponentsMovil = (props: {
       subTitulo: "Lista de Verificación",
       codigo: "creador_checklist",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -236,8 +235,8 @@ export const PermisosComponentsMovil = (props: {
       codigo: "creador_charla_5_minutos",
       subTitulo: "Charla de 5 minutos",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
 
@@ -247,8 +246,8 @@ export const PermisosComponentsMovil = (props: {
       subTitulo: "Inspeción y Observación",
       codigo: "creador_io",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -257,8 +256,8 @@ export const PermisosComponentsMovil = (props: {
       codigo: "creador_rem",
       subTitulo: "Registro, Evento, Mejora",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -267,8 +266,8 @@ export const PermisosComponentsMovil = (props: {
       subTitulo: "Permisos de trabajo",
       codigo: "creador_pt",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -277,8 +276,8 @@ export const PermisosComponentsMovil = (props: {
       subTitulo: "Evaluacion de Riesgo de la Tarea",
       codigo: "creador_ert",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
     {
@@ -287,8 +286,8 @@ export const PermisosComponentsMovil = (props: {
       codigo: "planificador",
       subTitulo: "Genera y Asigna Planes de Acción",
       permisos: {
-        crear: true,
-        validar: true,
+        crear: false,
+        validar: false,
       },
     },
   ];
@@ -302,10 +301,7 @@ export const PermisosComponentsMovil = (props: {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     let updatedPermisos: PermisoMobile[];
-    console.log(
-      "🚀 ~ file: permisosComponents.tsx:306 ~ item.transform:",
-      item.transform
-    );
+
     if (item.transform) {
       updatedPermisos = permisos.map((permiso) =>
         permiso.id === permisoId
@@ -321,7 +317,6 @@ export const PermisosComponentsMovil = (props: {
 
       let obj = item.transform(updatedPermisos);
 
-      console.log("🚀 ~ file: permisosComponents.tsx:318 ~ obj ~ obj:", obj);
       onChange(obj);
     } else {
       updatedPermisos = permisos.map((permiso) =>

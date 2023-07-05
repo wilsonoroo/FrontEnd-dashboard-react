@@ -57,7 +57,7 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
   let empresaHerramientaRepository: any;
   let divisionHerramientaRepository: any;
   let divisonRepository: any;
-  // console.log(idEmpresa, idGerencia, idDivision)
+
   if (isVersionRealtime) {
     empresaHerramientaRepository = new FirebaseRealtimeRepository<Herramienta>(
       `empresas/${currentUser.empresaIdGlobal}/equipos/herramientas`
@@ -70,15 +70,6 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
       `empresaCompact/${idEmpresa}/gerencias/${idGerencia}/divisiones`
     );
   } else {
-    // if (idEmpresa === undefined) {
-    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
-    //     `empresas/${currentUser.empresaId}/vehiculos`
-    //   );
-    // } else {
-    //   empresaVehiculoRepository = new FirestoreRepository<Vehiculo>(
-    //     `empresas/${idEmpresa}/vehiculos`
-    //   );
-    // }
   }
 
   const {
@@ -95,8 +86,6 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
     isLoading: empresaHerramientaLoading,
   } = useFetch(() => empresaHerramientaRepository.getAll(Herramienta));
 
-  // console.log(division, empresaVehiculos)
-
   const columnHelper = createColumnHelper<Equipo>();
 
   const onOpenModal = () => {
@@ -111,9 +100,6 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
   const handleGuardar = () => {
-    // console.log("Guardando datos de filas seleccionadas:");
-    // console.log(filasSeleccionadas);
-
     toast({
       title: "Vehículos asignados correctamente",
       status: "success",

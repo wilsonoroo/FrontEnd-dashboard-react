@@ -22,7 +22,7 @@ export class ErrorGetDataRespository extends Error {}
 //     setLoading(true);
 //     try {
 //       const newData = await repository.getAll();
-//       console.log(newData);
+
 //       setData(newData);
 //       setError(null);
 //     } catch (err) {

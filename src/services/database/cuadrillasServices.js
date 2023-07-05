@@ -8,7 +8,7 @@ export const getCuadrillas = async (empresa) => {
       return snapshot.val();
     }
   } catch (err) {
-    console.log(false);
+    console.error(err);
     return false;
   }
 };
@@ -26,11 +26,11 @@ export const getCuadrilla = async (id, empresa) => {
 
 export const updateCuadrillaById = async (uid, data, empresa) => {
   try {
-    console.log(uid, data, empresa);
+
     const caca = await update(ref(database, `empresas/${empresa}/cuadrillas/${uid}`), data);
     return true;
   } catch (err) {
-    console.log(err);
+    console.error(err);
     return false;
   }
 };

@@ -17,7 +17,7 @@ export const getGerenciasArray = async (empresa) => {
 };
 
 export const getDivisionesPorGerencia = async (empresa, gerencia) => {
-  console.log("🚀 ~ file: gerenciasServices.js:20 ~ getDivisionesPorGerencia ~ empresa, gerencia:", `empresaCompact/${empresa}/gerencias/${gerencia}/divisiones/`)
+
 
   let divisionesArr = []
   try {
@@ -60,7 +60,7 @@ export async function deleteGerencia(empresa, gerencia) {
     await update(ref(database, `empresas / ${empresa} / gerencias / ${gerencia}`), {
       isEliminado: true
     });
-    console.log('Gerencia eliminado exitosamente.');
+
   } catch (error) {
     console.error('Error al eliminar gerencia:', error);
   }
@@ -78,7 +78,7 @@ export async function guardarDatosEnFirebase(values, empresa) {
     values.id = nuevoObjetoRef.key
     await set(nuevoObjetoRef, values);
 
-    console.log("Datos guardados en Firebase");
+
   } catch (error) {
     console.error("Error al guardar datos en Firebase:", error);
   }
@@ -93,7 +93,7 @@ export async function guardarGerenciasEmpresas(values, empresa) {
     values.id = nuevoObjetoRef.key
     await set(nuevoObjetoRef, values);
 
-    console.log("Datos guardados en Firebase");
+
   } catch (error) {
     console.error("Error al guardar datos en Firebase:", error);
   }
@@ -108,7 +108,7 @@ export async function guardarDivisionGerenciasEmpresas(values, empresa, gerencia
     values.id = nuevoObjetoRef.key
     await set(nuevoObjetoRef, values);
 
-    console.log("Datos guardados en Firebase");
+
   } catch (error) {
     console.error("Error al guardar datos en Firebase:", error);
   }

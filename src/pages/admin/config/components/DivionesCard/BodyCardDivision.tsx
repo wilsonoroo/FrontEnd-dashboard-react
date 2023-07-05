@@ -6,7 +6,6 @@ import { HStack, Text, WrapItem } from "@chakra-ui/react";
 
 export function BodyCardDivision(props: { item: Divisiones }) {
   const { item } = props;
-  // console.log(typeof item.createdAt)
 
   return (
     <Box w={"100%"} marginTop={"8"}>

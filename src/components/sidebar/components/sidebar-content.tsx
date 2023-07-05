@@ -6,7 +6,7 @@ export const SidebarContent = (props: { routes: Menus[] }) => {
   return (
     <Flex flexDir="column" {...props}>
       {/* {routes.map(function (category, cid) {
-        console.log(category);
+        
         return (
           <chakra.div key={category.name} pt={cid === 0 ? 0 : 5}>
             <Text

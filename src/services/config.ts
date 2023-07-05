@@ -9,8 +9,6 @@ import {
 } from "firebase/firestore";
 import { FirebaseStorage, getStorage } from "firebase/storage";
 
-console.log(import.meta.env.VITE_FIREBASE_API_KEY);
-
 const app: FirebaseApp = initializeApp({
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,

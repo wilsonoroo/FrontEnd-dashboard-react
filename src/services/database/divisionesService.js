@@ -1,6 +1,6 @@
-import { child, get, orderByChild, push, query, ref, remove, set, update, equalTo  } from "firebase/database";
-import { database, storage } from "../config";
-import contenido from "../contenido.json"
+import { child, get, push, ref, set, update } from "firebase/database";
+import { database } from "../config";
+import contenido from "../contenido.json";
 
 
 
@@ -25,9 +25,9 @@ export async function deleteDivision(empresa, gerencia, division) {
 
   try {
     await update(ref(database, `empresas/${empresa}/gerencias/${gerencia}/divisiones/${division}`), {
-        isEliminado: true
+      isEliminado: true
     });
-    console.log('División eliminada exitosamente.');
+
   } catch (error) {
     console.error('Error al eliminar división:', error);
   }
@@ -51,7 +51,7 @@ export async function guardarDatosEnFirebase(values, empresa, gerencia) {
     // Guardar los datos en la base de datos utilizando la nueva ID generada
     await set(nuevoObjetoRef, values);
 
-    console.log("Datos guardados en Firebase");
+
   } catch (error) {
     console.error("Error al guardar datos en Firebase:", error);
   }

@@ -60,7 +60,6 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
     //     `empresas/${idEmpresa}/vehiculos`
     //   );
     // }
-    console.log(`empresas/${currentUser.empresaIdGlobal}/vehiculos`);
   }
 
   const {
@@ -94,47 +93,87 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
   const [filasSeleccionadas, setFilasSeleccionadas] = useState([]);
 
   const handleSaveGerencia = (data: Vehiculo) => {
-    console.log(data);
     setLoading(true);
 
-    let id = data.patente;
-    data.id = id;
-    data.createdAt = new Date();
-    data.updatedAt = new Date();
-    if (isVersionRealtime) {
-      data.proximaMantencion = moment(data.proximaMantencion).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      data.fechaVencimiento = moment(data.fechaVencimiento).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-      data.ultimaMantencion = moment(data.ultimaMantencion).format(
-        "YYYY-MM-DD HH:mm:ss"
-      );
-    } else {
-      data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
-      data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
-      data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
-    }
+    if (data.id === "") {
+      let id = data.patente;
+      data.id = id;
+      data.createdAt = dateToTimeStamp(new Date());
+      data.updatedAt = dateToTimeStamp(new Date());
+      if (isVersionRealtime) {
+        data.proximaMantencion = moment(data.proximaMantencion).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        data.fechaVencimiento = moment(data.fechaVencimiento).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        data.ultimaMantencion = moment(data.ultimaMantencion).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+      } else {
+        data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
+        data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
+        data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
+      }
 
-    empresaVehiculoRepository
-      .add(id, data)
-      .then(() => {
-        toast({
-          title: `Se ha creado el vehiculo con éxito `,
-          position: "top",
-          status: "success",
-          isClosable: true,
+      empresaVehiculoRepository
+        .add(id, data)
+        .then(() => {
+          toast({
+            title: `Se ha creado el vehiculo con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+          onClose();
+          refreshEmpresaVehiculos();
+        })
+        .catch((error: any) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
         });
-        onClose();
-        refreshEmpresaVehiculos();
-      })
-      .catch((error: any) => {
-        console.error(error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    } else {
+      let id = data.patente;
+      data.id = id;
+
+      data.updatedAt = dateToTimeStamp(data.updatedAt);
+      if (isVersionRealtime) {
+        data.proximaMantencion = moment(data.proximaMantencion).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        data.fechaVencimiento = moment(data.fechaVencimiento).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+        data.ultimaMantencion = moment(data.ultimaMantencion).format(
+          "YYYY-MM-DD HH:mm:ss"
+        );
+      } else {
+        data.proximaMantencion = dateToTimeStamp(data.proximaMantencion);
+        data.fechaVencimiento = dateToTimeStamp(data.fechaVencimiento);
+        data.ultimaMantencion = dateToTimeStamp(data.ultimaMantencion);
+      }
+
+      empresaVehiculoRepository
+        .update(id, data)
+        .then(() => {
+          toast({
+            title: `Se ha Actualizado el vehiculo con éxito `,
+            position: "top",
+            status: "success",
+            isClosable: true,
+          });
+          onClose();
+          refreshEmpresaVehiculos();
+        })
+        .catch((error: any) => {
+          console.error(error);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
 
     return;
   };
@@ -288,7 +327,11 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
                 onOpen={onOpen}
                 onReload={refreshEmpresaVehiculos}
               >
-                <DataTable columns={columns} data={empresaVehiculos} />
+                <DataTable
+                  placeholderSearch="Buscar..."
+                  columns={columns}
+                  data={empresaVehiculos}
+                />
               </TableLayout>
             </Grid>
           </Box>

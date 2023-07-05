@@ -18,20 +18,20 @@ export async function ingresarUsuarioApi(email, password) {
     return response;
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 
 }
 
 export async function loginUsuarioVakuWithToken(token) {
   try {
-    console.log(token)
+
 
     let result = await signInWithCustomToken(auth, token)
 
 
     let usuarioVaku = getUsuarioByUid(result.user.uid)
-    console.log(result)
+
     return {
       status: 200,
       user: result.user,
@@ -39,7 +39,7 @@ export async function loginUsuarioVakuWithToken(token) {
     }
 
   } catch (error) {
-    console.log(error)
+    console.error(err);
   }
 
 
@@ -47,11 +47,11 @@ export async function loginUsuarioVakuWithToken(token) {
 
 export async function loginUsuarioVaku(email, password) {
   try {
-    console.log(auth, email, password)
+
     let result = await signInWithEmailAndPassword(auth, email, password);
-    console.log(result.user.uid)
+
     let usuarioVaku = getUsuarioByUid(result.user.uid)
-    console.log(result)
+
     return {
       status: 200,
       user: result.user,
@@ -59,7 +59,7 @@ export async function loginUsuarioVaku(email, password) {
     }
 
   } catch (error) {
-    console.log(error)
+    console.error(err);
   }
 
 
@@ -83,6 +83,6 @@ export async function reIngresarUsuarioApi() {
     return data;
 
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 }
