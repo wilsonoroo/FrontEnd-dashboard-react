@@ -143,7 +143,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
   ) => {
     setLoading(true);
 
-    if (data.id === "") {
+    if (!data.id || data.id === "") {
       createUserAuth(
         data.email,
         data.email.split("@")[0] + "1234",
@@ -180,6 +180,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         .finally(() => {
           setLoading(false);
           resetForm();
+          setUserNew(new UsuarioVaku());
           onClose();
           refreshEmpresaUsuario();
         });
@@ -213,6 +214,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
           setLoading(false);
           resetForm();
           onClose();
+          setUserNew(new UsuarioVaku());
           refreshEmpresaUsuario();
         });
     }
@@ -421,7 +423,11 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
         <FormVaku<UsuarioVaku>
           titulo={"Agregar Usuario"}
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={() => {
+            console.log();
+            setUserNew(new UsuarioVaku());
+            onClose();
+          }}
           refreshData={refreshEmpresaUsuario}
           fieldsToExclude={["id"]}
           model={userNew}

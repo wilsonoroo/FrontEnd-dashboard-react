@@ -80,6 +80,7 @@ AgregarFormProps<T>) => {
             size={size}
             onClose={() => {
               resetForm();
+              console.log("ejecuta on close");
               onClose();
             }}
             handleSubmit={() => {

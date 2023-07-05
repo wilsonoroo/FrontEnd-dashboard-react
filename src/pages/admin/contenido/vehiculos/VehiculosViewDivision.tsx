@@ -125,7 +125,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
             status: "success",
             isClosable: true,
           });
-          onClose();
+
           refreshEmpresaVehiculos();
         })
         .catch((error: any) => {
@@ -133,6 +133,8 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
         })
         .finally(() => {
           setLoading(false);
+          setNewVehiculo(new Vehiculo());
+          onClose();
         });
     } else {
       let id = data.patente;
@@ -164,7 +166,7 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
             status: "success",
             isClosable: true,
           });
-          onClose();
+
           refreshEmpresaVehiculos();
         })
         .catch((error: any) => {
@@ -172,6 +174,8 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
         })
         .finally(() => {
           setLoading(false);
+          setNewVehiculo(new Vehiculo());
+          onClose();
         });
     }
 
@@ -342,7 +346,11 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
       <Flex>
         <FormVaku<Vehiculo>
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={() => {
+            console.log();
+            setNewVehiculo(new Vehiculo());
+            onClose();
+          }}
           refreshData={refreshEmpresaVehiculos}
           fieldsToExclude={["id"]}
           model={newVehiculo}

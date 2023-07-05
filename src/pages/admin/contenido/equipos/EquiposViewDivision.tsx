@@ -88,7 +88,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
   const handleSaveEquipo = (data: Equipo) => {
     setLoading(true);
 
-    if (data.id === "") {
+    if (!data.id || data.id === "") {
       data.createdAt = dateToTimeStamp(new Date());
       data.updatedAt = dateToTimeStamp(new Date());
       data.isEliminado = false;
@@ -110,6 +110,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         })
         .finally(() => {
           refreshData();
+          setNewVehiculo(new Equipo());
           setLoading(false);
         });
     } else {
@@ -133,6 +134,7 @@ export default function EquiposViewDivision(props: { titulo: string }) {
         })
         .finally(() => {
           refreshData();
+          setNewVehiculo(new Equipo());
           setLoading(false);
         });
     }
@@ -269,7 +271,11 @@ export default function EquiposViewDivision(props: { titulo: string }) {
       <Flex>
         <FormVaku<Equipo>
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={() => {
+            console.log();
+            setNewVehiculo(new Equipo());
+            onClose();
+          }}
           refreshData={refreshEmpresaVehiculos}
           fieldsToExclude={["id"]}
           model={newVehiculo}

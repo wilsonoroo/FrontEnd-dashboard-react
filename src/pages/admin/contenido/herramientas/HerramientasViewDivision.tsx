@@ -80,7 +80,7 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
   const handleGuardar = (data: Herramienta, resetForm: () => void) => {
     setLoading(true);
 
-    if (data.id === "") {
+    if (!data.id || data.id === "") {
       data.createdAt = dateToTimeStamp(new Date());
       data.updatedAt = dateToTimeStamp(new Date());
       data.isEliminado = false;
@@ -104,6 +104,7 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
         })
         .finally(() => {
           refresh();
+          resetForm();
           setLoading(false);
         });
     } else {
@@ -120,16 +121,16 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
             status: "success",
             isClosable: true,
           });
-          resetForm();
-          onClose();
-          refresh();
         })
         .catch((error: any) => {
           console.error(error);
         })
         .finally(() => {
           refresh();
+          setNewHerramienta(new Herramienta());
           setLoading(false);
+          onClose();
+          resetForm();
         });
     }
   };
@@ -278,7 +279,11 @@ export default function HerramientasViewDivision(props: { titulo: string }) {
       <Flex>
         <FormVaku<Herramienta>
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={() => {
+            console.log();
+            setNewHerramienta(new Herramienta());
+            onClose();
+          }}
           refreshData={refresh}
           fieldsToExclude={["id"]}
           model={newHerramienta}
