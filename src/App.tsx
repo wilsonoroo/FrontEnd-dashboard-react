@@ -15,63 +15,82 @@ import { useContext, useEffect } from "react";
 import Loading from "./components/Loading";
 import { AuthContext } from "./contexts/AuthContextFb";
 import SuperAdminLayout from "./layouts/superAdmin";
+import DtLayout from "./layouts/direccionTrabajo";
 
 export default function App() {
   const authContext = useContext(AuthContext);
   const { currentUser, currentUserAll } = authContext;
-
+ 
   useEffect(() => {}, [currentUser]);
+  console.log(currentUser)
+    return (
+      <AnimatePresence>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Navigate replace={true} to="/auth" />} />
 
-  return (
-    <AnimatePresence>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navigate replace={true} to="/auth" />} />
+            {currentUser?.isSuperAdmin ? (
+              <>
+                <Route
+                  path="/superAdmin/*"
+                  element={
+                    <PrivateRouteDos>
+                      <SuperAdminLayout />
+                    </PrivateRouteDos>
+                  }
+                />
 
-          {currentUser?.isSuperAdmin ? (
-            <>
-              <Route
-                path="/superAdmin/*"
-                element={
-                  <PrivateRouteDos>
-                    <SuperAdminLayout />
-                  </PrivateRouteDos>
-                }
-              />
+                {/* Ruta de redireccionamiento para superAdmin */}
+                <Route
+                  path="/*"
+                  element={<Navigate replace={true} to="/superAdmin" />}
+                />
+              </>
+            ) : currentUser?.isAdmin ? (
+              <>
+                <Route
+                  path="/admin/*"
+                  element={
+                    <PrivateRouteDos>
+                      <AdminLayout />
+                    </PrivateRouteDos>
+                  }
+                />
 
-              {/* Ruta de redireccionamiento para superAdmin */}
-              <Route
-                path="/*"
-                element={<Navigate replace={true} to="/superAdmin" />}
-              />
-            </>
-          ) : currentUser?.isAdmin ? (
-            <>
-              <Route
-                path="/admin/*"
-                element={
-                  <PrivateRouteDos>
-                    <AdminLayout />
-                  </PrivateRouteDos>
-                }
-              />
+                {/* Ruta de redireccionamiento para  superAdmin */}
+                <Route
+                  path="/*"
+                  element={<Navigate replace={true} to="/admin" />}
+                />
+              </>
+            ) : currentUser?.isUserDt ? (
+              <>
+                <Route
+                  path="/userDt/*"
+                  element={
+                    <PrivateRouteDos>
+                      {/* <h1>holaa mundo</h1> */}
+                      <DtLayout />
+                    </PrivateRouteDos>
+                  }
+                />
 
-              {/* Ruta de redireccionamiento para no superAdmin */}
-              <Route
-                path="/*"
-                element={<Navigate replace={true} to="/admin" />}
-              />
-            </>
-          ) : (
-            <></>
-          )}
+                {/* Ruta de redireccionamiento para isUserDt */}
+                <Route
+                  path="/*"
+                  element={<Navigate replace={true} to="/userDt" />}
+                />
+              </>
+            ) : (
+              <></>
+            )}
 
-          <Route path="/auth/*" element={<AuthLayout />} />
-          <Route path="/load" element={<Loading />} />
-        </Routes>
-      </BrowserRouter>
-    </AnimatePresence>
-  );
+            <Route path="/auth/*" element={<AuthLayout />} />
+            <Route path="/load" element={<Loading />} />
+          </Routes>
+        </BrowserRouter>
+      </AnimatePresence>
+    );
 }
 
 const { definePartsStyle, defineMultiStyleConfig } =
