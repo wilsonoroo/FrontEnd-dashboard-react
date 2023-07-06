@@ -181,13 +181,23 @@ const generateCheckboxField = (item: CampoForm) => (
   </>
 );
 
-const generateSwitchField = (item: CampoForm, setFieldValue: any) => (
+const generateSwitchField = (
+  item: CampoForm,
+  setFieldValue: any,
+  value: boolean
+) => (
   <>
-    <FormControl as={SimpleGrid} columns={{ base: 2, lg: 2 }}>
+    <FormControl
+      as={SimpleGrid}
+      columns={{ base: 2, lg: 2 }}
+      alignContent={"center"}
+      h={"100%"}
+    >
       <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
       <Switch
         id={item.field}
         name={item.field}
+        isChecked={value}
         onChange={(e) => {
           setFieldValue(item.field, e.target.checked);
         }}
@@ -306,6 +316,7 @@ export function getItemForm<T extends VakuModel>(
   setFieldValue: (field: string, value: any, shouldValidate?: boolean) => void,
   value: any
 ) {
+  console.log("🚀 ~ file: global.tsx:309 ~ value:", value);
   if (item) {
     switch (item.tipo) {
       case CampoFormKey.FECHA:
@@ -318,6 +329,26 @@ export function getItemForm<T extends VakuModel>(
       case CampoFormKey.NUMBER:
         return generateInputNumberFiels(item, setFieldValue);
       case CampoFormKey.DROPDOWN_V2:
+        let valueFinal;
+        if (item.isMulti) {
+          var result = [];
+          for (var key in value) {
+            if (value.hasOwnProperty(key)) {
+              result.push(value[key]);
+            }
+          }
+          valueFinal = result;
+        } else if (item.single) {
+          valueFinal = item.options.find((option) => {
+            if (option) {
+              return option.nombre === value;
+            } else {
+              return false;
+            }
+          });
+        } else {
+          valueFinal = value;
+        }
         return (
           <>
             <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
@@ -325,6 +356,7 @@ export function getItemForm<T extends VakuModel>(
               isMulti={item?.isMulti}
               id={item.field}
               name={item.field}
+              value={valueFinal}
               selectedOptionStyle="check"
               onChange={(v) => {
                 if (typeof item.onChangeValue !== "undefined") {
@@ -363,16 +395,23 @@ export function getItemForm<T extends VakuModel>(
           </>
         );
       case CampoFormKey.CREATE_SELECT:
+        let valueFinalCreate: any = {
+          label: value,
+          value: value,
+        };
         return (
           <>
             <FormLabel htmlFor={item.field}>{item.display}</FormLabel>
             <CreatableSelect
               isMulti={item?.isMulti}
               id={item.field}
+              value={valueFinalCreate}
               formatCreateLabel={(inputValue) => `Crear ${inputValue}`}
               noOptionsMessage={() => "No hay opciones"}
               name={item.field}
               onChange={(v) => {
+                console.log("🚀 ~ file: global.tsx:396 ~ v:", v);
+
                 if (typeof item.onChangeValue !== "undefined") {
                   if (!item.single) {
                     item.onChangeValue(v);
@@ -427,7 +466,7 @@ export function getItemForm<T extends VakuModel>(
       case CampoFormKey.CHECKBOX:
         return generateCheckboxField(item);
       case CampoFormKey.SWITCH:
-        return generateSwitchField(item, setFieldValue);
+        return generateSwitchField(item, setFieldValue, value);
       case CampoFormKey.FECHA_CUSTOM: {
         return (
           <>
@@ -466,6 +505,7 @@ export function getItemForm<T extends VakuModel>(
         return (
           <PermisosComponents
             item={item}
+            value={value}
             onChange={(permisos) => {
               setFieldValue(item.field, permisos);
             }}
@@ -476,6 +516,7 @@ export function getItemForm<T extends VakuModel>(
         return (
           <PermisosComponentsMovil
             item={item}
+            value={value}
             onChange={(permisos) => {
               setFieldValue(item.field, permisos);
             }}

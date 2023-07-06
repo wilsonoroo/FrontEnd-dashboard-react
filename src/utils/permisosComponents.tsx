@@ -10,10 +10,12 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
+import _ from "lodash";
 import { useEffect, useState } from "react";
 
 type Props = {
   item: any;
+  value: Permiso[];
 };
 
 type Permiso = {
@@ -38,24 +40,28 @@ type PermisoMobile = {
 
 const PermisosComponents = (props: {
   item: any;
+  value: Permiso[];
   onChange: (permisos: Permiso[]) => void;
 }) => {
-  const { item, onChange } = props;
-  let permisosIniciales: Permiso[] = [
+  const { item, onChange, value } = props;
+
+  let permisosIniciales: Permiso[] = value;
+
+  let permisosStandard: Permiso[] = [
     {
       id: "documento",
       nombre: "Documento",
       permisos: {
-        admin: true,
-        visualizar: true,
+        admin: false,
+        visualizar: false,
       },
     },
     {
       id: "planes_de_acción",
       nombre: "Planes de acción",
       permisos: {
-        admin: true,
-        visualizar: true,
+        admin: false,
+        visualizar: false,
       },
     },
     {
@@ -102,26 +108,38 @@ const PermisosComponents = (props: {
       id: "Perfil",
       nombre: "perfil",
       permisos: {
-        admin: true,
-        visualizar: true,
+        admin: false,
+        visualizar: false,
       },
     },
     {
       id: "Dashboard",
       nombre: "dashboard",
       permisos: {
-        admin: true,
-        visualizar: true,
+        admin: false,
+        visualizar: false,
       },
     },
   ];
   let headers: string[] = ["Administración", "Visualización"];
 
-  const [permisos, setPermisos] = useState(permisosIniciales);
+  const [permisos, setPermisos] = useState(permisosStandard);
 
   useEffect(() => {
-    onChange(permisosIniciales);
+    onChange(permisosStandard);
   }, []);
+
+  useEffect(() => {
+    if (value && value.length !== 0) {
+      let result = permisosStandard.map((permiso, index) => {
+        permiso.permisos.admin = value[index].permisos.admin;
+        permiso.permisos.visualizar = value[index].permisos.visualizar;
+        return permiso;
+      });
+
+      setPermisos(result);
+    }
+  }, [value]);
 
   const handleChangeAndSubmit = (
     permisoId: string,
@@ -205,9 +223,10 @@ const PermisosComponents = (props: {
 
 export const PermisosComponentsMovil = (props: {
   item: any;
+  value: PermisoMobile[];
   onChange: (permisos: PermisoMobile[]) => void;
 }) => {
-  const { item, onChange } = props;
+  const { item, onChange, value } = props;
   let permisosIniciales: PermisoMobile[] = [
     {
       id: "creador_is",
@@ -294,6 +313,37 @@ export const PermisosComponentsMovil = (props: {
   let headers: string[] = ["Crear", "Validar"];
 
   const [permisos, setPermisos] = useState(permisosIniciales);
+
+  useEffect(() => {
+    console.log(
+      "🚀 ~ file: permisosComponents.tsx:320 ~ useEffect ~ value:",
+      value
+    );
+    if (value) {
+      let permisoCapture = _.toArray(value);
+      console.log(
+        "🚀 ~ file: permisosComponents.tsx:320 ~ result ~ permisoCapture:",
+        permisoCapture
+      );
+      let result = permisosIniciales.map((permiso, index) => {
+        permisoCapture.find((item) => {
+          if (item.id === permiso.id) {
+            permiso.permisos.crear = item.permisos.crear;
+            permiso.permisos.validar = item.permisos.validar;
+          }
+        });
+        //permiso.permisos.crear = value[permiso.id];
+        //permiso.permisos.validar = value[index].permisos.visualizar;
+        return permiso;
+      });
+      console.log(
+        "🚀 ~ file: permisosComponents.tsx:339 ~ result ~ result:",
+        result
+      );
+
+      setPermisos(result);
+    }
+  }, [value]);
 
   const handleChangeAndSubmit = (
     permisoId: string,

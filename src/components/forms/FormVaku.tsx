@@ -17,7 +17,7 @@ import FormControls from "./FormControls";
 
 import VakuModel from "@/models/Vaku";
 import { getItemForm } from "@/utils/global";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DrawerComponent from "../drawer/DrawerComponent";
 
 interface AgregarFormProps<T> {
@@ -49,11 +49,14 @@ const FormVaku = <T extends VakuModel>({
 AgregarFormProps<T>) => {
   const validationSchema = model.getValidationSchema();
   const camposForm = model.getFormBuilder(options);
+  const [initialValuesState, setInitialValuesState] = useState(initialValues);
 
   const handleSubmitForm = (values: any, resetForm: () => void) => {
     onSubmit(values, resetForm);
   };
-  useEffect(() => {}, [initialValues]);
+  useEffect(() => {
+    setInitialValuesState(initialValues);
+  }, [initialValues]);
 
   return (
     <Formik
@@ -61,7 +64,7 @@ AgregarFormProps<T>) => {
       validateOnChange={false}
       validateOnBlur={false}
       enableReinitialize={true}
-      initialValues={initialValues}
+      initialValues={initialValuesState}
       onSubmit={async (values, { resetForm }) => {
         handleSubmitForm(values, resetForm);
       }}

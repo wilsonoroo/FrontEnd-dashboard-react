@@ -188,7 +188,7 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
       data.nombre = data.displayName;
       data.empresa = currentUserAll.empresa;
       data.empresaId = currentUserAll.empresaId;
-      data.enrolamiento = new Enrolamiento(false);
+
       data.tipo = "usuario_vaku";
 
       empresaUsuarioRepository
@@ -359,6 +359,10 @@ export default function UsuariosViewDivision(props: { titulo: string }) {
                 isLoading={iconLoading[info.row.original.id]}
                 onClick={() => {
                   const select = info.row.original;
+                  console.log(
+                    "🚀 ~ file: UsuariosViewDivision.tsx:362 ~ UsuariosViewDivision ~ select:",
+                    select
+                  );
                   let loadingIc = iconLoading;
                   loadingIc[info.row.original.id] = true;
                   setIconLoading({ ...loadingIc });

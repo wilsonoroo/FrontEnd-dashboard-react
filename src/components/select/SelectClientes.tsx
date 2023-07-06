@@ -11,6 +11,7 @@ type GroupedOption<T> = {
 export type Props<T extends VakuModel> = {
   nombre: string;
   single?: boolean;
+  valueInput?: T;
   onChangeValue?: (newValue: T[] | T) => void;
 } & Omit<
   StateManagerProps<T, false | true, GroupedOption<T>>,
@@ -23,47 +24,6 @@ declare module "node_modules/react-select/dist/declarations/src/Select" {
     Group extends GroupBase<Option>
   > {}
 }
-
-// const SingleValue = ({ children, ...props }: SingleValueProps<MyOption>) => {
-//   return <components.SingleValue {...props}>{children}</components.SingleValue>;
-// };
-
-// const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
-//   const { user } = props.selectProps;
-
-//   return (
-//     <>
-//       <components.Control {...props}>
-//         <Box
-//           py={2}
-//           px={2}
-//           display={"flex"}
-//           justifyContent={"space-between"}
-//           w={"100%"}
-//         >
-//           <>
-
-//             {!Array.isArray(user) && !props.menuIsOpen ? (
-//               <>
-//                 {user.nombre}
-//                 {props.isMulti ?? children}
-
-//                 {/* {children} */}
-//                 {/* <components.ClearIndicator
-//                   {...props}
-//                   {...innerProps}
-//                   isMulti={true}
-//                 /> */}
-//               </>
-//             ) : (
-//               children
-//             )}
-//           </>
-//         </Box>
-//       </components.Control>
-//     </>
-//   );
-// };
 
 export const ValueContainer = (props: any) => {
   return (
@@ -82,6 +42,7 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
     placeholder,
     onChangeValue,
     options,
+    valueInput,
     single = false,
     ...restProps
   } = props;
@@ -161,3 +122,44 @@ const FormikReactSelectClientes = <T extends VakuModel>(props: Props<T>) => {
 };
 
 export default FormikReactSelectClientes;
+
+// const SingleValue = ({ children, ...props }: SingleValueProps<MyOption>) => {
+//   return <components.SingleValue {...props}>{children}</components.SingleValue>;
+// };
+
+// const Control = ({ children, ...props }: ControlProps<MyOption, false>) => {
+//   const { user } = props.selectProps;
+
+//   return (
+//     <>
+//       <components.Control {...props}>
+//         <Box
+//           py={2}
+//           px={2}
+//           display={"flex"}
+//           justifyContent={"space-between"}
+//           w={"100%"}
+//         >
+//           <>
+
+//             {!Array.isArray(user) && !props.menuIsOpen ? (
+//               <>
+//                 {user.nombre}
+//                 {props.isMulti ?? children}
+
+//                 {/* {children} */}
+//                 {/* <components.ClearIndicator
+//                   {...props}
+//                   {...innerProps}
+//                   isMulti={true}
+//                 /> */}
+//               </>
+//             ) : (
+//               children
+//             )}
+//           </>
+//         </Box>
+//       </components.Control>
+//     </>
+//   );
+// };

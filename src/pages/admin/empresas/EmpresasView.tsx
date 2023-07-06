@@ -11,7 +11,7 @@ import { motion } from "framer-motion";
 import { useContext, useEffect } from "react";
 import { MdAdd } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
-import AgregarEmpresa from "./AgregarEmpresa";
+import AgregarEmpresa from "./agregarEmpresa";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },

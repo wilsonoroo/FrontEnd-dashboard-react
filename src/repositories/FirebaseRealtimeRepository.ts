@@ -53,7 +53,7 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
 
   async update(id: string, item: T): Promise<void> {
     let cleanObj = cleanObject({ ...item });
-    await set(this.getDataReference(id), cleanObj);
+    await update(this.getDataReference(id), cleanObj);
   }
 
   async updateObj(id: string, item: any): Promise<void> {
