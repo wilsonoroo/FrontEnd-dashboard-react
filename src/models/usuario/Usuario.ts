@@ -14,6 +14,7 @@ export class UsuarioVaku extends VakuModel {
   cuadrilla: Cuadrilla[];
   isSuperAdmin: boolean;
   isAdmin: boolean;
+  isUserDt: boolean;
 
   dispositivos: Dispositivos[];
   email: string;
