@@ -13,7 +13,6 @@ import { motion } from "framer-motion";
 
 import { HiPlus } from "react-icons/hi2";
 
-import FormVaku from "@/components/forms/FormVaku";
 import empty from "@assets/empty.png";
 import useFetch from "@hooks/useFetch";
 import { useContext, useEffect, useState } from "react";
@@ -27,8 +26,7 @@ import { Gerencia } from "@/models/gerencia/Gerencia";
 import { UsuarioVaku } from "@/models/usuario/Usuario";
 import { FirebaseRealtimeRepository } from "@/repositories/FirebaseRealtimeRepository";
 import { FirestoreRepository } from "@/repositories/FirestoreRepository";
-import { v4 as uuid } from "uuid";
-import DivisionCard from "./components/DivionesCard/DivisionCard";
+import DivisionCardDT from "./DivionesCard/DivisionCardDT";
 
 const container = {
   hidden: { opacity: 1, scale: 0 },
@@ -50,7 +48,7 @@ const itemAnim = {
   },
 };
 
-export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
+export default function DetalleGerenciaUsuarioDT(props: { titulo: string }) {
   const { titulo } = props;
   const isVersionRealtime = import.meta.env.VITE_FIREBASE_DATABASE_URL
     ? true
@@ -93,9 +91,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
     );
 
     divisionEmpresa = new FirebaseRealtimeRepository<Divisiones>(`empresas`);
-    usuariosRepository = new FirebaseRealtimeRepository<UsuarioVaku>(
-      `empresas/${currentUser.empresaId}/usuarios/auth`
-    );
   } else {
     empresaRepository = new FirestoreRepository<Empresa>(`empresas`);
     gerenciaRepository = new FirestoreRepository<Gerencia>(
@@ -143,10 +138,15 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
   const navigate = useNavigate();
   const {
     data: divisiones,
+
     firstLoading,
     refreshData,
     isLoading,
   } = useFetch(() => divisonRepository.getAll(Divisiones));
+  console.log(
+    "🚀 ~ file: DetalleGerenciaUsuarioDT.tsx:141 ~ DetalleGerenciaUsuarioDT ~ divisiones:",
+    divisiones
+  );
 
   const handleClickConfig = (item: any) => {
     navigate("/admin/config/" + idEmpresa + `/${idGerencia}/` + item.id, {
@@ -164,7 +164,7 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
     });
   };
   const handleClickDetalle = (item: any) => {
-    navigate("/admin/" + idEmpresa + `/${idGerencia}/` + item.id, {
+    navigate("/userDt/empresa/" + idEmpresa + `/${idGerencia}/` + item.id, {
       state: {
         empresa: {
           id: empresa.id,
@@ -215,57 +215,12 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
     }
   };
 
-  const handleSaveDivision = async (data: Divisiones) => {
-    setLoading(true);
-    data.displayName = data.nombre;
-    data.createdAt = new Date();
-    data.updatedAt = new Date();
-    const empresa = await divisionEmpresa.get(idEmpresa);
-
-    const idNotNull = uuid();
-    data.id = `${idEmpresa}_${idNotNull}`;
-    divisionEmpresa
-      .add(`${idEmpresa}_${idNotNull}`, {
-        config: empresa.config,
-        correlativo: {
-          prefijo: data.codigo,
-          numeral: 0,
-        },
-        faenas: empresa.faenas,
-        id: `${idEmpresa}_${idNotNull}`,
-        nombre: data.nombre,
-        repositorio: empresa.repositorio,
-        utils: empresa.utils,
-      })
-      .then(() => {
-        divisonRepository
-          .add(`${idEmpresa}_${idNotNull}`, data)
-          .then(() => {
-            toast({
-              title: `Se ha creado la division con éxito `,
-              position: "top",
-              status: "success",
-              isClosable: true,
-            });
-            onClose();
-            refreshData();
-          })
-          .catch((error: any) => {
-            console.error(error);
-          });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-
-    return;
-  };
-
   return (
     <>
       <Headers
         titulo={"División"}
         tituloBajo={`${gerencia?.nombre}`}
+        subtitulo={"En esta sección se especifica los detalles de la gerencia"}
         onOpen={onOpen}
         rutas={[
           {
@@ -273,10 +228,8 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
             url: currentUser?.isSuperAdmin ? `/superAdmin/` : `/admin/`,
           },
           {
-            nombre: `Configuración`,
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
-              : `/admin/config/${idEmpresa}/${idGerencia}`,
+            nombre: `Empresas`,
+            url: "/userDt/empresa",
             state: {
               empresa: {
                 id: empresa?.id,
@@ -290,9 +243,7 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           },
           {
             nombre: `Gerencias`,
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/config`
-              : `/admin/config`,
+            url: `/userDt/empresa/${idEmpresa}`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -302,9 +253,7 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           },
           {
             nombre: `${gerencia?.nombre}`,
-            url: currentUser?.isSuperAdmin
-              ? `/superAdmin/config/${idEmpresa}/${idGerencia}`
-              : `/admin/config/${idEmpresa}/${idGerencia}`,
+            url: `/userDt/empresa/${idEmpresa}/${idGerencia}`,
             state: {
               empresa: {
                 id: empresa?.id,
@@ -313,9 +262,8 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
             },
           },
         ]}
-        showButtonAdd={true}
+        showButtonAdd={false}
         textButton="Agregar División"
-        subtitulo={""}
       />
 
       <Box pt={{ base: "30px", md: "83px", xl: "30px" }}>
@@ -370,12 +318,11 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
               {divisiones.map((item, index) => {
                 return (
                   <motion.div key={index} className="item" variants={itemAnim}>
-                    <DivisionCard
+                    <DivisionCardDT
                       key={item.id + "-" + index}
                       index={index}
                       item={item}
                       division={item}
-                      onClickConfig={handleClickConfig}
                       onClickDetalle={handleClickDetalle}
                       onClick={() => {
                         // handleClick(item);
@@ -415,18 +362,6 @@ export default function DetalleGerenciaAdminConfig(props: { titulo: string }) {
           </VStack>
         )}
       </Box>
-      <FormVaku<Divisiones>
-        isOpen={isOpen}
-        onClose={onClose}
-        refreshData={refreshData}
-        fieldsToExclude={["id", "createdAt", "updatedAt"]}
-        model={newDivision}
-        initialValues={newDivision}
-        onSubmit={handleSaveDivision}
-        loading={loading}
-        size="xl"
-        options={options}
-      />
     </>
   );
 }

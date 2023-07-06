@@ -52,15 +52,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         let userComplete: any;
         if (import.meta.env.VITE_FIREBASE_DATABASE_URL) {
           userSemiComplete = await getUsuarioByUid(user?.uid);
+          let isUserDT = userSemiComplete.isUserDt;
 
-          const empresa = await getLogoEmpresa(userSemiComplete.empresaId);
+          const empresa = await getLogoEmpresa(
+            userSemiComplete.empresaId,
+            isUserDT
+          );
 
           const { divisionId, empresaId, gerenciaId, id, empresaIdGlobal } =
             userSemiComplete;
-
           let userComplete = await getUsuarioV1(id, empresaId);
-
-          userComplete.empresaIdGlobal = empresaIdGlobal;
+          if (!isUserDT) {
+            userComplete = await getUsuarioV1(id, empresaId);
+            userComplete.empresaIdGlobal = empresaIdGlobal;
+          }
 
           setLogoEmpresa(empresa);
           setUserAll(userComplete);

@@ -89,15 +89,19 @@ export const getEmpresaById = async (id) => {
   }
 };
 
-export const getLogoEmpresa = async (id) => {
+export const getLogoEmpresa = async (id, isUserDT = false) => {
   try {
-    const snapshot = await get(
-      child(ref(database), `empresas/${id}/config/logo`)
-    );
-    if (snapshot.exists()) {
-      return snapshot.val();
+    if (!isUserDT) {
+      const snapshot = await get(
+        child(ref(database), `empresas/${id}/config/logo`)
+      );
+      if (snapshot.exists()) {
+        return snapshot.val();
+      } else {
+        return null;
+      }
     } else {
-      return null;
+      return "https://firebasestorage.googleapis.com/v0/b/vaku-89121.appspot.com/o/logo_dt.jpeg?alt=media&token=d36aa2ed-d291-4a6c-a782-2617ca7a3869";
     }
   } catch (err) {
     console.error(err);

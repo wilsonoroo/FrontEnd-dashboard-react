@@ -31,6 +31,7 @@ export class Empresa
   configContenido: string;
   isActive: boolean;
   repositorioVersion: number;
+  versionDataBase: number;
 
   // colleciones
   divisiones: Divisiones[];

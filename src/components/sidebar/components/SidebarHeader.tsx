@@ -60,7 +60,7 @@ export const SidebarHeader: React.FC<SidebarHeaderProps> = ({
     <StyledSidebarHeader {...rest}>
       <div style={{ display: "flex", alignItems: "center" }}>
         <Box>
-          <Image src={url} alt="logo" w={170} />
+          <Image src={url} alt="logo" w={170} maxH={100} />
         </Box>
 
         {/* <StyledLogo rtl={rtl}>V</StyledLogo>

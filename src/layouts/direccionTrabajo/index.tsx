@@ -1,13 +1,12 @@
 // Chakra imports
-import { menuApp } from "@/navigation/menu/menu.admin";
-import { routesAdmin } from "@/navigation/route/route.admin";
+import { menuApp } from "@/navigation/menu/menu.userDT";
 import { Box, Flex } from "@chakra-ui/react";
 // Layout components
 
+import { routesDtUser } from "@/navigation/route/route.dtUser";
 import SidebarContainer from "@components/sidebar/Sidebar";
 import { createBrowserRouter, useRoutes } from "react-router-dom";
 import RouterDt from "./RoutesDt";
-import { routesDtUser } from "@/navigation/route/route.dtUser";
 
 // Custom Chakra theme
 export default function DtLayout(props: { [x: string]: any }) {
@@ -59,7 +58,6 @@ export default function DtLayout(props: { [x: string]: any }) {
                 minH="100vh"
                 pt="50px"
               >
-
                 <RouterDt routes={routesDtUser} />
               </Box>
             }

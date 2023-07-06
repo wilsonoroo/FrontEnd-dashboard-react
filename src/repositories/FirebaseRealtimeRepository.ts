@@ -34,6 +34,20 @@ export class FirebaseRealtimeRepository<T extends VakuModel>
     return values;
   }
 
+  async getAllById(id: string, factory: new () => T): Promise<T[]> {
+    console.log(this.getDataReference(id).toString());
+    const snapshot = await get(this.getDataReference(id));
+    const values: T[] = [];
+
+    snapshot.forEach((child: DataSnapshot) => {
+      const value = new factory();
+
+      Object.assign(value, child.val());
+      values.push(value);
+    });
+    return values;
+  }
+
   async get(id: string): Promise<T | null> {
     const snapshot = await get(this.getDataReference(id));
     return snapshot.exists() ? (snapshot.val() as T) : null;

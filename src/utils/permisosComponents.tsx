@@ -132,8 +132,8 @@ const PermisosComponents = (props: {
   useEffect(() => {
     if (value && value.length !== 0) {
       let result = permisosStandard.map((permiso, index) => {
-        permiso.permisos.admin = value[index].permisos.admin;
-        permiso.permisos.visualizar = value[index].permisos.visualizar;
+        permiso.permisos.admin = value[index]?.permisos?.admin;
+        permiso.permisos.visualizar = value[index]?.permisos?.visualizar;
         return permiso;
       });
 
@@ -325,11 +325,11 @@ export const PermisosComponentsMovil = (props: {
         "🚀 ~ file: permisosComponents.tsx:320 ~ result ~ permisoCapture:",
         permisoCapture
       );
-      let result = permisosIniciales.map((permiso, index) => {
+      let result = permisosIniciales.map((permiso) => {
         permisoCapture.find((item) => {
           if (item.id === permiso.id) {
-            permiso.permisos.crear = item.permisos.crear;
-            permiso.permisos.validar = item.permisos.validar;
+            permiso.permisos.crear = item?.permisos?.crear;
+            permiso.permisos.validar = item?.permisos?.validar;
           }
         });
         //permiso.permisos.crear = value[permiso.id];
