@@ -6,6 +6,10 @@ import ContenidoDocs from "@/pages/admin/contenido/ContenidoDocs";
 import DocumentosViewV1 from "@/pages/admin/contenido/documentos/DocumentosViewV1";
 import EmpresasView from "@/pages/admin/empresas/EmpresasView";
 import LogOutview from "@/pages/admin/logOut/LogOutview";
+// import {App} from "@/components/dashboard/LineChart"
+// import {App} from "@/components/dashboard/BarChart"
+// import {App} from "@/components/dashboard/PieChart"
+import {App} from "@/components/dashboard/index"
 import { RouterJson } from "../model";
 
 export const routesAdmin: RouterJson[] = [
@@ -13,6 +17,12 @@ export const routesAdmin: RouterJson[] = [
     path: "/",
     element: <DetalleEmpresaAdminConfig titulo={"Gerencias"} />,
     name: "Empresas",
+  },
+
+  {
+    path: "/dashboard",
+    element: <App/>,
+    name: "Dashboard",
   },
   {
     path: "/admin",
