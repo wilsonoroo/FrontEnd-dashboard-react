@@ -81,7 +81,7 @@ export const App = () => {
   return (
     <Box bg="white" p={4} borderRadius="md" boxShadow="md">
 
-      <Flex mb={2}   p={2} borderRadius="md" boxShadow="md" >
+      <Flex mb={2} p={0} borderRadius="md" boxShadow="md" >
         <ScrollCards data={data} />
       </Flex>
       <Box  height="calc(100vh - 64px)">   

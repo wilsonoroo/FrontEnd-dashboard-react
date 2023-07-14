@@ -35,10 +35,10 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
   const showNextArrow = currentSlide < data.length - 4;
 
   return (
-    <Box bg="black" w="100%" h="200px" display="flex" flexDirection="row" justifyContent="center" position="relative">
+    <Box borderRadius="lg" bg="white" w="100%" h="200px" display="flex" flexDirection="row" justifyContent="center" position="relative">
       {showPrevArrow && (
         <IconButton
-          icon={<ChevronLeftIcon />}
+          // w="40px"
           aria-label="Previous"
           onClick={handlePrevSlide}
           position="absolute"
@@ -47,10 +47,12 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
           transform="translateY(-50%)"
           zIndex="1"
           borderRadius="50%"
-          // bg="transparent"
-          // _hover={{ bg: "transparent" }}
-          bg="blue"
-          _hover={{ bg: "blue" }}
+          bg="white"
+          color="black"
+          // border="2px solid white"
+          boxShadow="0 2px 4px 0 rgba(0, 0, 0, 0.2)"
+          _hover={{ bg: "gray.100" }}
+          icon={<ChevronLeftIcon boxSize={6}/>}
         />
       )}
 
@@ -68,13 +70,23 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
               section3: { text: item.section3, counter: item.counter1 },
             }}
           />
-          {index !== visibleData.length - 1 && <Divider orientation="vertical" mx={0} />}
+          {index !== visibleData.length - 1 && (
+            <Divider
+              orientation="vertical"
+              mx={0}
+              borderWidth="1px"
+              height="140px"
+              borderColor="black"
+              alignSelf="center"
+              
+            />
+          )}
         </React.Fragment>
       ))}
 
       {showNextArrow && (
         <IconButton
-          icon={<ChevronRightIcon />}
+          // w="40px"
           aria-label="Next"
           onClick={handleNextSlide}
           position="absolute"
@@ -83,11 +95,12 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
           transform="translateY(-50%)"
           zIndex="1"
           borderRadius="50%"
-          // bg="transparent"
-          bg="blue"
-          _hover={{ bg: "blue" }}
-          // _hover={{ bg: "transparent" }}
-          
+          bg="white"
+          color="black"
+          // border="2px solid white"
+          boxShadow="0 2px 4px 0 rgba(0, 0, 0, 0.2)"
+          _hover={{ bg: "gray.100" }}
+          icon={<ChevronRightIcon boxSize={6}/>}
         />
       )}
     </Box>
