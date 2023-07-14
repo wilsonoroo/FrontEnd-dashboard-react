@@ -20,17 +20,17 @@ export const App = () => {
       counter2: 20,
       counter3: 30,
     },
-    // {
-    //   id: '2',
-    //   title: 'Título 2',
-    //   description: 'Descripción 2',
-    //   section1: 'Sección 1',
-    //   section2: 'Sección 2',
-    //   section3: 'Sección 3',
-    //   counter1: 40,
-    //   counter2: 50,
-    //   counter3: 60,
-    // },
+    {
+      id: '2',
+      title: 'Título 2',
+      description: 'Descripción 2',
+      section1: 'Sección 1',
+      section2: 'Sección 2',
+      section3: 'Sección 3',
+      counter1: 40,
+      counter2: 50,
+      counter3: 60,
+    },
     {
       id: '3',
       title: 'Título 3',
@@ -64,12 +64,24 @@ export const App = () => {
       counter2: 140,
       counter3: 150,
     },
+    {
+      id: '6',
+      title: 'Título 6',
+      description: 'Descripción 6',
+      section1: 'Sección 1',
+      section2: 'Sección 2',
+      section3: 'Sección 3',
+      counter1: 130,
+      counter2: 140,
+      counter3: 150,
+    },
   ];
   
 
   return (
     <Box bg="white" p={4} borderRadius="md" boxShadow="md">
-      <Flex mb={2} bg="gray"  p={2} borderRadius="md" boxShadow="md" justifyContent="center" alignItems="center">
+
+      <Flex mb={2}   p={2} borderRadius="md" boxShadow="md" >
         <ScrollCards data={data} />
       </Flex>
       <Box  height="calc(100vh - 64px)">   

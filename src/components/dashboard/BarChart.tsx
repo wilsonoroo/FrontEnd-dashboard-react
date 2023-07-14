@@ -9,10 +9,15 @@ export const options = {
   plugins: {
     legend: {
       position: 'top',
+      align: 'end', // Alinea los labels a la derecha
+      labels: {
+        usePointStyle: true, // Utiliza estilo de punto en lugar de rectángulo
+        // padding: 20, // Ajusta el margen superior
+      },
     },
     title: {
       display: true,
-      text: 'Chart.js Bar Chart',
+      // text: 'Chart.js Bar Chart',
     },
   },
 } as const;

@@ -27,11 +27,13 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ title, description, bottomDescription, boxProps, textProps }) => {
   return (
     <Box
+      mt={2}
+      mb={2}
       maxW="sm"
       borderWidth="1px"
-    //   borderRadius="lg"
+      borderRadius="lg"
       overflow="hidden"
-      p={1}
+      p={0}
       shadow="md"
       bg="white"
       w={400}
