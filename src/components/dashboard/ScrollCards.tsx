@@ -6,7 +6,10 @@ import TotalCard from './TotalCard';
 interface Data {
   id: string;
   title: string;
-  description: string;
+  description: {
+    text: string;
+    counter: number;
+  };
   section1: string;
   section2: string;
   section3: string;
@@ -61,8 +64,8 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
           <TotalCard
             title={item.title}
             description={{
-              text: item.description,
-              counter: item.counter1,
+              text: item.description.text,
+              counter: item.description.counter,
             }}
             bottomDescription={{
               section1: { text: item.section1, counter: item.counter2 },

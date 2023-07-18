@@ -36,7 +36,7 @@ export const data = {
 export function PieChart() {
   return (
     <div 
-     style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80%' }}
+     style={{  display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '80%' }}
     >
       <Pie data={data} />
     </div>

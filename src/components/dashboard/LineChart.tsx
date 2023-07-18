@@ -10,10 +10,13 @@ export const options = {
   plugins: {
     legend: {
       position: 'top',
+      labels: {
+        usePointStyle: true, 
+      },
     },
     title: {
       display: true,
-      text: 'Chart.js Line Chart',
+      // text: 'Chart.js Line Chart',
     },
   },
 } as const;
