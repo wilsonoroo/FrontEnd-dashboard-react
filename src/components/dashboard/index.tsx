@@ -6,7 +6,10 @@ import { LineChart}  from './LineChart';
 // import TotalCard from './TotalCard';
 import ScrollCards from './ScrollCards';
 import StatsUsers from './StatsUsers';
-import icon from "./icon.svg"
+import herramientas from "./icon/herramientas_de_mano.svg"
+import icon from "./icon/icono hombre.svg"
+import iconDoc from "./icon/icono instructivo de seguridad.svg"
+import iconVehiculo from "./icon/icono vehículo liviano 1.svg"
 
 export const App = () => {
 
@@ -27,7 +30,7 @@ export const App = () => {
     },
     {
       id: '2',
-      title: 'Título 2',
+      title: iconDoc,
       description: {
         text: 'Descripción 2',
         counter: 210,
@@ -41,7 +44,7 @@ export const App = () => {
     },
     {
       id: '3',
-      title: 'Título 3',
+      title: herramientas,
       description: {
         text: 'Descripción 3',
         counter: 310,
@@ -55,7 +58,7 @@ export const App = () => {
     },
     {
       id: '4',
-      title: 'Título 4',
+      title: iconVehiculo,
       description: {
         text: 'Descripción 4',
         counter: 410,
