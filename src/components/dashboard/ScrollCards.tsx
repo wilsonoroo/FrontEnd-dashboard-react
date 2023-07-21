@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Box, Divider, IconButton } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import TotalCard from './TotalCard';
+import icon from "./icon.svg"
 
 interface Data {
   id: string;
@@ -63,6 +64,7 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
         <React.Fragment key={item.id}>
           <TotalCard
             title={item.title}
+            // title={icon}
             description={{
               text: item.description.text,
               counter: item.description.counter,

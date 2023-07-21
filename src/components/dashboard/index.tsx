@@ -1,18 +1,19 @@
 import React from 'react';
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { BarChart } from '@/components/dashboard/BarChart';
 import { PieChart } from './PieChart';
-import { LineChart } from './LineChart';
+import { LineChart}  from './LineChart';
 // import TotalCard from './TotalCard';
 import ScrollCards from './ScrollCards';
 import StatsUsers from './StatsUsers';
+import icon from "./icon.svg"
 
 export const App = () => {
 
-  const data = [
+  const data2 = [
     {
       id: '1',
-      title: 'Título 1',
+      title: icon,
       description: {
         text: 'Descripción 1',
         counter: 110,
@@ -98,44 +99,69 @@ export const App = () => {
 
   const data1 = [
     {
-      nivel: 'Nivel 1',
+      nivel: 'Nivel 0',
       descripcion: 'Administra la cuenta de la empresa',
       activosDisponibles: 15,
     },
     {
-      nivel: 'Nivel 2',
-      descripcion: 'Realiza tareas de soporte técnico',
+      nivel: 'Nivel 1',
+      descripcion: 'Asigna y gestiona la información',
       activosDisponibles: 10,
     },
     {
-      nivel: 'Nivel 3',
-      descripcion: 'Maneja la logística de envíos',
+      nivel: 'Nivel 2',
+      descripcion: 'Validadores de documentos',
       activosDisponibles: 8,
     },
     {
-      nivel: 'Nivel 4',
-      descripcion: 'Desarrolla nuevas funcionalidades',
+      nivel: 'Nivel 3',
+      descripcion: 'Elabora y participa en documentos',
       activosDisponibles: 5,
     },
     {
-      nivel: 'Nivel 5',
+      nivel: 'Nivel 4',
       descripcion: 'Lidera el equipo de desarrollo',
       activosDisponibles: 3,
     },
-    {
-      nivel: 'Nivel 6',
-      descripcion: 'Toma decisiones estratégicas',
-      activosDisponibles: 2,
-    },
+   
   ];
   
+  // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
+  // const dataset1Data = [200, 350, 400, 600, 800, 700, 900];
+  // const dataset2Data = [100, 200, 50, 400, 300, 250, 150];
+  // const dataset3Data = [400, 550, 700, 300, 600, 500, 800];
+
+  // const data = {
+  //   labels,
+  //   datasets: [
+  //     {
+  //       label: 'Abiertos',
+  //       data: dataset1Data,
+  //       borderColor: '#0B79F4',
+  //       backgroundColor: '#0B79F4',
+  //     },
+  //     {
+  //       label: 'Cerradas',
+  //       data: dataset2Data,
+  //       borderColor: '#89FF00',
+  //       backgroundColor: '#89FF00',
+  //     },
+  //     {
+  //       label: 'En Mora',
+  //       data: dataset3Data,
+  //       borderColor: '#FF2200',
+  //       backgroundColor: '#FF2200',
+  //     },
+  //   ],
+  // };
   
 
   return (
     <Box bg="white" p={4} borderRadius="md" boxShadow="md">
+      
 
       <Flex mb={2} p={0} borderRadius="md" boxShadow="md" >
-        <ScrollCards data={data} />
+        <ScrollCards data={data2} />
       </Flex>
       <Box  >  
       {/* <Box  height="calc(100vh - 64px)">    */}
@@ -158,7 +184,7 @@ export const App = () => {
 
           <Box gridRow="2" gridColumn="2" bg="white" borderRadius="md" boxShadow="md" p={4}>
             <Text fontSize="xl" fontWeight="bold" mb={4}>Line Chart</Text>
-            <LineChart />
+            <LineChart  />
           </Box>
 
         </Box>

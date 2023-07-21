@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 import { Line } from 'react-chartjs-2';
+import Select from 'react-select';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -11,7 +12,7 @@ export const options = {
     legend: {
       position: 'top',
       labels: {
-        usePointStyle: true, 
+        usePointStyle: true,
       },
     },
     title: {
@@ -52,18 +53,44 @@ export const data = {
   ],
 };
 
+const optionsMonths = labels.map((month) => ({ value: month, label: month }));
+
 export function LineChart() {
+  const [selectedMonths, setSelectedMonths] = useState([]); // Estados para almacenar los meses seleccionados
+
+  const handleMonthChange = (selectedOptions) => {
+    setSelectedMonths(selectedOptions);
+  };
+
+  // Filtrar los datos según el rango de meses seleccionado o mostrar todos los datos si no hay selección
+  const filteredData = {
+    labels,
+    datasets: data.datasets.map((dataset) => ({
+      ...dataset,
+      data: selectedMonths.length === 0
+        ? dataset.data // Si no hay meses seleccionados, mostrar todos los datos
+        : dataset.data.filter((_, index) => {
+            const month = labels[index];
+            return selectedMonths.some((opt) => opt.value === month);
+          }),
+    })),
+  };
+
   return (
-    <div
-      style={{
-        // position: 'absolute',
-        bottom: '0',
-        right: '0',
-        width: '100%',
-        height: '80%',
-      }}
-    >
-      <Line options={options} data={data} />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <div style={{ width: '50%', marginBottom: '20px' }}>
+        <label htmlFor="months">Selecciona el rango de meses a comparar:</label>
+        <Select
+          id="months"
+          isMulti
+          options={optionsMonths}
+          value={selectedMonths}
+          onChange={handleMonthChange}
+        />
+      </div>
+      <div style={{ width: '80%', height: '300px' }}>
+        <Line options={options} data={filteredData} />
+      </div>
     </div>
   );
 }

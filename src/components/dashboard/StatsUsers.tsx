@@ -13,10 +13,11 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
   const getColorForLevel = (nivel: string) => {
     // Define the color mapping for each level
     const colorMap: { [key: string]: string } = {
-      "Nivel 1": 'blue',
-      "Nivel 2": 'green',
-      "Nivel 3": 'yellow',
-      "Nivel 4": 'red',
+      "Nivel 0": '#FFD600',
+      "Nivel 1": '#c705b5',
+      "Nivel 2": '#89FF00',
+      "Nivel 3": '#0B79F4',
+      "Nivel 4": '#003560',
     };
 
     return colorMap[nivel] || 'gray';
