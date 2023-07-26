@@ -108,13 +108,13 @@ const dataJson: DataJson = {
         "cant": 50,
         "tipo": {
           "IS": {
-            "cant": 25
+            "cant": 1
           },
           "LV": {
-            "cant": 15
+            "cant": 2
           },
           "C5": {
-            "cant": 10
+            "cant": 3
           }
         },
         "turno": {
@@ -130,7 +130,7 @@ const dataJson: DataJson = {
         "cant": 50,
         "tipo": {
           "IS": {
-            "cant": 30
+            "cant": 4
           },
           "LV": {
             "cant": 15
@@ -186,13 +186,13 @@ const dataJson: DataJson = {
         "cant": 40,
         "tipo": {
           "IS": {
-            "cant": 18
+            "cant": 4
           },
           "LV": {
-            "cant": 10
+            "cant": 5
           },
           "C5": {
-            "cant": 12
+            "cant": 6
           }
         },
         "turno": {
@@ -463,6 +463,10 @@ export function StackedBar() {
   //   };
   // });
 
+  interface DocumentDataByDate {
+    [key: string]: DataItem;
+  }
+  
   const fetchDocumentData = (startDateString:any, endDateString:any) => {
     const filteredDates = Object.keys(dataJson).filter((date) => {
       return date >= startDateString && date <= endDateString;
@@ -479,25 +483,28 @@ export function StackedBar() {
     return documentDataByDate;
   };
  
+  const fetchDivisionData = (division: string, startDateString: string, endDateString: string) => {
+    const filteredDates = Object.keys(dataJson).filter((date) => {
+      return date >= startDateString && date <= endDateString;
+    });
+  
+    // Creamos un objeto para almacenar los datos de la división por fecha
+    const divisionDataByDate = {};
+  
+    // Iteramos a través de las fechas filtradas y recopilamos los datos
+    filteredDates.forEach((date) => {
+      divisionDataByDate[date] = dataJson[date]?.division[division];
+    });
+  
+    return divisionDataByDate;
+  };
 
   const handleC = (values: PieC) => {
     const { desde, hasta, filtroDivision, filtroDocumento } = values;
   
     const startDateString = desde instanceof Date ? formatDateToISO(desde) : desde;
     const endDateString = hasta instanceof Date ? formatDateToISO(hasta) : hasta;
-  
-    // // console.log(startDateString, endDateString)
-    // updateDates(startDateString, endDateString);   
-
-    // const filteredDates = Object.keys(dataJson).filter((date) => {
-    //   return date >= startDateString && date <= endDateString;
-    // });  
-
-    // // Llama a la función getDocumentData() para obtener los datos
-    // // const documentData = getDocumentData();
-
-    // console.log(filteredDates)
-  
+    
     if (filtroDivision === 'documentosT') {
       // Obtener los datos de los documentos según el rango de fechas seleccionado
       const documentDataByDate = fetchDocumentData(startDateString, endDateString);
@@ -515,9 +522,24 @@ export function StackedBar() {
         labels: labels,
         datasets: datasets,
       });
+      console.log(labels,datasets)
     } else {
-      // Código para manejar otros filtros de divisiones si es necesario
-      // ...
+      // Obtener los datos para la división seleccionada según el rango de fechas
+      const divisionDataByDate = fetchDivisionData(filtroDivision, startDateString, endDateString);
+
+      // Crear las listas de fechas y cantidades para el gráfico
+      const labels = Object.keys(divisionDataByDate);
+      const datasets = Object.keys(divisionDataByDate[labels[0]]?.tipo || {}).map((docType) => ({
+        label: docType,
+        data: labels.map((date) => divisionDataByDate[date]?.tipo[docType]?.cant || 0),
+        backgroundColor: getRandomColor(),
+      }));
+
+      // Actualizar el estado de chartData con los nuevos datos
+      setChartData({
+        labels: labels,
+        datasets: datasets,
+      });
     }
   
     onClose();
