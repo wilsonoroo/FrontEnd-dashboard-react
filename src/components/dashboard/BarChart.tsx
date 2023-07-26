@@ -1,59 +1,155 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import Select from 'react-select';
+import { BsFilter } from 'react-icons/bs';
+import { IconButton, useDisclosure } from '@chakra-ui/react';
+import FormVaku from '../forms/FormVaku';
+import { BarC } from "../../models/graficos/BarChar"
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const dataJson = {
-  "1": {
+const dataJson= {
+  "2023-01-01": {
     "documento": {
-      "tipo": {
-        "IS": {
-          "cantidad": "10"
+      "IS": {
+        "cant": 21
+      },
+      "LV": {
+        "cant": 22
+      },
+      "C5": {
+        "cant": 22
+      }
+    },
+    "turno": {
+      "turnoNoche": {
+        "tipo": {
+          "is": {
+            "cant": 21
+          },
+          "lv": {
+            "cant": 52
+          },
+          "c5": {
+            "cant": 1
+          }
         },
-        "LV": {
-          "cantidad": "12"
+        "cant": 74
+      },
+      "turnoDia": {
+        "cant": 25
+      }
+    },
+    "division": {
+      "division1": {
+        "cant": 50,
+        "tipo": {
+          "is": {
+            "cant": 25
+          },
+          "lv": {
+            "cant": 15
+          },
+          "c5": {
+            "cant": 10
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 20
+          },
+          "turnoDia": {
+            "cant": 30
+          }
         }
       },
-      "cantidad": "22"
-    },
-    "otro": {}
+      "division2": {}
+    }
   },
-  "2": {
+  "2023-01-02": {
     "documento": {
-      "tipo": {
+      "IS": {
+        "cant": 12
+      },
+      "LV": {
+        "cant": 35
+      },
+      "C5": {
+        "cant": 5
+      }
+    },
+    "turno": {
+      "turnoNoche": {
         "IS": {
-          "cantidad": "30"
+          "cant": 8
         },
         "LV": {
-          "cantidad": "12"
+          "cant": 10
+        },
+        "C5": {
+          "cant": 4
+        },
+        "cant": 22
+      },
+      "turnoDia": {
+        "cant": 30
+      }
+    },
+    "division": {
+      "division1": {
+        "cant": 40,
+        "tipo": {
+          "IS": {
+            "cant": 18
+          },
+          "LV": {
+            "cant": 10
+          },
+          "C5": {
+            "cant": 12
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 15
+          },
+          "turnoDia": {
+            "cant": 25
+          }
         }
       },
-      "cantidad": "42"
-    },
-    "otro": {}
+      "division2": {
+        "cant": 20,
+        "tipo": {
+          "IS": {
+            "cant": 8
+          },
+          "LV": {
+            "cant": 5
+          },
+          "C5": {
+            "cant": 7
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 10
+          },
+          "turnoDia": {
+            "cant": 10
+          }
+        }
+      }
+    }
   },
-  "3": {
-    "documento": {
-      "tipo": {
-        "IS": {
-          "cantidad": "55"
-        },
-        "LV": {
-          "cantidad": "12"
-        }
-      },
-      "cantidad": "67"
-    },
-    "otro": {}
-  }
-};
+  
+}
 
-const getDatasetsFromJson = (json, selectedItems) => {
+const getDatasetsFromJson = (dataJson, selectedItems) => {
   const datasets = [];
   const labels = [];
-  
+
   // Separate dataset for "Documento" bar
   const documentoDataset = {
     label: 'Documento',
@@ -62,15 +158,15 @@ const getDatasetsFromJson = (json, selectedItems) => {
   };
 
   selectedItems.forEach((selectedItem) => {
-    const data = json[selectedItem];
+    const data = dataJson[selectedItem];
     labels.push(selectedItem);
 
-    const documentoTotal = parseInt(data.documento.cantidad);
+    const documentoTotal = data.documento.IS.cant + data.documento.LV.cant + data.documento.C5.cant;
     documentoDataset.data.push(documentoTotal);
 
-    const tipos = data.documento.tipo;
+    const tipos = data.documento;
     Object.keys(tipos).forEach((tipoKey) => {
-      const cantidad = parseInt(tipos[tipoKey].cantidad);
+      const cantidad = tipos[tipoKey].cant;
       const datasetIndex = datasets.findIndex((dataset) => dataset.label === tipoKey);
       if (datasetIndex === -1) {
         datasets.push({
@@ -92,40 +188,80 @@ const getDatasetsFromJson = (json, selectedItems) => {
 
 export function BarChart() {
   const allItems = Object.keys(dataJson);
-  const [selectedItems, setSelectedItems] = useState(allItems);
-
-  const handleFilterChange = (selectedOptions) => {
-    const selectedItems = selectedOptions.map((option) => option.value);
-    setSelectedItems(selectedItems);
-  };
-
-  const { datasets, labels } = getDatasetsFromJson(dataJson, selectedItems);
+  const { datasets, labels } = getDatasetsFromJson(dataJson, allItems);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [loading, setLoading] = useState(false);
+  const newC = new BarC();
+  const [barC, setBarC] = useState<BarC>(newC);
+  const [options, setOptions] = useState({
+    filtro: [
+      { nombre: "documento", displayName: "Documento" },
+      { nombre: "turno", displayName: "Turno" },   
+      { nombre: "division", displayName: "Division" },    
+    ],
+  });
+  useEffect(() => {
+    setOptions({
+      filtro: [
+        { nombre: "documento", displayName: "Documento" },
+        { nombre: "turno", displayName: "Turno" },   
+        { nombre: "division", displayName: "Division" },    
+      ],      
+    });
+  }, []);
 
   const data = {
     labels,
     datasets,
   };
 
-  const options = allItems.map((item) => ({
-    value: item,
-    label: item,
-  }));
+  const handleC = (values: BarC) => {
+    // const { desde, hasta } = values;
+
+    // const startDateString = desde instanceof Date ? desde.toISOString() : desde;
+    // const endDateString = hasta instanceof Date ? hasta.toISOString() : hasta;
+
+    // setStartDate(startDateString);
+    // setEndDate(endDateString);
+
+
+    // onClose();}
+    console.log("gg")
+  };
 
   return (
-    <div>
-      {/* Filter Select */}
-      <Select
-        isMulti
-        options={options}
-        value={options.filter((option) => selectedItems.includes(option.value))}
-        onChange={handleFilterChange}
-        styles={{ container: (provided) => ({ ...provided, marginBottom: '10px' }) }}
-      />
-
-      {/* Chart */}
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', top: '0', left: '0', width: '100%', height: '80%' }}>
+    <>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ marginRight: '10px' }}>
+          <IconButton
+            aria-label="Filter"
+            icon={<BsFilter size={24} color="gray" />}
+            onClick={() => {
+              onOpen();
+            }}
+          />
+        </div>
+      </div>
+    
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px', width: '100%', height: '80%' }}>
         <Bar data={data} />
       </div>
-    </div>
+
+      <FormVaku<BarC>
+        titulo={"Filter"}
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+        }}
+        fieldsToExclude={["id"]}
+        model={barC}
+        initialValues={barC} // Pasamos startDate y endDate aquí
+        onSubmit={handleC}
+        loading={loading}
+        options={options}
+        size="xl"
+        grid={{ base: 1, md: 2 }}
+      />
+    </>
   );
 }

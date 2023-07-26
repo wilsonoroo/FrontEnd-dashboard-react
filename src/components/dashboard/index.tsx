@@ -10,6 +10,7 @@ import herramientas from "./icon/herramientas_de_mano.svg"
 import icon from "./icon/icono hombre.svg"
 import iconDoc from "./icon/icono instructivo de seguridad.svg"
 import iconVehiculo from "./icon/icono vehículo liviano 1.svg"
+import { StackedBar } from './StackedBar';
 
 export const App = () => {
 
@@ -129,34 +130,9 @@ export const App = () => {
    
   ];
   
-  // const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-  // const dataset1Data = [200, 350, 400, 600, 800, 700, 900];
-  // const dataset2Data = [100, 200, 50, 400, 300, 250, 150];
-  // const dataset3Data = [400, 550, 700, 300, 600, 500, 800];
 
-  // const data = {
-  //   labels,
-  //   datasets: [
-  //     {
-  //       label: 'Abiertos',
-  //       data: dataset1Data,
-  //       borderColor: '#0B79F4',
-  //       backgroundColor: '#0B79F4',
-  //     },
-  //     {
-  //       label: 'Cerradas',
-  //       data: dataset2Data,
-  //       borderColor: '#89FF00',
-  //       backgroundColor: '#89FF00',
-  //     },
-  //     {
-  //       label: 'En Mora',
-  //       data: dataset3Data,
-  //       borderColor: '#FF2200',
-  //       backgroundColor: '#FF2200',
-  //     },
-  //   ],
-  // };
+  const startDate = '2023-01-01';
+  const endDate = '2023-01-02';
   
 
   return (
@@ -177,12 +153,12 @@ export const App = () => {
 
           <Box gridRow="1" gridColumn="1" bg="white" borderRadius="md" boxShadow="md" p={4}>
             <Text fontSize="xl" fontWeight="bold" mb={4}>Bar Chart</Text>
-            <BarChart />
+            <StackedBar />
           </Box>
 
           <Box gridRow="2" gridColumn="1" bg="white" borderRadius="md" boxShadow="md" p={4}>
             <Text fontSize="xl" fontWeight="bold" mb={4}>Pie Chart</Text>
-            <PieChart />
+            <PieChart  />
           </Box>
 
           <Box gridRow="2" gridColumn="2" bg="white" borderRadius="md" boxShadow="md" p={4}>

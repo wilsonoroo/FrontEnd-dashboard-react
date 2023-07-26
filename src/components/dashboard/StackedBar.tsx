@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
-import { BsFilter } from 'react-icons/bs';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import { IconButton, useDisclosure } from '@chakra-ui/react';
+import { BsFilter } from 'react-icons/bs';
 import FormVaku from '../forms/FormVaku';
-import { PieC } from "../../models/graficos/PieChar"
-import useFilter from './useFilter'; // Importamos el custom hook
+import { PieC } from '@/models/graficos/PieChar';
+import useFilter from './useFilter';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
 
 interface DataItem {
   documento: {
@@ -52,9 +68,8 @@ interface DataJson {
   [key: string]: DataItem;
 }
 
-
 const dataJson: DataJson = {
-  "2023-07-25": {
+  "2023-07-24": {
     "documento": {
       "IS": {
         "cant": 21
@@ -135,7 +150,85 @@ const dataJson: DataJson = {
       },
     }
   },
-  "2023-07-24": {
+  "2023-07-25": {
+    "documento": {
+      "IS": {
+        "cant": 12
+      },
+      "LV": {
+        "cant": 35
+      },
+      "C5": {
+        "cant": 5
+      }
+    },
+    "turno": {
+      "turnoNoche": {
+        "tipo": {
+          "IS": {
+            "cant": 21
+          },
+          "LV": {
+            "cant": 52
+          },
+          "C5": {
+            "cant": 1
+          }
+        },
+        "cant": 74
+      },
+      "turnoDia": {
+        "cant": 25
+      }
+    },
+    "division": {
+      "division1": {
+        "cant": 40,
+        "tipo": {
+          "IS": {
+            "cant": 18
+          },
+          "LV": {
+            "cant": 10
+          },
+          "C5": {
+            "cant": 12
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 15
+          },
+          "turnoDia": {
+            "cant": 25
+          }
+        }
+      },
+      "division2": {
+        "cant": 20,
+        "tipo": {
+          "IS": {
+            "cant": 8
+          },
+          "LV": {
+            "cant": 5
+          },
+          "C5": {
+            "cant": 7
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 10
+          },
+          "turnoDia": {
+            "cant": 10
+          }
+        }
+      }
+    }
+  },
+  "2023-07-26": {
     "documento": {
       "IS": {
         "cant": 12
@@ -214,8 +307,46 @@ const dataJson: DataJson = {
     }
   },
   
+  
 }
 
+// interface CustomChartData {
+//   labels: string[];
+//   datasets: {
+//     label: string;
+//     data: number[];
+//     backgroundColor: string;
+//   }[];
+// }
+
+// Function to generate a random color in hexadecimal format
+const getRandomColor = () => {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
+
+
+export const opt = {
+  // plugins: {
+  //   title: {
+  //     display: true,
+  //     text: '',
+  //   },
+  // },
+  responsive: true,
+  scales: {
+    x: {
+      stacked: true,
+    },
+    y: {
+      stacked: true,
+    },
+  },
+};
 const getUniqueDivisions = (data: DataJson): string[] => {
   const uniqueDivisions: string[] = [];
 
@@ -238,19 +369,14 @@ const getMinMaxDates = () => {
   return { minDate, maxDate };
 };
 
-export function PieChart() {
+export function StackedBar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const newC = new PieC();
   const [pieC, setPieC] = useState<PieC>(newC);
-  // const [pieChartData, setPieChartData] = useState<any>(chartData); 
 
   const [options, setOptions] = useState({
-    // filtroDocumento: [
-    //   { nombre: "is", displayName: "IS" },
-    //   { nombre: "lv", displayName: "LV" },   
-    //   { nombre: "c5", displayName: "C5" },    
-    // ],
+
     filtroDivision: [
       { nombre: "division1", displayName: "Division 1" },
       { nombre: "division2", displayName: "Division 2" },   
@@ -265,11 +391,7 @@ export function PieChart() {
     const opcionesConNuevaDivision = [nuevaDivision, ...divisionesUnicas.map((division) => ({ nombre: division, displayName: division }))];
 
     setOptions({
-      // filtroDocumento: [
-      //   { nombre: "is", displayName: "IS" },
-      //   { nombre: "lv", displayName: "LV" },
-      //   { nombre: "c5", displayName: "C5" },
-      // ],
+
       filtroDivision: opcionesConNuevaDivision,
     });
   }, []);
@@ -279,97 +401,129 @@ export function PieChart() {
     LV: "LV",
     C5: "C5",
     // Agrega más etiquetas si es necesario
-  };
-
+  };  
 
   // Obtener las fechas mínimas y máximas disponibles
   const { minDate, maxDate } = getMinMaxDates();
-
-  // Utilizar el custom hook useFilter para el filtrado y obtener las funciones processData y processDataDivision
-  const [filteredData, filterState, updateDates, processData, processDataDivision] = useFilter(dataJson, minDate, maxDate, tipoDocumentoLabels);
-
+  const [filteredData, filterState, updateDates, processData, processDataDivision,  getDocumentData ] = useFilter(dataJson, minDate, maxDate, tipoDocumentoLabels);
   const [dataUpdated, setDataUpdated] = useState(false);
+  ;
 
+  const [chartData, setChartData] = useState(() => {
+    // Generar datos para el gráfico basados en todos los items del objeto "documento" de todas las fechas disponibles
+    const todasLasFechas = Object.keys(dataJson);   
+    const itemsDocumento = Object.keys(dataJson[todasLasFechas[0]].documento); // Suponemos que "todasLasFechas[0]" es la primera fecha en los datos
 
-  useEffect(() => {
-    // Ejecutar processData para mostrar los datos para el rango de fechas disponibles
-    const { labels, data } = processData();
+    const datasets = itemsDocumento.map((item) => {
+      const datos = todasLasFechas.map((fecha) => dataJson[fecha].documento[item]?.cant || 0); // Usar 0 para datos faltantes
+      return {
+        label: item,
+        data: datos,
+        backgroundColor: getRandomColor(),
+      };
+    });
 
-    // Actualiza el estado solo cuando los datos han cambiado
-    if (!dataUpdated) {
-      setChartData((prevChartData) => ({
-        ...prevChartData,
-        labels: labels,
-        datasets: [
-          {
-            ...prevChartData.datasets[0],
-            data: data,
-          },
-        ],
-      }));
-      setDataUpdated(true);
-    }
-  }, [filteredData, dataUpdated]);
-
-
-  // Define el estado inicial del objeto chartData utilizando useState
-  const [chartData, setChartData] = useState({
-    labels: [], // Agrega etiquetas iniciales si las tienes, de lo contrario, un arreglo vacío
-    datasets: [
-      {
-        data: [], // Agrega datos iniciales si los tienes, de lo contrario, un arreglo vacío
-        backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-        borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-        borderWidth: 1,
-      },
-    ],
+    return {
+      labels: todasLasFechas,
+      datasets: datasets,
+    };
   });
+  useEffect(() => {
+    console.log('chartData:', chartData);
+  }, [chartData]);
+  
 
- 
-  // Actualizar la función handleC para llamar a processDataDivision y actualizar los datos del gráfico
-  const handleC = (values: PieC) => {
+  // useEffect(() => {
+  //   // Ejecutar processData para mostrar los datos para el rango de fechas disponibles
+  //   const { labels:labelDoc , data } = processData();
+  //   console.log(labelDoc, data)
+  //   if (!dataUpdated) {
+  //     // setChartData()      
+  //   };
     
-    const { desde, hasta, filtroDivision, filtroDocumento } = values;
+    
+  // }, [filteredData, dataUpdated]);
 
+
+  //  // Definir el estado inicial para chartData con datos únicamente para el backgroundColor
+  //  const [chartData, setChartData] = useState<CustomChartData>(() => {
+  //   const todasLasFechas = Object.keys(dataJson);
+  //   const itemsDocumento = Object.keys(dataJson[todasLasFechas[0]].documento);
+
+  //   // Generar datasets iniciales para cada elemento en el documento con datos vacíos
+  //   const datasets = itemsDocumento.map((item) => ({
+  //     label: item,
+  //     data: [],
+  //     backgroundColor: getRandomColor(),
+  //   }));
+
+  //   return {
+  //     labels: todasLasFechas,
+  //     datasets: datasets,
+  //   };
+  // });
+
+  const fetchDocumentData = (startDateString:any, endDateString:any) => {
+    const filteredDates = Object.keys(dataJson).filter((date) => {
+      return date >= startDateString && date <= endDateString;
+    });
+  
+    // Creamos un objeto para almacenar los datos de cada tipo de documento por fecha
+    const documentDataByDate = {};
+  
+    // Iteramos a través de las fechas filtradas y recopilamos los datos
+    filteredDates.forEach((date) => {
+      documentDataByDate[date] = dataJson[date]?.documento;
+    });
+  
+    return documentDataByDate;
+  };
+ 
+
+  const handleC = (values: PieC) => {
+    const { desde, hasta, filtroDivision, filtroDocumento } = values;
+  
     const startDateString = desde instanceof Date ? formatDateToISO(desde) : desde;
     const endDateString = hasta instanceof Date ? formatDateToISO(hasta) : hasta;
+  
+    // // console.log(startDateString, endDateString)
+    // updateDates(startDateString, endDateString);   
 
-    updateDates(startDateString, endDateString);
+    // const filteredDates = Object.keys(dataJson).filter((date) => {
+    //   return date >= startDateString && date <= endDateString;
+    // });  
 
+    // // Llama a la función getDocumentData() para obtener los datos
+    // // const documentData = getDocumentData();
+
+    // console.log(filteredDates)
+  
     if (filtroDivision === 'documentosT') {
-      const { labels, data } = processData();
-      // console.log(labels, data, desde, hasta)
+      // Obtener los datos de los documentos según el rango de fechas seleccionado
+      const documentDataByDate = fetchDocumentData(startDateString, endDateString);
+  
+      // Crear las listas de fechas, tipos de documentos y cantidades para el gráfico
+      const labels = Object.keys(documentDataByDate);
+      const datasets = Object.keys(dataJson[labels[0]]?.documento || {}).map((docType) => ({
+        label: docType,
+        data: labels.map((date) => dataJson[date]?.documento[docType]?.cant || 0),
+        backgroundColor: getRandomColor(),
+      }));
+  
+      // Actualizar el estado de chartData con los nuevos datos
       setChartData({
         labels: labels,
-        datasets: [
-          {
-            data: data,
-            backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-            borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-            borderWidth: 1,
-          },
-        ],
+        datasets: datasets,
       });
-      console.log("documentosT", labels, data)
     } else {
-      const { labels, data } = processDataDivision(filtroDivision);
-      setChartData({
-        labels: labels,
-        datasets: [
-          {
-            data: data,
-            backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-            borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-            borderWidth: 1,
-          },
-        ],
-      });
-      console.log(labels, data)
+      // Código para manejar otros filtros de divisiones si es necesario
+      // ...
     }
-
+  
     onClose();
   };
 
+  
   // Función para convertir una fecha en formato ISO (yyyy-mm-dd)
   const formatDateToISO = (date: Date) => {
     const year = date.getFullYear();
@@ -377,7 +531,6 @@ export function PieChart() {
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   };
-
 
   return (
     <>
@@ -394,9 +547,9 @@ export function PieChart() {
       </div>
 
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
-        <Pie data={chartData} />
+        <Bar options={opt} data={chartData} />
       </div>
-
+    
       <FormVaku<PieC>
         titulo={'Filter'}
         isOpen={isOpen}
@@ -413,5 +566,6 @@ export function PieChart() {
         grid={{ base: 1, md: 2 }}
       />
     </>
-  );
+  )
+  
 }
