@@ -54,7 +54,7 @@ interface DataJson {
 
 
 const dataJson: DataJson = {
-  "2023-07-25": {
+  "2023-07-24": {
     "documento": {
       "IS": {
         "cant": 21
@@ -93,13 +93,13 @@ const dataJson: DataJson = {
         "cant": 50,
         "tipo": {
           "IS": {
-            "cant": 25
+            "cant": 1
           },
           "LV": {
-            "cant": 15
+            "cant": 2
           },
           "C5": {
-            "cant": 10
+            "cant": 3
           }
         },
         "turno": {
@@ -115,7 +115,7 @@ const dataJson: DataJson = {
         "cant": 50,
         "tipo": {
           "IS": {
-            "cant": 30
+            "cant": 4
           },
           "LV": {
             "cant": 15
@@ -135,7 +135,85 @@ const dataJson: DataJson = {
       },
     }
   },
-  "2023-07-24": {
+  "2023-07-25": {
+    "documento": {
+      "IS": {
+        "cant": 12
+      },
+      "LV": {
+        "cant": 35
+      },
+      "C5": {
+        "cant": 5
+      }
+    },
+    "turno": {
+      "turnoNoche": {
+        "tipo": {
+          "IS": {
+            "cant": 21
+          },
+          "LV": {
+            "cant": 52
+          },
+          "C5": {
+            "cant": 1
+          }
+        },
+        "cant": 74
+      },
+      "turnoDia": {
+        "cant": 25
+      }
+    },
+    "division": {
+      "division1": {
+        "cant": 40,
+        "tipo": {
+          "IS": {
+            "cant": 4
+          },
+          "LV": {
+            "cant": 5
+          },
+          "C5": {
+            "cant": 6
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 15
+          },
+          "turnoDia": {
+            "cant": 25
+          }
+        }
+      },
+      "division2": {
+        "cant": 20,
+        "tipo": {
+          "IS": {
+            "cant": 8
+          },
+          "LV": {
+            "cant": 5
+          },
+          "C5": {
+            "cant": 7
+          }
+        },
+        "turno": {
+          "turnoNoche": {
+            "cant": 10
+          },
+          "turnoDia": {
+            "cant": 10
+          }
+        }
+      }
+    }
+  },
+  "2023-07-26": {
     "documento": {
       "IS": {
         "cant": 12
@@ -213,6 +291,7 @@ const dataJson: DataJson = {
       }
     }
   },
+  
   
 }
 
@@ -364,7 +443,7 @@ export function PieChart() {
           },
         ],
       });
-      console.log(labels, data)
+      console.log("filtroDivision", labels, data)
     }
 
     onClose();

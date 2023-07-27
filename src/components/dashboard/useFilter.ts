@@ -52,17 +52,8 @@ const useFilter = (
   data: DataJson,
   initialMinDate: string,
   initialMaxDate: string,
-  tipoDocumentoLabels: { [key: string]: string }
-): [
-  DataJson,
-  FilterState,
-  (minDate: string, maxDate: string) => void,
-  () => { labels: string[]; data: number[] },
-  (selectedDivision: string) => { labels: string[]; data: number[] },
-  () => { fecha: Date[]; labels: string[]; data: number[] }
-] => {
- 
- 
+  tipoDocumentoLabels: { [key: string]: string } // Agregamos el argumento tipoDocumentoLabels
+): [DataJson, FilterState, (minDate: string, maxDate: string) => void, () => { labels: string[]; data: number[] }, (selectedDivision: string) => { labels: string[]; data: number[] }] => {
   const [filterState, setFilterState] = useState<FilterState>({
     startDate: initialMinDate,
     endDate: initialMaxDate,
@@ -144,41 +135,11 @@ const useFilter = (
     return { labels, data };
   };
 
-  const getDocumentData = () => {
-    const dates: Date[] = [];
-    const labels: string[] = [];
-    const data: number[] = [];
-
-    for (const fecha in filteredData) {
-      if (Object.prototype.hasOwnProperty.call(filteredData, fecha)) {
-        const documento = filteredData[fecha].documento;
-
-        for (const tipo in documento) {
-          if (Object.prototype.hasOwnProperty.call(documento, tipo)) {
-            const cant = documento[tipo].cant;
-
-            // Agregar los datos a los arrays
-            dates.push(new Date(fecha));
-            labels.push(tipo);
-            data.push(cant);
-          }
-        }
-      }
-    }
-
-    return { fecha: dates, labels, data };
-  };
+  
 
   const filteredData = processDataDate();
 
-  return [
-    filteredData,
-    filterState,
-    updateDates,
-    processData,
-    processDataDivision,
-    getDocumentData,
-  ];
+  return [filteredData, filterState, updateDates, processData, processDataDivision];
 };
 
 export default useFilter;

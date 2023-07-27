@@ -310,14 +310,7 @@ const dataJson: DataJson = {
   
 }
 
-// interface CustomChartData {
-//   labels: string[];
-//   datasets: {
-//     label: string;
-//     data: number[];
-//     backgroundColor: string;
-//   }[];
-// }
+
 
 // Function to generate a random color in hexadecimal format
 const getRandomColor = () => {
@@ -405,9 +398,9 @@ export function StackedBar() {
 
   // Obtener las fechas mínimas y máximas disponibles
   const { minDate, maxDate } = getMinMaxDates();
-  const [filteredData, filterState, updateDates, processData, processDataDivision,  getDocumentData ] = useFilter(dataJson, minDate, maxDate, tipoDocumentoLabels);
+  const [filteredData, filterState, updateDates, processData, processDataDivision] = useFilter(dataJson, minDate, maxDate, tipoDocumentoLabels);
   const [dataUpdated, setDataUpdated] = useState(false);
-  ;
+  
 
   const [chartData, setChartData] = useState(() => {
     // Generar datos para el gráfico basados en todos los items del objeto "documento" de todas las fechas disponibles
@@ -432,36 +425,6 @@ export function StackedBar() {
     console.log('chartData:', chartData);
   }, [chartData]);
   
-
-  // useEffect(() => {
-  //   // Ejecutar processData para mostrar los datos para el rango de fechas disponibles
-  //   const { labels:labelDoc , data } = processData();
-  //   console.log(labelDoc, data)
-  //   if (!dataUpdated) {
-  //     // setChartData()      
-  //   };
-    
-    
-  // }, [filteredData, dataUpdated]);
-
-
-  //  // Definir el estado inicial para chartData con datos únicamente para el backgroundColor
-  //  const [chartData, setChartData] = useState<CustomChartData>(() => {
-  //   const todasLasFechas = Object.keys(dataJson);
-  //   const itemsDocumento = Object.keys(dataJson[todasLasFechas[0]].documento);
-
-  //   // Generar datasets iniciales para cada elemento en el documento con datos vacíos
-  //   const datasets = itemsDocumento.map((item) => ({
-  //     label: item,
-  //     data: [],
-  //     backgroundColor: getRandomColor(),
-  //   }));
-
-  //   return {
-  //     labels: todasLasFechas,
-  //     datasets: datasets,
-  //   };
-  // });
 
   interface DocumentDataByDate {
     [key: string]: DataItem;
