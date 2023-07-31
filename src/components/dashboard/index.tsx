@@ -1,8 +1,9 @@
 import React from 'react';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { BarChart } from '@/components/dashboard/BarChart';
-import { PieChart } from './PieChart';
+import { PieChart1 } from './PieChart1';
 import { LineChart}  from './LineChart';
+import { PieChart } from './PieChart';
 // import TotalCard from './TotalCard';
 import ScrollCards from './ScrollCards';
 import StatsUsers from './StatsUsers';
@@ -155,7 +156,7 @@ export const App = () => {
 
           <Box gridRow="2" gridColumn="1" bg="white" borderRadius="md" boxShadow="md" p={4}>
             <Text fontSize="xl" fontWeight="bold" mb={4}>Pie Chart</Text>
-            <PieChart  />
+            <PieChart1  />
           </Box>
 
           <Box gridRow="2" gridColumn="2" bg="white" borderRadius="md" boxShadow="md" p={4}>

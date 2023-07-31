@@ -467,7 +467,7 @@ export function PieChart() {
 
 
       {loading ? (
-        <p>Loading...</p> // Puedes reemplazar este mensaje con un spinner o un componente de carga más sofisticado
+        <p>Loading...</p> 
       ) : (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
           <Pie data={chartData} />
