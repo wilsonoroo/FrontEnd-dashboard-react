@@ -236,37 +236,6 @@ export const opt = {
   },
 } as const;
 
-// const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-// // Datos de ejemplo para los datasets
-// const dataset1Data = [200, 350, 400, 600, 800, 700, 900];
-// const dataset2Data = [100, 200, 50, 400, 300, 250, 150];
-// const dataset3Data = [400, 550, 700, 300, 600, 500, 800];
-
-// export const data = {
-//   labels,
-//   datasets: [
-//     {
-//       label: 'Abiertos',
-//       data: dataset1Data,
-//       borderColor: '#0B79F4',
-//       backgroundColor: '#0B79F4',
-//     },
-//     {
-//       label: 'Cerradas',
-//       data: dataset2Data,
-//       borderColor: '#89FF00',
-//       backgroundColor: '#89FF00',
-//     },
-//     {
-//       label: 'En Mora',
-//       data: dataset3Data,
-//       borderColor: '#FF2200',
-//       backgroundColor: '#FF2200',
-//     },
-//   ],
-// };
-
 const getUniqueDivisions = (data: DataJson): string[] => {
   const uniqueDivisions: string[] = [];
 
@@ -282,13 +251,13 @@ const getUniqueDivisions = (data: DataJson): string[] => {
   return uniqueDivisions;
 };
 
-const getMinMaxDates = () => {
-  const dates = Object.keys(dataJson);
-  const minDate = dates.reduce((min, date) => (date < min ? date : min), dates[0]);
-  const maxDate = dates.reduce((max, date) => (date > max ? date : max), dates[0]);
-  return { minDate, maxDate };
+// Función para convertir una fecha en formato ISO (yyyy-mm-dd)
+const formatDateToISO = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
-
 
 export function LineChart() { 
 
@@ -296,7 +265,6 @@ export function LineChart() {
   const [loading, setLoading] = useState(false);
   const newC = new PieC();
   const [pieC, setPieC] = useState<PieC>(newC);
-  const { minDate, maxDate } = getMinMaxDates();
 
   const [options, setOptions] = useState({
 
@@ -319,12 +287,7 @@ export function LineChart() {
     });
   }, []);
 
-  const tipoDocumentoLabels: { [key: string]: string } = {
-    IS: "IS",
-    LV: "LV",
-    C5: "C5",
-    // Agrega más etiquetas si es necesario
-  };  
+  
 
   const [chartData, setChartData] = useState(() => {
     // Generar datos para el gráfico basados en todos los items del objeto "documento" de todas las fechas disponibles
@@ -427,13 +390,7 @@ export function LineChart() {
     onClose();
   };
   
-  // Función para convertir una fecha en formato ISO (yyyy-mm-dd)
-  const formatDateToISO = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  
 
   return (
     <>

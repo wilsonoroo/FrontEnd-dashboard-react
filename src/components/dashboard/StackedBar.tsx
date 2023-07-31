@@ -311,9 +311,6 @@ const dataJson: DataJson = {
   
 }
 
-
-
-// Function to generate a random color in hexadecimal format
 const getRandomColor = () => {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -362,11 +359,12 @@ const getUniqueDivisions = (data: DataJson): string[] => {
   return uniqueDivisions;
 };
 
-const getMinMaxDates = () => {
-  const dates = Object.keys(dataJson);
-  const minDate = dates.reduce((min, date) => (date < min ? date : min), dates[0]);
-  const maxDate = dates.reduce((max, date) => (date > max ? date : max), dates[0]);
-  return { minDate, maxDate };
+// Función para convertir una fecha en formato ISO (yyyy-mm-dd)
+const formatDateToISO = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export function StackedBar() {
@@ -376,7 +374,6 @@ export function StackedBar() {
   const [pieC, setPieC] = useState<PieC>(newC);
 
   const [options, setOptions] = useState({
-
     filtroDivision: [
       { nombre: "division1", displayName: "Division 1" },
       { nombre: "division2", displayName: "Division 2" },   
@@ -395,19 +392,6 @@ export function StackedBar() {
       filtroDivision: opcionesConNuevaDivision,
     });
   }, []);
-
-  const tipoDocumentoLabels: { [key: string]: string } = {
-    IS: "IS",
-    LV: "LV",
-    C5: "C5",
-    // Agrega más etiquetas si es necesario
-  };  
-
-  // Obtener las fechas mínimas y máximas disponibles
-  const { minDate, maxDate } = getMinMaxDates();
-  const [filteredData, filterState, updateDates, processData, processDataDivision] = useFilter(dataJson, minDate, maxDate, tipoDocumentoLabels);
-  const [dataUpdated, setDataUpdated] = useState(false);
-  
 
   const [chartData, setChartData] = useState(() => {
     // Generar datos para el gráfico basados en todos los items del objeto "documento" de todas las fechas disponibles
@@ -431,12 +415,7 @@ export function StackedBar() {
   useEffect(() => {
     console.log('chartData:', chartData);
   }, [chartData]);
-  
-
-  interface DocumentDataByDate {
-    [key: string]: DataItem;
-  }
-  
+    
   const fetchDocumentData = (startDateString:any, endDateString:any) => {
     const filteredDates = Object.keys(dataJson).filter((date) => {
       return date >= startDateString && date <= endDateString;
@@ -516,13 +495,6 @@ export function StackedBar() {
   };
 
   
-  // Función para convertir una fecha en formato ISO (yyyy-mm-dd)
-  const formatDateToISO = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   return (
     <>
