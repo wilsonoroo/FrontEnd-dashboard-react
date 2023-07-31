@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
 import { BsFilter } from 'react-icons/bs';
@@ -290,9 +290,7 @@ const dataJson: DataJson = {
         }
       }
     }
-  },
-  
-  
+  },  
 }
 
 const getUniqueDivisions = (data: DataJson): string[] => {
@@ -322,14 +320,8 @@ export function PieChart() {
   const [loading, setLoading] = useState(false);
   const newC = new PieC();
   const [pieC, setPieC] = useState<PieC>(newC);
-  // const [pieChartData, setPieChartData] = useState<any>(chartData); 
-
+  
   const [options, setOptions] = useState({
-    // filtroDocumento: [
-    //   { nombre: "is", displayName: "IS" },
-    //   { nombre: "lv", displayName: "LV" },   
-    //   { nombre: "c5", displayName: "C5" },    
-    // ],
     filtroDivision: [
       { nombre: "division1", displayName: "Division 1" },
       { nombre: "division2", displayName: "Division 2" },   
@@ -344,11 +336,6 @@ export function PieChart() {
     const opcionesConNuevaDivision = [nuevaDivision, ...divisionesUnicas.map((division) => ({ nombre: division, displayName: division }))];
 
     setOptions({
-      // filtroDocumento: [
-      //   { nombre: "is", displayName: "IS" },
-      //   { nombre: "lv", displayName: "LV" },
-      //   { nombre: "c5", displayName: "C5" },
-      // ],
       filtroDivision: opcionesConNuevaDivision,
     });
   }, []);
@@ -369,6 +356,8 @@ export function PieChart() {
 
   const [dataUpdated, setDataUpdated] = useState(false);
 
+  // Utilizamos useMemo para memoizar los resultados de la función processData
+  // const { labels, data } = useMemo(() => processData(), [filteredData]);
 
   useEffect(() => {
     // Ejecutar processData para mostrar los datos para el rango de fechas disponibles
@@ -388,11 +377,13 @@ export function PieChart() {
       }));
       setDataUpdated(true);
     }
-  }, [filteredData, dataUpdated]);
 
+  }, [filteredData, dataUpdated, processData])
 
   // Define el estado inicial del objeto chartData utilizando useState
   const [chartData, setChartData] = useState({
+    
+    
     labels: [], // Agrega etiquetas iniciales si las tienes, de lo contrario, un arreglo vacío
     datasets: [
       {
@@ -403,6 +394,8 @@ export function PieChart() {
       },
     ],
   });
+
+  
 
  
   // Actualizar la función handleC para llamar a processDataDivision y actualizar los datos del gráfico
@@ -472,9 +465,14 @@ export function PieChart() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
-        <Pie data={chartData} />
-      </div>
+
+      {loading ? (
+        <p>Loading...</p> // Puedes reemplazar este mensaje con un spinner o un componente de carga más sofisticado
+      ) : (
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
+          <Pie data={chartData} />
+        </div>
+      )}
 
       <FormVaku<PieC>
         titulo={'Filter'}

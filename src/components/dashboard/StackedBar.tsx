@@ -14,6 +14,7 @@ import { BsFilter } from 'react-icons/bs';
 import FormVaku from '../forms/FormVaku';
 import { PieC } from '@/models/graficos/PieChar';
 import useFilter from './useFilter';
+// import dataJson from "../dashboard/jsoncrack.json"
 
 ChartJS.register(
   CategoryScale,
@@ -325,6 +326,12 @@ const getRandomColor = () => {
 
 export const opt = {
   // plugins: {
+  //   legend: {
+  //     position: 'top',
+  //     labels: {
+  //       usePointStyle: true,
+  //     },
+  //   },
   //   title: {
   //     display: true,
   //     text: '',
@@ -531,7 +538,7 @@ export function StackedBar() {
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
         <Bar options={opt} data={chartData} />
       </div>
     

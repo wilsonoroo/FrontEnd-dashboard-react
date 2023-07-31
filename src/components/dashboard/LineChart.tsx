@@ -448,7 +448,7 @@ export function LineChart() {
           />
         </div>
       </div>
-      <div style={{ width: '80%', height: '300px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
         <Line options={opt} data={chartData} />
       </div>
 

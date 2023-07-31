@@ -40,10 +40,10 @@ const Card: React.FC<CardProps> = ({ title, description, bottomDescription, boxP
       {...boxProps}
     >
       <Flex h="50%"  {...boxProps}>
-        <Box w="25%" bg="" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-            <Image src={title} alt="I" w={14} h={14} mb={0} />
+        <Box w="35%" bg="" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+            <Image src={title} alt="I" w={20} h={20} mb={0} bg="lightblue" borderRadius="xl" border="blue 1px solid" padding={1} />
         </Box>
-        <Box w="75%" bg="" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
+        <Box w="65%" bg="" display="flex" flexDirection="column" alignItems="center" justifyContent="center">
           <Text fontSize="lg" {...textProps}>{description.text}</Text>
           <Text fontWeight="bold" fontSize="lg" mt={2} {...textProps}>
             {description.counter}

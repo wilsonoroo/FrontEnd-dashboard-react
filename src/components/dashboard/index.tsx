@@ -131,9 +131,6 @@ export const App = () => {
   ];
   
 
-  const startDate = '2023-01-01';
-  const endDate = '2023-01-02';
-  
 
   return (
     <Box bg="white" p={4} borderRadius="md" boxShadow="md">
