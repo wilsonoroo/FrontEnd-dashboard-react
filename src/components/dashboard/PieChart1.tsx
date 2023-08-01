@@ -148,8 +148,7 @@ export function PieChart1() {
     }, []);
 
     // Define el estado inicial del objeto chartData utilizando useState
-    const [chartData, setChartData] = useState({
-        
+    const [chartData, setChartData] = useState({       
         
         labels: [], // Agrega etiquetas iniciales si las tienes, de lo contrario, un arreglo vacío
         datasets: [
@@ -162,135 +161,74 @@ export function PieChart1() {
         ],
     });
 
-      // Nueva función para calcular los datos del gráfico
-    const calculateChartData = (data: DataJson, minDate: string, maxDate: string) => {
-        const documentSums: { [key: string]: number } = {};
+    const calculateChartData = (data: DataJson, startDate: Date | string, endDate: Date | string, divisionFilter?: string) => {
+        const startDateString = startDate instanceof Date ? formatDateToISO(startDate) : startDate;
+        const endDateString = endDate instanceof Date ? formatDateToISO(endDate) : endDate;
 
-        for (const date in data) {
-        // Verificar si la fecha actual está dentro del rango de fechas especificado
-        if (date >= minDate && date <= maxDate) {
-            for (const documentType in data[date]?.documento || {}) {
-            const sum = data[date]?.documento[documentType]?.cant || 0;
-            documentSums[documentType] = (documentSums[documentType] || 0) + sum;
-            }
-        }
-        }
-
-        const labels = Object.keys(documentSums);
-        const dataValues = Object.values(documentSums);
-
-        return { labels, data: dataValues };
-    };
-
-    // Actualizar los datos del gráfico cuando el componente se monte y cuando cambie el rango de fechas
-    useEffect(() => {
-        const { minDate, maxDate } = getMinMaxDates();
-        const chartData = calculateChartData(dataJson, minDate, maxDate);
-        setChartData({
-        labels: chartData.labels,
+        const chartData: DataProps = {
+        labels: [],
         datasets: [
             {
-            data: chartData.data,
+            label: '# of Votes',
+            data: [],
             backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
             borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
             borderWidth: 1,
             },
         ],
-        });
-    }, []); // Array de dependencias vacío para que el efecto se ejecute solo una vez cuando el componente se monte
+        };
 
-        // Función para calcular la suma de cada tipo de documento dentro del rango seleccionado
-    const calculateDocumentSumsInRange = (startDate: Date | string, endDate: Date | string) => {
-        const startDateString = startDate instanceof Date ? formatDateToISO(startDate) : startDate;
-        const endDateString = endDate instanceof Date ? formatDateToISO(endDate) : endDate;
+        const dataSums: { [key: string]: number } = {};
 
-        const documentSums: { [key: string]: number } = {};
+        for (const date in data) {
+            if (date >= startDateString && date <= endDateString) {
+                // Verificar si hay datos específicos de la división según el filtro
+                const divisionData = data[date]?.division?.[divisionFilter || ''];
+                const documentData = data[date]?.documento;
 
-        for (const date in dataJson) {
-        if (date >= startDateString && date <= endDateString) {
-            for (const documentType in dataJson[date]?.documento || {}) {
-            const sum = dataJson[date]?.documento[documentType]?.cant || 0;
-            documentSums[documentType] = (documentSums[documentType] || 0) + sum;
+                // Si hay datos específicos de la división, calcular la suma de documentos por tipo
+                if (divisionData) {
+                    for (const documentType in divisionData.tipo || {}) {
+                        const sum = divisionData.tipo[documentType]?.cant || 0;
+                        dataSums[documentType] = (dataSums[documentType] || 0) + sum;
+                    }
+                // Si no hay datos específicos de la división, calcular la suma de documentos sin filtro de división
+                } else if (documentData) {
+                    for (const documentType in documentData) {
+                        const sum = documentData[documentType]?.cant || 0;
+                        dataSums[documentType] = (dataSums[documentType] || 0) + sum;
+                    }
+                }
             }
         }
-        }
 
-        return documentSums;
+         // Actualizar las etiquetas y valores de chartData con los datos calculados
+        chartData.labels = Object.keys(dataSums);
+        chartData.datasets[0].data = Object.values(dataSums);
+
+        return chartData;
     };
 
-    // Función para calcular el total de cada tipo de documento para una división y rango de fechas seleccionado
-    const calculateDocumentTotalsForDivision = (
-        division: string,
-        startDate: Date | string,
-        endDate: Date | string
-    ) => {
-        const startDateString = startDate instanceof Date ? formatDateToISO(startDate) : startDate;
-        const endDateString = endDate instanceof Date ? formatDateToISO(endDate) : endDate;
-
-        const documentTotals: { [key: string]: number } = {};
-
-        for (const date in dataJson) {
-        if (date >= startDateString && date <= endDateString) {
-            const divisionData = dataJson[date]?.division?.[division];
-            if (divisionData) {
-            for (const documentType in divisionData.tipo || {}) {
-                const sum = divisionData.tipo[documentType]?.cant || 0;
-                documentTotals[documentType] = (documentTotals[documentType] || 0) + sum;
-            }
-            }
-        }
-        }
-
-        return documentTotals;
-    };
+    useEffect(() => {
+        const { minDate, maxDate } = getMinMaxDates();
+        const initialChartData = calculateChartData(dataJson, minDate, maxDate);
+        setChartData(initialChartData);
+    }, []);
 
     const handleC = (values: PieC) => {
-
         const { desde, hasta, filtroDivision, filtroDocumento } = values;
-
-      
+    
+        let chartData;
         if (filtroDivision === 'documentosT') {
-            // Calcular la suma de cada tipo de documento dentro del rango seleccionado
-            const documentSums = calculateDocumentSumsInRange(desde , hasta);
-      
-            const labels = Object.keys(documentSums);
-            const dataValues = Object.values(documentSums);
-      
-            // Actualizar el estado del gráfico con los nuevos datos
-            setChartData({
-              labels,
-              datasets: [
-                {
-                  data: dataValues,
-                  backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-                  borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-                  borderWidth: 1,
-                },
-              ],
-            });
-          } else {
-            // Calcular el total de cada tipo de documento para la división seleccionada y el rango de fechas
-            const divisionTotalData = calculateDocumentTotalsForDivision(filtroDivision, desde, hasta);
-
-            const labels = Object.keys(divisionTotalData);
-            const dataValues = Object.values(divisionTotalData);
-
-            // Actualizar el estado del gráfico con los nuevos datos para la división seleccionada
-            setChartData({
-                labels,
-                datasets: [
-                {
-                    data: dataValues,
-                    backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-                    borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-                    borderWidth: 1,
-                },
-                ],
-            });
-          }
+          chartData = calculateChartData(dataJson, desde, hasta);
+        } else {
+          chartData = calculateChartData(dataJson, desde, hasta, filtroDivision);
+        }
+    
+        setChartData(chartData);
         onClose();
-    };
-
+      };
+      
   return (
         <>  
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>

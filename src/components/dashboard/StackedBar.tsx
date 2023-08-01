@@ -13,7 +13,6 @@ import { IconButton, useDisclosure } from '@chakra-ui/react';
 import { BsFilter } from 'react-icons/bs';
 import FormVaku from '../forms/FormVaku';
 import { PieC } from '@/models/graficos/PieChar';
-import useFilter from './useFilter';
 // import dataJson from "../dashboard/jsoncrack.json"
 
 ChartJS.register(
