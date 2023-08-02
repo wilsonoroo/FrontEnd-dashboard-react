@@ -25,6 +25,7 @@ ChartJS.register(
 );
 
 
+
 interface DataItem {
   documento: {
     [key: string]: {
@@ -305,9 +306,7 @@ const dataJson: DataJson = {
         }
       }
     }
-  },
-  
-  
+  },  
 }
 
 const getRandomColor = () => {
@@ -321,19 +320,20 @@ const getRandomColor = () => {
 
 
 export const opt = {
-  // plugins: {
-  //   legend: {
-  //     position: 'top',
-  //     labels: {
-  //       usePointStyle: true,
-  //     },
-  //   },
-  //   title: {
-  //     display: true,
-  //     text: '',
-  //   },
-  // },
+  plugins: {
+    legend: {
+      // position: "top",
+      labels: {
+        usePointStyle: true,
+      },
+    },
+    // title: {
+    //   display: true,
+    //   text: '',
+    // },
+  },
   responsive: true,
+  // maintainAspectRatio: false,
   scales: {
     x: {
       stacked: true,
@@ -403,6 +403,7 @@ export function StackedBar() {
         label: item,
         data: datos,
         backgroundColor: getRandomColor(),
+        // borderRadius: 50,
       };
     });
 
@@ -464,6 +465,7 @@ export function StackedBar() {
         data: labels.map((date) => dataJson[date]?.documento[docType]?.cant || 0),
         backgroundColor: getRandomColor(),
       }));
+      console.log(labels, datasets)
   
       // Actualizar el estado de chartData con los nuevos datos
       setChartData({

@@ -169,7 +169,7 @@ export function PieChart1() {
         labels: [],
         datasets: [
             {
-            label: '# of Votes',
+            label: '# Cantidad',
             data: [],
             backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
             borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
@@ -227,7 +227,20 @@ export function PieChart1() {
     
         setChartData(chartData);
         onClose();
-      };
+    };
+
+    const legendOptions = {
+      display: true,
+      labels: {
+        usePointStyle: true,
+      },
+    };
+  
+    const opt = {
+      plugins: {
+        legend: legendOptions,
+      },
+    };
       
   return (
         <>  
@@ -244,7 +257,7 @@ export function PieChart1() {
             </div>
     
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
-                <Pie data={chartData} />
+                <Pie data={chartData} options={opt}/>
             </div>
 
             <FormVaku<PieC>

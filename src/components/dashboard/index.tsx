@@ -142,29 +142,30 @@ export const App = () => {
       </Flex>
       <Box  >  
       {/* <Box  height="calc(100vh - 64px)">    */}
-        <Box display="grid" gridTemplateColumns="repeat(2, 1fr)" gridTemplateRows="repeat(2, 1fr)" gap={4} height="100%">
-
-          <Box gridRow="1" gridColumn="2" bg="white" borderRadius="md" boxShadow="md" p={4}>
-            {/* <Text fontSize="xl" fontWeight="bold" mb={4}>STATS</Text> */}
-            <StatsUsers data={data1} />
-          </Box>
-
-          <Box gridRow="1" gridColumn="1" bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>Bar Chart</Text>
+          {/* Contenedor para ambas filas */}
+      <Box display="grid" gridTemplateRows="repeat(2, 1fr)" gap={4} height="100%">
+        {/* Primera fila */}
+        <Box display="grid" gridTemplateColumns="60% 40%" gap={2} bg="white" borderRadius="md"  p={0}>
+          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
             <StackedBar />
           </Box>
 
-          <Box gridRow="2" gridColumn="1" bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>Pie Chart</Text>
-            <PieChart1  />
+          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
+            <StatsUsers data={data1} />
           </Box>
-
-          <Box gridRow="2" gridColumn="2" bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <Text fontSize="xl" fontWeight="bold" mb={4}>Line Chart</Text>
-            <LineChart  />
-          </Box>
-
         </Box>
+
+        {/* Segunda fila */}
+        <Box display="grid" gridTemplateColumns="40% 60%" gap={2} bg="white" borderRadius="md"  p={0}>
+          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
+            <PieChart1 />
+          </Box>
+
+          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
+            <LineChart />
+          </Box>
+        </Box>
+      </Box>
       </Box>
     </Box>
   );

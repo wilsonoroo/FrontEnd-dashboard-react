@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid, Text } from '@chakra-ui/react';
+import { Box, Divider, Grid, Text } from '@chakra-ui/react';
 
 interface StatsUsersProps {
   data: {
@@ -24,56 +24,71 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
   };
 
   return (
-    <Box>
-      <Text fontSize="xl" fontWeight="bold" mb={2} mt={2}>
-        Roles activos por Usuarios
-      </Text>
-      <Grid templateColumns="1fr 1fr" gap={4}>
+    <Box position="relative">
+    {/* Divider */}
+    <Divider
+      orientation="vertical"
+      borderColor="black"
+      borderWidth="1px"
+      position="absolute"
+      top="0"
+      bottom="0"
+      left="54%"
+      transform="translateX(-50%)"
+      height="470px" // Puedes ajustar el largo del divider aquí
+      mt="26px" // Ajusta el valor para centrar el divider verticalmente
+    />
+
+    {/* Header */}
+    <Text fontSize="xl" fontWeight="bold" mb={2} mt={2}>
+      Roles activos por Usuarios
+    </Text>
+    <Grid templateColumns="1fr 1fr" gap={4}>
+      <Box p={4}>
+        <Text fontSize="xl" mb={4}>
+          Rol
+        </Text>
+      </Box>
+      <Box p={4}>
+        <Text fontSize="xl" mb={4} align="center">
+          Activos/Disponibles
+        </Text>
+      </Box>
+    </Grid>
+    {data.map((item, index) => (
+      <Grid key={index} templateColumns="1fr 1fr" gap={4}>
         <Box p={4}>
-          <Text fontSize="xl" mb={4}>
-            Rol
-          </Text>
-        </Box>
-        <Box p={4}>
-          <Text fontSize="xl" mb={4} align="center">
-            Activos/Disponibles
-          </Text>
-        </Box>
-      </Grid>
-      {data.map((item, index) => (
-        <Grid key={index} templateColumns="1fr 1fr" gap={4}>
-          <Box p={4}>
-            <Grid templateColumns="1fr 1fr" gap={2} alignItems="center" justifyContent="center">
-              <Box>
-                <Text fontSize="xl" fontWeight="bold" mb={2} align="center">
-                  <span
-                    style={{
-                      background: getColorForLevel(item.nivel), // Apply the background color based on the level
-                      borderRadius: '15px',
-                      padding: '4px 20px',
-                    }}
-                  >
-                    {item.nivel}
-                  </span>
-                </Text>
-              </Box>
-              <Box>
-                <Text fontSize="md" mb={2} align="center">
-                  {item.descripcion}
-                </Text>
-              </Box>
-            </Grid>
-          </Box>
-          <Box p={4}>
+          <Grid templateColumns="1fr 1fr" gap={2} alignItems="center" justifyContent="center">
             <Box>
-              <Text fontSize="xl" mb={2} fontWeight="bold" align="center">
-                {item.activosDisponibles}
+              <Text fontSize="xl" fontWeight="bold" mb={2} align="center">
+                <span
+                  style={{
+                    background: getColorForLevel(item.nivel), // Apply the background color based on the level
+                    borderRadius: '15px',
+                    padding: '4px 20px',
+                  }}
+                >
+                  {item.nivel}
+                </span>
               </Text>
             </Box>
+            <Box>
+              <Text fontSize="md" mb={2} align="center">
+                {item.descripcion}
+              </Text>
+            </Box>
+          </Grid>
+        </Box>
+        <Box p={4}>
+          <Box>
+            <Text fontSize="xl" mb={2} fontWeight="bold" align="center">
+              {item.activosDisponibles}
+            </Text>
           </Box>
-        </Grid>
-      ))}
-    </Box>
+        </Box>
+      </Grid>
+    ))}
+  </Box>
   );
 };
 
