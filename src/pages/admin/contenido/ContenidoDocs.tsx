@@ -66,6 +66,7 @@ export default function ContenidoDocs(props: { titulo: string }) {
       });
     });
   }, []);
+  console.log(divisonRepository)
 
   const handleTabsChange = (index: number) => {
     setTabIndex(index);

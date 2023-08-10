@@ -3,7 +3,6 @@ import { Box, Flex, Image, Text } from '@chakra-ui/react';
 import { BarChart } from '@/components/dashboard/BarChart';
 import { PieChart1 } from './PieChart1';
 import { LineChart}  from './LineChart';
-import { PieChart } from './PieChart';
 // import TotalCard from './TotalCard';
 import ScrollCards from './ScrollCards';
 import StatsUsers from './StatsUsers';

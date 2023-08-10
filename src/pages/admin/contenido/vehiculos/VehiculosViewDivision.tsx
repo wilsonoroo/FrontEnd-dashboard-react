@@ -82,8 +82,10 @@ export default function VehiculosViewDivision(props: { titulo: string }) {
           nombre: "Vehículo Liviano",
           displayName: "Vehículo Liviano",
         },
-
-        ,
+        {
+          nombre: "gg",
+          displayName: "gg",
+        },
       ],
     });
   }, []);

@@ -7,6 +7,10 @@ export class DocumentoVaku extends VakuModel {
   division?: string;
   correlativo: string;
   fechaValidacion: string;
+  
+  tipo:string;  
+  mandantes: [{ id: number; displayName: string }];
+
   pdf: {
     id: string;
     name: string;

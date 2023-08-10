@@ -333,7 +333,7 @@ export const opt = {
     // },
   },
   responsive: true,
-  // maintainAspectRatio: false,
+  maintainAspectRatio: false,
   scales: {
     x: {
       stacked: true,
@@ -403,7 +403,9 @@ export function StackedBar() {
         label: item,
         data: datos,
         backgroundColor: getRandomColor(),
-        // borderRadius: 50,
+        // borderRadius: 100,
+        // barThickness: 40,
+        // barPercentage: 0.6,
       };
     });
 
