@@ -287,6 +287,9 @@ export function LineChart() {
     });
   }, []);
 
+  const colorPalette = [
+    '#0B79F4', '#89FF00', '#FF2200',
+  ];
   
 
   const [chartData, setChartData] = useState(() => {
@@ -294,12 +297,14 @@ export function LineChart() {
     const todasLasFechas = Object.keys(dataJson);   
     const itemsDocumento = Object.keys(dataJson[todasLasFechas[0]].planDeAccion); // Suponemos que "todasLasFechas[0]" es la primera fecha en los datos
 
-    const datasets = itemsDocumento.map((item) => {
-      const datos = todasLasFechas.map((fecha) => dataJson[fecha].planDeAccion[item]?.cant || 0); // Usar 0 para datos faltantes
+    const datasets = itemsDocumento.map((item, index) => {
+      const datos = todasLasFechas.map((fecha) => dataJson[fecha].planDeAccion[item]?.cant || 0);
       return {
         label: item,
         data: datos,
-        backgroundColor: getRandomColor(),
+        borderColor: colorPalette[index % colorPalette.length], // Obtén el color de la paleta en función del índice
+        pointBackgroundColor: colorPalette[index % colorPalette.length],
+        fill: false,
       };
     });
 
@@ -393,20 +398,30 @@ export function LineChart() {
   
 
   return (
-    <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <div style={{ marginRight: '10px' }}>
-          <IconButton
-            aria-label="Filter"
-            icon={<BsFilter size={24} color="gray" />}
-            onClick={() => {
-              onOpen();
-            }}
-          />
+    <>    
+      <div style={{ 
+        display: 'grid',
+        borderRadius: 'md',
+        boxShadow: 'md',
+        width: '100%', // Ancho del 33.33% de la página
+        minWidth: '400px', // Un ancho mínimo para evitar que sea demasiado pequeño
+        height: '550px',
+        padding: '16px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ marginRight: '10px' }}>
+            <IconButton
+              aria-label="Filter"
+              icon={<BsFilter size={24} color="gray" />}
+              onClick={() => {
+                onOpen();
+              }}
+            />
+          </div>
         </div>
-      </div>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
-        <Line options={opt} data={chartData} />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
+          <Line options={opt} data={chartData} style={{ maxWidth: '100%' }}/>
+        </div>
       </div>
 
       <FormVaku<PieC>

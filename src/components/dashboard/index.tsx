@@ -133,39 +133,62 @@ export const App = () => {
 
 
   return (
-    <Box bg="white" p={4} borderRadius="md" boxShadow="md">
-      
+    <Box bg="white" p={4} borderRadius="md" boxShadow="md">   
 
-      <Flex mb={2} p={0} borderRadius="md" boxShadow="md" >
+      <Box mb={2} p={0} borderRadius="md" boxShadow="md" >
         <ScrollCards data={data2} />
+      </Box>
+       {/* Contenedor de la primera fila */}
+      <Flex
+        direction={{ base: "column", md: "row" }} // Columna en pantallas pequeñas, fila en pantallas medianas y mayores
+        flexWrap="wrap" // Asegura que los elementos se envuelvan si el ancho es insuficiente
+      >
+        <Flex 
+          // mr={2}
+          borderRadius="md" boxShadow="md"
+          flex={{ base: 1, md: 3 }}
+          p={4}
+          boxSizing="border-box"
+        >
+          <StackedBar />
+        </Flex>
+
+        <Flex
+          borderRadius="md" boxShadow="md"
+          flex={{ base: 1, md: 2 }}
+          p={4}
+          boxSizing="border-box"
+        >
+          <StatsUsers data={data1} />
+        </Flex>
       </Flex>
-      <Box  >  
-      {/* <Box  height="calc(100vh - 64px)">    */}
-          {/* Contenedor para ambas filas */}
-      <Box display="grid" gridTemplateRows="repeat(2, 1fr)" gap={4} height="100%">
-        {/* Primera fila */}
-        <Box display="grid" gridTemplateColumns="60% 40%" gap={2} bg="white" borderRadius="md"  p={0}>
-          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <StackedBar />
-          </Box>
 
-          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <StatsUsers data={data1} />
-          </Box>
-        </Box>
 
-        {/* Segunda fila */}
-        <Box display="grid" gridTemplateColumns="40% 60%" gap={2} bg="white" borderRadius="md"  p={0}>
-          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <PieChart1 />
-          </Box>
+      <Flex
+        mt={4}
+        direction={{ base: "column", md: "row" }} 
+        flexWrap="wrap" 
+      >
+        <Flex 
+          // mr={2}
+          borderRadius="md" boxShadow="md"
+          flex={{ base: 1, md: 2.5 }}
+          p={4}
+          boxSizing="border-box"
+        >
+          <PieChart1 />
+        </Flex>
 
-          <Box bg="white" borderRadius="md" boxShadow="md" p={4}>
-            <LineChart />
-          </Box>
-        </Box>
-      </Box>
-      </Box>
+        <Flex
+          borderRadius="md" boxShadow="md"
+          flex={{ base: 1, md: 3 }}
+          p={4}
+          boxSizing="border-box"
+        >
+          <LineChart />
+        </Flex>
+      </Flex>
+     
     </Box>
   );
 };

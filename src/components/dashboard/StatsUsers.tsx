@@ -24,7 +24,7 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
   };
 
   return (
-    <Box position="relative">
+    <Box position="relative" display="grid"  width="600px" height="550px" p="16px">
     {/* Divider */}
     <Divider
       orientation="vertical"
@@ -35,22 +35,22 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
       bottom="0"
       left="54%"
       transform="translateX(-50%)"
-      height="470px" // Puedes ajustar el largo del divider aquí
-      mt="26px" // Ajusta el valor para centrar el divider verticalmente
+      height="490px" // Puedes ajustar el largo del divider aquí
+      mt="55px" // Ajusta el valor para centrar el divider verticalmente
     />
 
     {/* Header */}
     <Text fontSize="xl" fontWeight="bold" mb={2} mt={2}>
       Roles activos por Usuarios
     </Text>
-    <Grid templateColumns="1fr 1fr" gap={4}>
+    <Grid templateColumns="1fr 1fr" gap={4} >
       <Box p={4}>
-        <Text fontSize="xl" mb={4}>
+        <Text fontSize="xl" >
           Rol
         </Text>
       </Box>
       <Box p={4}>
-        <Text fontSize="xl" mb={4} align="center">
+        <Text fontSize="xl" align="center">
           Activos/Disponibles
         </Text>
       </Box>
@@ -88,7 +88,7 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
         </Box>
       </Grid>
     ))}
-  </Box>
+    </Box>
   );
 };
 

@@ -171,8 +171,8 @@ export function PieChart1() {
             {
             label: '# Cantidad',
             data: [],
-            backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
-            borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#A4A4A4', '#dc662a'],
+            backgroundColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#D2D4D6', '#dc662a'],
+            borderColor: ['#0B79F4', '#FFD600', '#89FF00', '#003560', '#FF2200', '#D2D4D6', '#dc662a'],
             borderWidth: 1,
             },
         ],
@@ -244,6 +244,15 @@ export function PieChart1() {
       
   return (
         <>  
+          <div style={{ 
+            display: 'grid',
+            borderRadius: 'md',
+            boxShadow: 'md',
+            width: '100%', // Ancho del 33.33% de la página
+            minWidth: '400px', // Un ancho mínimo para evitar que sea demasiado pequeño
+            height: '550px',
+            padding: '16px',
+          }}>
             <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <div style={{ marginRight: '10px' }}>
                 <IconButton
@@ -256,25 +265,26 @@ export function PieChart1() {
                 </div>
             </div>
     
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '30px', width: '100%', height: '80%' }}>
-                <Pie data={chartData} options={opt}/>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px', width: '100%', height: '90%' }}>
+                <Pie data={chartData} options={opt} style={{ maxWidth: '100%' }}/>
             </div>
+          </div>
 
-            <FormVaku<PieC>
-                titulo={'Filter'}
-                isOpen={isOpen}
-                onClose={() => {
-                onClose();
-                }}
-                fieldsToExclude={['id']}
-                model={pieC}
-                initialValues={pieC} // Pasamos startDate y endDate aquí
-                onSubmit={handleC}
-                loading={loading}
-                options={options}
-                size="xl"
-                grid={{ base: 1, md: 2 }}
-            />
+          <FormVaku<PieC>
+              titulo={'Filter'}
+              isOpen={isOpen}
+              onClose={() => {
+              onClose();
+              }}
+              fieldsToExclude={['id']}
+              model={pieC}
+              initialValues={pieC} // Pasamos startDate y endDate aquí
+              onSubmit={handleC}
+              loading={loading}
+              options={options}
+              size="xl"
+              grid={{ base: 1, md: 2 }}
+          />
         </>
     );
 }

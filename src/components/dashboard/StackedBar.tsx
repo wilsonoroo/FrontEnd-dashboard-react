@@ -9,7 +9,7 @@ import {
   Legend,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { IconButton, useDisclosure } from '@chakra-ui/react';
+import { Box, IconButton, useDisclosure } from '@chakra-ui/react';
 import { BsFilter } from 'react-icons/bs';
 import FormVaku from '../forms/FormVaku';
 import { PieC } from '@/models/graficos/PieChar';
@@ -392,17 +392,23 @@ export function StackedBar() {
     });
   }, []);
 
+  const colorPalette = [
+    '#FFD600', '#0B79F4', '#89FF00', '#003560', '#FF2200', '#D2D4D6',
+  ];
+  
   const [chartData, setChartData] = useState(() => {
     // Generar datos para el gráfico basados en todos los items del objeto "documento" de todas las fechas disponibles
     const todasLasFechas = Object.keys(dataJson);   
     const itemsDocumento = Object.keys(dataJson[todasLasFechas[0]].documento); // Suponemos que "todasLasFechas[0]" es la primera fecha en los datos
 
-    const datasets = itemsDocumento.map((item) => {
-      const datos = todasLasFechas.map((fecha) => dataJson[fecha].documento[item]?.cant || 0); // Usar 0 para datos faltantes
+  
+    const datasets = itemsDocumento.map((item, index) => {
+      const datos = todasLasFechas.map((fecha) => dataJson[fecha].documento[item]?.cant || 0);
       return {
         label: item,
         data: datos,
-        backgroundColor: getRandomColor(),
+        backgroundColor: colorPalette[index % colorPalette.length], // Obtén el color de la paleta en función del índice
+        // backgroundColor: getRandomColor(),
         // borderRadius: 100,
         // barThickness: 40,
         // barPercentage: 0.6,
@@ -501,20 +507,31 @@ export function StackedBar() {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <div style={{ marginRight: '10px' }}>
-          <IconButton
-            aria-label="Filter"
-            icon={<BsFilter size={24} color="gray" />}
-            onClick={() => {
-              onOpen();
-            }}
-          />
+      <div style={{ 
+        display: 'grid',
+        borderRadius: 'md',
+        boxShadow: 'md',
+        width: '100%', // Ancho del 33.33% de la página
+        minWidth: '400px', // Un ancho mínimo para evitar que sea demasiado pequeño
+        height: '550px',
+        padding: '16px',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ marginRight: '10px' }}>
+            <IconButton
+              aria-label="Filter"
+              icon={<BsFilter size={24} color="gray" />}
+              onClick={() => {
+                onOpen();
+              }}
+            />
+          </div>
         </div>
-      </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
-        <Bar options={opt} data={chartData} />
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '90%' }}>
+          <Bar options={opt} data={chartData}  style={{ maxWidth: '100%' }}/>
+        </div>
+
       </div>
     
       <FormVaku<PieC>
