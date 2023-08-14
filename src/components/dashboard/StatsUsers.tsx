@@ -24,7 +24,20 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
   };
 
   return (
-    <Box position="relative" display="grid"  width="600px" height="550px" p="16px">
+    <Box 
+      position="relative" 
+      width="600px" 
+      style={{ 
+        display: 'grid',
+        borderRadius: 'md',
+        boxShadow: 'md',
+        width: "100%", 
+        minWidth: '400px', // Un ancho mínimo para evitar que sea demasiado pequeño
+        height: '550px',
+        padding: '16px',
+        alignItems: "center",
+      }}
+    >
     {/* Divider */}
     <Divider
       orientation="vertical"
@@ -50,17 +63,33 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
         </Text>
       </Box>
       <Box p={4}>
-        <Text fontSize="xl" align="center">
+        <Text 
+          fontSize={{
+            base: "md",    
+            md: "md",      
+            lg: "xl",    
+          }}
+          align="center"
+        >
           Activos/Disponibles
         </Text>
       </Box>
     </Grid>
     {data.map((item, index) => (
       <Grid key={index} templateColumns="1fr 1fr" gap={4}>
-        <Box p={4}>
+        <Box p={2}>
           <Grid templateColumns="1fr 1fr" gap={2} alignItems="center" justifyContent="center">
             <Box>
-              <Text fontSize="xl" fontWeight="bold" mb={2} align="center">
+              <Text 
+                fontSize={{
+                  base: "md",    // Tamaño de fuente en pantallas pequeñas
+                  md: "md",      // Tamaño de fuente en pantallas medianas
+                  lg: "xl",     // Tamaño de fuente en pantallas grandes
+                }}
+                fontWeight="bold" 
+                mb={2} 
+                align="center"
+              >
                 <span
                   style={{
                     background: getColorForLevel(item.nivel), // Apply the background color based on the level
@@ -73,7 +102,11 @@ const StatsUsers: React.FC<StatsUsersProps> = ({ data }) => {
               </Text>
             </Box>
             <Box>
-              <Text fontSize="md" mb={2} align="center">
+              <Text 
+                fontSize="md" 
+                mb={2} 
+                align="center"
+              >
                 {item.descripcion}
               </Text>
             </Box>

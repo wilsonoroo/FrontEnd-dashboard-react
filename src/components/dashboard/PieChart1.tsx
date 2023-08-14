@@ -265,7 +265,7 @@ export function PieChart1() {
                 </div>
             </div>
     
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '10px', width: '100%', height: '90%' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '90%' }}>
                 <Pie data={chartData} options={opt} style={{ maxWidth: '100%' }}/>
             </div>
           </div>

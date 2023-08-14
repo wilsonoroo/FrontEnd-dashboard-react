@@ -59,7 +59,7 @@ const dataJson: DataJson = {
       "Cerradas": {
         "cant": 22
       },
-      "En Mora": {
+      "Pendiente": {
         "cant": 22
       }
     },
@@ -72,7 +72,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 22
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 22
           }
         },
@@ -92,7 +92,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 4
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 6
           }
         },
@@ -114,7 +114,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 22
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 22
           }
         },
@@ -137,7 +137,7 @@ const dataJson: DataJson = {
       "Cerradas": {
         "cant": 2
       },
-      "En Mora": {
+      "Pendiente": {
         "cant": 3
       }
     },
@@ -150,7 +150,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 22
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 22
           }
         },
@@ -170,7 +170,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 22
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 26
           }
         },
@@ -192,7 +192,7 @@ const dataJson: DataJson = {
           "Cerradas": {
             "cant": 22
           },
-          "En Mora": {
+          "Pendiente": {
             "cant": 22
           }
         },
@@ -419,7 +419,7 @@ export function LineChart() {
             />
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '80%' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '1px', width: '100%', height: '90%' }}>
           <Line options={opt} data={chartData} style={{ maxWidth: '100%' }}/>
         </div>
       </div>

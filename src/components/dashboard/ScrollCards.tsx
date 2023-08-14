@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Box, Divider, IconButton } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Box, Divider, IconButton, useMediaQuery } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import TotalCard from './TotalCard';
 import icon from "./icon.svg"
@@ -25,6 +25,8 @@ interface ScrollCardsProps {
 
 const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+  const [isLargerThan1024] = useMediaQuery("(min-width: 1024px)");
 
   const handlePrevSlide = () => {
     setCurrentSlide(currentSlide - 1);
@@ -34,10 +36,10 @@ const ScrollCards: React.FC<ScrollCardsProps> = ({ data }) => {
     setCurrentSlide(currentSlide + 1);
   };
 
-  const visibleData = data.slice(currentSlide, currentSlide + 4);
+  const numCardsToShow = isLargerThan1024 ? 4 : isLargerThan768 ? 3 : 2;
+  const visibleData = data.slice(currentSlide, currentSlide + numCardsToShow);
   const showPrevArrow = currentSlide > 0;
-  const showNextArrow = currentSlide < data.length - 4;
-
+  const showNextArrow = currentSlide < data.length - numCardsToShow;
   return (
     <Box borderRadius="lg" bg="white" w="100%" h="200px" display="flex" flexDirection="row" justifyContent="center" position="relative">
       {showPrevArrow && (
