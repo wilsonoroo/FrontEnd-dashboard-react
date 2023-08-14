@@ -304,7 +304,7 @@ export function LineChart() {
         data: datos,
         borderColor: colorPalette[index % colorPalette.length], // Obtén el color de la paleta en función del índice
         pointBackgroundColor: colorPalette[index % colorPalette.length],
-        fill: false,
+        // fill: false,
       };
     });
 
